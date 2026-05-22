@@ -131,28 +131,40 @@
   background: var(--dark-2);
   border: 1px solid oklch(0.3 0.005 60);
   border-radius: 14px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   position: relative;
   transition: background 200ms, border-color 200ms;
   cursor: default;
 }
+.logo-tile__icon {
+  height: 26px;
+  width: auto;
+  fill: #F5EFE6;
+  display: block;
+  flex-shrink: 0;
+}
 .logo-tile__name {
   font-weight: 700;
-  font-size: 17px;
-  letter-spacing: -0.01em;
-  color: var(--dark-text);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.5);
   transition: opacity 200ms;
+  white-space: nowrap;
 }
-.logo-tile__name::before {
-  content: "";
-  display: inline-block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--orange);
-  margin-right: 8px;
-  vertical-align: middle;
-  transform: translateY(-2px);
+.logo-tile--text .logo-tile__name {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: rgba(245,239,230,0.85);
+}
+.logo-tile {
+  flex-direction: column;
+  gap: 8px;
 }
 .logo-tile__hover {
   position: absolute; inset: 0;
@@ -167,6 +179,7 @@
   transition: opacity 200ms;
 }
 .logo-tile:hover { background: oklch(0.22 0.005 60); border-color: var(--orange); }
+.logo-tile:hover .logo-tile__icon,
 .logo-tile:hover .logo-tile__name { opacity: 0; }
 .logo-tile:hover .logo-tile__hover { opacity: 1; }
 @media (max-width: 760px) {
