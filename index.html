@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kunwar · Brand Partnerships</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ============= Page-specific ============= */
+
+/* Hero */
+.hero { padding-top: 60px; padding-bottom: 120px; position: relative; overflow: hidden; }
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 56px;
+  align-items: end;
+}
+.hero__top {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.hero__headline {
+  position: relative;
+  margin: 0 0 32px;
+}
+.hero__sub {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 56px; align-items: end;
+}
+.hero__sub .lede { margin: 0 0 28px; }
+.hero__cta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.hero__visual {
+  margin-top: 64px;
+  position: relative;
+  aspect-ratio: 21 / 9;
+  border-radius: var(--r-lg);
+}
+.hero__visual .ph { width: 100%; height: 100%; border-radius: var(--r-lg); }
+
+@media (max-width: 760px) {
+  .hero__sub { grid-template-columns: 1fr; gap: 24px; }
+  .hero { padding-bottom: 64px; }
+}
+
+/* Sticker positioning — sized & placed per-slot. Swap the inner SVG, layout stays. */
+.sticker-slot[data-slot="hero-smile"] { top: -10px; right: 6%; width: 96px; --rot: -8deg; }
+.sticker-slot[data-slot="hero-sparkle"] { bottom: 18%; left: -2%; width: 64px; --rot: 14deg; }
+@media (max-width: 760px) {
+  .sticker-slot[data-slot="hero-smile"] { width: 64px; right: 0; }
+  .sticker-slot[data-slot="hero-sparkle"] { width: 44px; }
+}
+
+/* Proof bar */
+.proof {
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 48px 0;
+  background: var(--cream-2);
+}
+.proof__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.proof__stat {
+  padding: 8px 32px;
+  border-right: 1px solid var(--rule);
+  display: grid; gap: 6px;
+}
+.proof__stat:last-child { border-right: none; }
+.proof__stat:first-child { padding-left: 0; }
+.proof__num {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(40px, 5vw, 76px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+.proof__num sup { font-size: 0.4em; font-weight: 600; }
+.proof__label {
+  font-size: 14px;
+  color: var(--ink-2);
+  font-weight: 500;
+  line-height: 1.3;
+}
+@media (max-width: 980px) {
+  .proof__grid { grid-template-columns: repeat(2, 1fr); }
+  .proof__stat { padding: 16px 20px; border-bottom: 1px solid var(--rule); }
+  .proof__stat:nth-child(odd) { padding-left: 0; }
+  .proof__stat:nth-child(2) { border-right: none; }
+  .proof__stat:nth-child(3) { border-right: 1px solid var(--rule); }
+}
+
+/* Logo wall (dark) */
+.wall { overflow: hidden; }
+.wall__head {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: end;
+  margin-bottom: 56px;
+}
+.wall__rows {
+  display: grid;
+  gap: 18px;
+  margin: 0 -32px;
+  padding: 0 32px;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.wall__track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+.wall__track--reverse { animation-direction: reverse; animation-duration: 75s; }
+.wall:hover .wall__track { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.logo-tile {
+  flex-shrink: 0;
+  width: 220px;
+  height: 96px;
+  background: var(--dark-2);
+  border: 1px solid oklch(0.3 0.005 60);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  transition: background 200ms, border-color 200ms;
+  cursor: default;
+}
+.logo-tile__name {
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--dark-text);
+  transition: opacity 200ms;
+}
+.logo-tile__name::before {
+  content: "";
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--orange);
+  margin-right: 8px;
+  vertical-align: middle;
+  transform: translateY(-2px);
+}
+.logo-tile__hover {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.logo-tile:hover { background: oklch(0.22 0.005 60); border-color: var(--orange); }
+.logo-tile:hover .logo-tile__name { opacity: 0; }
+.logo-tile:hover .logo-tile__hover { opacity: 1; }
+@media (max-width: 760px) {
+  .wall__head { grid-template-columns: 1fr; gap: 24px; }
+  .logo-tile { width: 160px; height: 76px; }
+}
+
+/* Categories */
+.cats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 48px; border-top: 1.5px solid var(--ink); }
+.cat {
+  padding: 24px 24px 28px;
+  border-right: 1px solid var(--rule);
+  display: grid;
+  gap: 14px;
+  position: relative;
+}
+.cat:last-child { border-right: none; }
+.cat__dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  display: grid; place-items: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+.cat__name { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+.cat__desc { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+.cat__brands { font-size: 12px; color: var(--ink-3); font-family: ui-monospace, monospace; letter-spacing: 0.02em; }
+@media (max-width: 1100px) { .cats { grid-template-columns: repeat(3, 1fr); }
+  .cat { border-bottom: 1px solid var(--rule); }
+  .cat:nth-child(3) { border-right: none; }
+}
+@media (max-width: 640px) {
+  .cats { grid-template-columns: 1fr; }
+  .cat { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+
+/* Featured case studies */
+.cases {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 56px;
+}
+.case-card {
+  display: grid;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: var(--shadow-card-sm);
+  transition: transform 240ms cubic-bezier(.2,.7,.2,1), box-shadow 240ms;
+  cursor: pointer;
+}
+.case-card:hover { transform: translate(-4px, -4px); box-shadow: 8px 8px 0 0 var(--ink); }
+.case-card__thumb {
+  aspect-ratio: 4 / 5;
+  position: relative;
+  border-bottom: 1.5px solid var(--ink);
+}
+.case-card__thumb .ph { border: none; border-radius: 0; height: 100%; }
+.case-card__result {
+  position: absolute;
+  top: 16px; left: 16px;
+  background: var(--orange);
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+.case-card__body { padding: 24px; display: grid; gap: 14px; }
+.case-card__brand {
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 22px; letter-spacing: -0.02em;
+}
+.case-card__brand .arrow { font-size: 22px; transition: transform 200ms; }
+.case-card:hover .case-card__brand .arrow { transform: translate(4px, -4px); }
+.case-card__summary { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.case-card__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.case-card__tags .tag { font-size: 11px; padding: 4px 10px; }
+
+/* Accent variants */
+.case-card[data-accent="green"] .case-card__result { background: var(--green); color: white; }
+.case-card[data-accent="blue"] .case-card__result { background: var(--blue); color: white; }
+.case-card[data-accent="pink"] .case-card__result { background: var(--pink); color: white; }
+
+@media (max-width: 980px) { .cases { grid-template-columns: 1fr 1fr; }
+  .cases > :nth-child(3) { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }
+
+/* How I work */
+.how {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 80px;
+  align-items: start;
+}
+.how__list { display: grid; gap: 0; counter-reset: step; }
+.how__item {
+  padding: 28px 0;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.how__item:last-child { border-bottom: 1px solid var(--rule); }
+.how__item::before {
+  counter-increment: step;
+  content: "0" counter(step);
+  font-family: var(--italic);
+  font-style: italic;
+  font-size: 32px;
+  color: var(--orange);
+  line-height: 1;
+  padding-top: 6px;
+}
+.how__item h4 { margin: 0 0 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.015em; }
+.how__item p { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+@media (max-width: 860px) { .how { grid-template-columns: 1fr; gap: 24px; } }
+
+/* Testimonials */
+.notes-head {
+  display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end;
+  margin-bottom: 48px;
+}
+.notes-nav { display: flex; gap: 12px; }
+.notes-nav button {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  font-size: 22px;
+  display: grid; place-items: center;
+  transition: transform 150ms, background 200ms, color 200ms;
+}
+.notes-nav button:hover { background: var(--ink); color: var(--cream); transform: scale(1.05); }
+.notes-track {
+  display: flex; gap: 24px;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  margin: 0 -32px; padding: 8px 32px 32px;
+  scrollbar-width: none;
+}
+.notes-track::-webkit-scrollbar { display: none; }
+.note {
+  flex: 0 0 calc(33.33% - 16px);
+  min-width: 360px;
+  scroll-snap-align: start;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card-sm);
+  overflow: hidden;
+  display: grid;
+}
+.note__top {
+  height: 14px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.note__body { padding: 28px; display: grid; gap: 24px; }
+.note__quote {
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.note__attr {
+  display: flex; align-items: center; gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+.note__avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(135deg, var(--cream-2) 0 6px, var(--cream) 6px 12px);
+  border: 1.5px solid var(--ink);
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 16px; color: var(--ink-2);
+}
+.note__name { font-weight: 700; font-size: 15px; }
+.note__role { font-size: 13px; color: var(--ink-3); }
+.note[data-accent="orange"] .note__top { background: var(--orange); }
+.note[data-accent="green"] .note__top { background: var(--green); }
+.note[data-accent="blue"] .note__top { background: var(--blue); }
+.note[data-accent="plum"] .note__top { background: var(--plum); }
+
+/* Audience snapshot */
+.audience {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.audience__stats { display: grid; gap: 0; }
+.audience__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+}
+.audience__row:last-child { border-bottom: 1px solid var(--rule); }
+.audience__label {
+  font-size: 14px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.audience__value {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(28px, 3vw, 44px);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.audience__value em {
+  font-family: var(--italic); font-style: italic; font-weight: 400;
+  color: var(--orange);
+}
+@media (max-width: 860px) { .audience { grid-template-columns: 1fr; gap: 32px; } }
+
+/* Closing CTA */
+.cta-head {
+  display: grid; gap: 28px; max-width: 900px; margin-bottom: 56px;
+  position: relative;
+}
+.cta-block {
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+}
+.cta-block .fallback {
+  font-size: 15px;
+  color: var(--dark-text-2);
+}
+.cta-block .fallback a { color: var(--dark-text); border-bottom: 1px solid currentColor; }
+.cta-block .fallback a:hover { color: var(--orange); }
+
+@media (max-width: 480px) {
+  .notes-track { margin: 0 -20px; padding: 8px 20px 32px; }
+  .note { min-width: 300px; }
+}
+</style>
+</head>
+<body class="is-home">
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo" aria-label="Kunwar Deep"><span class="logomark">Kunwar<em>Deep</em></span></a>
+    <div class="nav__links">
+      <a href="index.html" class="is-active">Home</a>
+      <a href="index.html#work">Work</a>
+      <a href="case-study.html">Case Studies</a>
+      <a href="insights.html">Insights</a>
+      <a href="index.html#about">About</a>
+    </div>
+    <div class="nav__cta-group">
+      <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener" class="ig-link" aria-label="Instagram @the_ecomjet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      </a>
+      <a href="#mediakit" class="btn btn--ghost nav__cta">Get the media kit</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero__top reveal">
+      <span class="pill"><span class="dot"></span>Content that converts, not just performs</span>
+    </div>
+    <h1 class="display h1 hero__headline reveal">
+      I make <em>scroll-stopping</em> content<br>
+      that actually <em>converts</em>.
+      <!-- STICKER SLOT: hero-smile, replace inner SVG with your own asset -->
+      <span class="sticker-slot" data-slot="hero-smile">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" fill="#B6A7F4" stroke="#0F0D0B" stroke-width="3"/>
+          <circle cx="50" cy="50" r="34" fill="#F2E27A" stroke="#0F0D0B" stroke-width="2.5"/>
+          <ellipse cx="38" cy="44" rx="4" ry="6" fill="#0F0D0B"/>
+          <ellipse cx="62" cy="44" rx="4" ry="6" fill="#0F0D0B"/>
+          <path d="M 32 60 Q 50 78 68 60" fill="none" stroke="#0F0D0B" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <!-- STICKER SLOT: hero-sparkle, replace inner SVG with your own asset -->
+      <span class="sticker-slot" data-slot="hero-sparkle">
+        <svg viewBox="0 0 80 80" aria-hidden="true">
+          <path d="M40 4 L44 32 L72 36 L44 40 L40 72 L36 40 L8 36 L36 32 Z" fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </h1>
+    <div class="hero__sub reveal">
+      <div>
+        <p class="lede">I create content around business and AI tools that's fun to watch and drives real action, for an audience of <strong>[FOLLOWERS]</strong> founders and marketers.</p>
+        <div class="hero__cta">
+          <a href="#mediakit" class="btn btn--primary">Get the media kit <span class="arr">&#8594;</span></a>
+          <a href="#work" class="btn--link">See the work <span class="arr">&#8594;</span></a>
+        </div>
+      </div>
+      <div class="tiny muted" style="border-left: 1.5px solid var(--ink); padding-left: 20px; margin-bottom: 8px;">
+        <div style="font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color: var(--ink); margin-bottom:6px;">Currently</div>
+        <div>Open to partnerships<br>for Q3 · Q4 '26.</div>
+        <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+          <span style="width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;box-shadow:0 0 0 4px color-mix(in oklch, var(--green) 25%, transparent);"></span>
+          Replying within 24h
+        </div>
+      </div>
+    </div>
+    <div class="hero__visual reveal">
+      <div class="ph" data-label="[HERO IMAGE · best-performing reel loop]"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ PROOF BAR ============ -->
+<section class="proof reveal" id="proof">
+  <div class="wrap">
+    <div class="proof__grid">
+      <div class="proof__stat">
+        <div class="proof__num"><span class="placeholder">[FOLLOWERS]</span></div>
+        <div class="proof__label">Founders &amp; marketers following</div>
+      </div>
+      <div class="proof__stat">
+        <div class="proof__num"><span class="placeholder">[TOTAL VIEWS]</span></div>
+        <div class="proof__label">Views driven across collabs</div>
+      </div>
+      <div class="proof__stat">
+        <div class="proof__num"><span class="placeholder">[BRAND COUNT]</span><sup>+</sup></div>
+        <div class="proof__label">Brands partnered with</div>
+      </div>
+      <div class="proof__stat">
+        <div class="proof__num"><span class="placeholder">[BEST REEL VIEWS]</span></div>
+        <div class="proof__label">Best-performing reel</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAND LOGO WALL · DARK ============ -->
+<section class="section section--dark wall" id="work">
+  <div class="wrap">
+    <div class="wall__head reveal">
+      <div>
+        <span class="kicker">The company I keep</span>
+        <h2 class="display h2" style="margin-top: 24px;">
+          <em>[BRAND COUNT]</em> brands,<br>and counting.
+        </h2>
+      </div>
+      <div>
+        <p class="lede">From early-stage tools to names you already know. Hover any logo to see what we made together.</p>
+        <a href="#work" class="btn--link" style="margin-top: 16px;">See every brand <span class="arr">&#8594;</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wall__rows">
+    <div class="wall__track" id="wall-row-1"></div>
+    <div class="wall__track wall__track--reverse" id="wall-row-2"></div>
+    <div class="wall__track" id="wall-row-3"></div>
+  </div>
+</section>
+
+<!-- ============ CATEGORY BREAKDOWN ============ -->
+<section class="section" id="categories">
+  <div class="wrap">
+    <div class="reveal" style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: end;">
+      <div>
+        <span class="kicker">A bit of range</span>
+        <h2 class="display h2" style="margin-top: 24px;">I speak <em>your</em> category.</h2>
+      </div>
+      <p class="lede">Most of my audience builds and markets software, so I've gone deep across the tools they actually use.</p>
+    </div>
+    <div class="cats reveal">
+      <div class="cat">
+        <div class="cat__dot">01</div>
+        <div class="cat__name">Business tools</div>
+        <div class="cat__desc">Helping teams work smarter.</div>
+        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+      </div>
+      <div class="cat">
+        <div class="cat__dot" style="background: var(--orange); color: var(--ink); border-color: var(--ink);">02</div>
+        <div class="cat__name">AI business tools</div>
+        <div class="cat__desc">The agents and copilots changing how work gets done.</div>
+        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+      </div>
+      <div class="cat">
+        <div class="cat__dot">03</div>
+        <div class="cat__name">Generative AI tools</div>
+        <div class="cat__desc">Image, video and creative AI that people love to watch.</div>
+        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+      </div>
+      <div class="cat">
+        <div class="cat__dot">04</div>
+        <div class="cat__name">Marketing tools</div>
+        <div class="cat__desc">Speaking directly to the marketers in my audience.</div>
+        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+      </div>
+      <div class="cat">
+        <div class="cat__dot">05</div>
+        <div class="cat__name">And more</div>
+        <div class="cat__desc">[SHORT DESCRIPTOR]</div>
+        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED CASE STUDIES ============ -->
+<section class="section" id="case-studies" style="padding-top: 48px;">
+  <div class="wrap">
+    <div class="reveal" style="display:grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end;">
+      <div>
+        <span class="kicker">A few favorites</span>
+        <h2 class="display h2" style="margin-top: 24px; position: relative;">
+          Some work I'm <em>proud of</em>.
+          <!-- STICKER SLOT: work-clap, replace inner SVG with your own asset -->
+          <span class="sticker-slot" data-slot="work-clap" style="top: -20px; left: 32%; width: 80px; --rot: -12deg;">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M30 32 Q24 28 22 36 L24 60 Q26 74 38 78 L60 80 Q72 78 74 66 L74 40 Q70 36 66 40 L66 56 L64 36 Q60 32 56 36 L58 56 L54 30 Q50 26 46 30 L48 56 L44 36 Q40 32 36 36 L38 58 Z"
+                fill="#F2E27A" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M14 24 L4 22 M16 14 L10 4 M24 18 L20 8" stroke="#E55525" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <path d="M82 36 L94 32 M86 26 L96 22 M78 28 L86 18" stroke="#E55525" stroke-width="3" stroke-linecap="round" fill="none"/>
+            </svg>
+          </span>
+        </h2>
+      </div>
+      <a href="case-study.html" class="btn--link">All case studies <span class="arr">&#8594;</span></a>
+    </div>
+
+    <div class="cases reveal">
+      <a href="case-study.html" class="case-card" data-accent="orange">
+        <div class="case-card__thumb">
+          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
+          <span class="case-card__result">[HEADLINE RESULT]</span>
+        </div>
+        <div class="case-card__body">
+          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tags">
+            <span class="tag">[collab type]</span>
+            <span class="tag">[collab type]</span>
+          </div>
+          <p class="case-card__summary">"[One-line summary of what this collab was and how it landed.]"</p>
+        </div>
+      </a>
+
+      <a href="case-study.html" class="case-card" data-accent="green">
+        <div class="case-card__thumb">
+          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
+          <span class="case-card__result">[HEADLINE RESULT]</span>
+        </div>
+        <div class="case-card__body">
+          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tags">
+            <span class="tag">[collab type]</span>
+            <span class="tag">[collab type]</span>
+          </div>
+          <p class="case-card__summary">"[One-line summary of what this collab was and how it landed.]"</p>
+        </div>
+      </a>
+
+      <a href="case-study.html" class="case-card" data-accent="blue">
+        <div class="case-card__thumb">
+          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
+          <span class="case-card__result">[HEADLINE RESULT]</span>
+        </div>
+        <div class="case-card__body">
+          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tags">
+            <span class="tag">[collab type]</span>
+            <span class="tag">[collab type]</span>
+          </div>
+          <p class="case-card__summary">"[One-line summary of what this collab was and how it landed.]"</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW I WORK ============ -->
+<section class="section" id="about" style="border-top: 1.5px solid var(--ink); background: var(--cream-2);">
+  <div class="wrap">
+    <div class="how reveal">
+      <div>
+        <span class="kicker">How this goes</span>
+        <h2 class="display h2" style="margin: 24px 0 28px;">
+          Easy to <em>work with</em>,<br>hard to ignore.
+        </h2>
+        <p class="lede">Technically I'm a doctor. Practically, I've spent the last few years making content that founders and marketers stop scrolling for. Here's how I approach a partnership.</p>
+        <div style="margin-top: 32px;">
+          <div class="ph" style="aspect-ratio: 4/5; max-width: 360px;" data-label="[CREATOR PHOTO]"></div>
+        </div>
+      </div>
+      <div class="how__list">
+        <div class="how__item">
+          <div>
+            <h4>The hook comes first.</h4>
+            <p>If the first two seconds don't earn attention, nothing else matters. Every script starts there.</p>
+          </div>
+        </div>
+        <div class="how__item">
+          <div>
+            <h4>Built to convert, not just to please.</h4>
+            <p>Watchable is the floor. The goal is saves, shares, DMs and signups, the things you can take to your boss.</p>
+          </div>
+        </div>
+        <div class="how__item">
+          <div>
+            <h4>A real point of view.</h4>
+            <p>I only take on tools I can speak about honestly, so the content lands as a recommendation, not an ad.</p>
+          </div>
+        </div>
+        <div class="how__item">
+          <div>
+            <h4>Quick, clean, no hand-holding.</h4>
+            <p>Clear scripts, on-time delivery, and content that fits how I already talk to my audience. [confirm/adjust turnaround]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOVE NOTES ============ -->
+<section class="section" id="testimonials">
+  <div class="wrap">
+    <div class="notes-head reveal">
+      <div>
+        <span class="kicker">Don't take my word for it</span>
+        <h2 class="display h2" style="margin-top: 24px; position: relative;">
+          Read the <em>love</em> notes.
+          <!-- STICKER SLOT: love-heart, replace inner SVG with your own asset -->
+          <span class="sticker-slot" data-slot="love-heart" style="top: -36px; left: -8px; width: 64px; --rot: -18deg;">
+            <svg viewBox="0 0 80 80" aria-hidden="true">
+              <path d="M40 68 C 20 56 8 40 16 26 C 24 16 36 22 40 34 C 44 22 56 16 64 26 C 72 40 60 56 40 68 Z"
+                fill="#B0345A" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M28 30 Q34 26 36 32" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+          </span>
+        </h2>
+      </div>
+      <div class="notes-nav">
+        <button id="notes-prev" aria-label="Previous">&#8592;</button>
+        <button id="notes-next" aria-label="Next">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="notes-track" id="notes-track">
+      <div class="note" data-accent="orange">
+        <div class="note__top"></div>
+        <div class="note__body">
+          <p class="note__quote">"[REAL QUOTE · paste yours and I'll fit it. Two or three sentences that capture how the partnership felt and what it delivered.]"</p>
+          <div class="note__attr">
+            <div class="note__avatar">[N]</div>
+            <div>
+              <div class="note__name">[NAME]</div>
+              <div class="note__role">[TITLE], [COMPANY]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" data-accent="green">
+        <div class="note__top"></div>
+        <div class="note__body">
+          <p class="note__quote">"[REAL QUOTE · what they said about the work, the process, or the results.]"</p>
+          <div class="note__attr">
+            <div class="note__avatar">[N]</div>
+            <div>
+              <div class="note__name">[NAME]</div>
+              <div class="note__role">[TITLE], [COMPANY]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" data-accent="blue">
+        <div class="note__top"></div>
+        <div class="note__body">
+          <p class="note__quote">"[REAL QUOTE · ideally a line that names a number, a feeling, or a specific outcome.]"</p>
+          <div class="note__attr">
+            <div class="note__avatar">[N]</div>
+            <div>
+              <div class="note__name">[NAME]</div>
+              <div class="note__role">[TITLE], [COMPANY]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" data-accent="plum">
+        <div class="note__top"></div>
+        <div class="note__body">
+          <p class="note__quote">"[REAL QUOTE · a fourth one to keep the carousel honest. Replace or remove as needed.]"</p>
+          <div class="note__attr">
+            <div class="note__avatar">[N]</div>
+            <div>
+              <div class="note__name">[NAME]</div>
+              <div class="note__role">[TITLE], [COMPANY]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="tiny muted" style="margin-top: 8px;">Real quotes only. Nothing here is fabricated.</p>
+  </div>
+</section>
+
+<!-- ============ AUDIENCE SNAPSHOT ============ -->
+<section class="section" style="background: var(--cream-2); border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink);">
+  <div class="wrap">
+    <div class="audience reveal">
+      <div>
+        <span class="kicker">Who's actually watching</span>
+        <h2 class="display h2" style="margin: 24px 0 24px;">
+          The followers <em>are</em><br>the buyers.
+        </h2>
+        <p class="lede"><strong>[FOLLOWERS]</strong> people, and most of them build or market software for a living. That's the whole point.</p>
+        <a href="insights.html" class="btn--link" style="margin-top: 28px;">See the full numbers <span class="arr">&#8594;</span></a>
+      </div>
+      <div class="audience__stats">
+        <div class="audience__row">
+          <span class="audience__label">Founders &amp; marketers</span>
+          <span class="audience__value"><em>[XX]</em>%</span>
+        </div>
+        <div class="audience__row">
+          <span class="audience__label">Engagement rate</span>
+          <span class="audience__value"><em>[XX]</em>%</span>
+        </div>
+        <div class="audience__row">
+          <span class="audience__label">Avg. views per reel</span>
+          <span class="audience__value"><span class="placeholder">[AVG VIEWS]</span></span>
+        </div>
+        <div class="audience__row">
+          <span class="audience__label">Top regions</span>
+          <span class="audience__value" style="font-size: clamp(18px, 1.8vw, 24px); font-weight: 600; letter-spacing: -0.01em;"><span class="placeholder" style="font-size: 14px;">[REGION], [REGION], [REGION]</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING CTA · DARK ============ -->
+<section class="section section--dark" id="mediakit" style="padding: 120px 0;">
+  <div class="wrap">
+    <div class="cta-head reveal">
+      <span class="pill" style="justify-self: start;">Still reading? Let's talk.</span>
+      <h2 class="display h2" style="position: relative;">
+        Let's make something<br>worth <em>watching</em>.
+        <!-- STICKER SLOT: cta-closing, empty placeholder — drop your own asset here -->
+        <span class="sticker-slot sticker-slot--empty" data-slot="cta-closing" style="right: 2%; top: -28px; width: 88px;"></span>
+      </h2>
+      <p class="lede" style="max-width: 56ch;">Grab the media kit for rates, audience data and recent work. Or just reply to my email, I read every one.</p>
+    </div>
+    <div class="cta-block reveal">
+      <a href="#" class="btn btn--primary" id="mediakit-dl">Get the media kit <span class="arr">&#8594;</span></a>
+      <span class="fallback">Prefer email? <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <div class="nav__logo" style="color: var(--dark-text); margin-bottom: 20px;"><span class="logomark">Kunwar<em style="color: var(--orange);">Deep</em></span></div>
+        <p style="color: var(--dark-text-2); font-size: 15px; max-width: 32ch; margin: 0;">
+          Content built to be watched, then saved, then sent to the boss. For brands that need their audience to actually care.
+        </p>
+      </div>
+      <div>
+        <h5>Pages</h5>
+        <div class="footer__list">
+          <a href="index.html">Home</a>
+          <a href="case-study.html">Case Studies</a>
+          <a href="insights.html">Insights</a>
+          <a href="#about">About</a>
+        </div>
+      </div>
+      <div>
+        <h5>Reach me</h5>
+        <div class="footer__list">
+          <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a>
+          <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener">Instagram</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">X / Twitter</a>
+        </div>
+      </div>
+      <div>
+        <h5>The kit</h5>
+        <div class="footer__list">
+          <a href="#mediakit">Media kit (PDF)</a>
+          <a href="insights.html">Audience data</a>
+          <a href="case-study.html">Recent work</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__watermark">@the_<em>ecomjet</em></div>
+    <div class="footer__bottom">
+      <span>Made by hand, not by template. &copy; 2026 Kunwar.</span>
+      <span>No em dashes were harmed in the making of this site.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ TWEAKS PANEL ============ -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks__head">
+    <span>Tweaks</span>
+    <button id="tweaks-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="tweaks__body">
+    <div class="tweaks__row">
+      <span>Primary accent</span>
+      <div class="tweaks__swatches" id="tw-accent">
+        <button data-color="#E55525" style="background:#E55525" class="is-active" title="Burnt orange"></button>
+        <button data-color="#2F6B4F" style="background:#2F6B4F" title="Forest"></button>
+        <button data-color="#2B49C4" style="background:#2B49C4" title="Cobalt"></button>
+        <button data-color="#B0345A" style="background:#B0345A" title="Plum"></button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span>Italic serif</span>
+      <div class="tweaks__opts" id="tw-italic">
+        <button data-font="Instrument Serif" class="is-active">Instrument</button>
+        <button data-font="DM Serif Display">DM Serif</button>
+        <button data-font="Caveat" data-script="1">Caveat</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span>Stickers</span>
+      <div class="tweaks__opts" id="tw-stickers">
+        <button data-val="on" class="is-active">On</button>
+        <button data-val="off">Off</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span>Background</span>
+      <div class="tweaks__opts" id="tw-bg">
+        <button data-bg="warm" class="is-active">Warm cream</button>
+        <button data-bg="paper">Bright paper</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit-mode defaults persisted by host -->
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#E55525",
+  "italic": "Instrument Serif",
+  "stickers": "on",
+  "bg": "warm"
+}/*EDITMODE-END*/;
+</script>
+
+<script src="app.js"></script>
+</body>
+</html>

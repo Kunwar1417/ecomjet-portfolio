@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[BRAND] · Case study · Kunwar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ============= Case study page ============= */
+
+.cs-back {
+  padding-top: 32px;
+}
+.cs-back a {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 500;
+}
+.cs-back a:hover .arr { transform: translateX(-4px); }
+
+.cs-header {
+  padding: 32px 0 80px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 64px;
+  align-items: end;
+}
+.cs-header__tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+.cs-header h1 { margin: 0 0 32px; }
+.cs-header__meta {
+  display: grid; gap: 14px;
+  padding: 24px;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: var(--shadow-card-sm);
+}
+.cs-header__meta dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 12px 18px;
+  font-size: 14px;
+  align-items: baseline;
+}
+.cs-header__meta dt { color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px; font-weight: 600; }
+.cs-header__meta dd { margin: 0; font-weight: 600; }
+@media (max-width: 860px) { .cs-header { grid-template-columns: 1fr; gap: 32px; padding-bottom: 48px; } }
+
+.cs-hero-img {
+  aspect-ratio: 16/9;
+  border-radius: var(--r-lg);
+  margin-bottom: 96px;
+}
+.cs-hero-img .ph { width: 100%; height: 100%; border-radius: var(--r-lg); }
+
+/* Two-column section */
+.cs-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  padding: 64px 0;
+  border-top: 1px solid var(--rule);
+  align-items: start;
+}
+.cs-row:last-child { border-bottom: 1px solid var(--rule); }
+.cs-row h2 {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+.cs-row h2 em { font-family: var(--italic); font-style: italic; font-weight: 400; color: var(--orange); font-size: 1.05em; }
+.cs-row__body { font-size: 18px; line-height: 1.55; color: var(--ink-2); max-width: 64ch; }
+.cs-row__body p { margin: 0 0 1em; }
+.cs-row__body strong { color: var(--ink); font-weight: 700; }
+@media (max-width: 860px) { .cs-row { grid-template-columns: 1fr; gap: 24px; padding: 40px 0; } }
+
+/* Content embed */
+.cs-embed {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.cs-embed__reel {
+  aspect-ratio: 9 / 16;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.cs-embed__reel .ph { height: 100%; border-radius: 24px; }
+.cs-embed__play {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+}
+.cs-embed__play span {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 0 var(--ink);
+  display: grid; place-items: center;
+  font-size: 24px;
+  color: var(--ink);
+  font-weight: 800;
+  padding-left: 6px;
+}
+.cs-embed__meta { font-size: 15px; color: var(--ink-2); }
+.cs-embed__meta strong { color: var(--ink); display: block; font-size: 20px; margin-bottom: 8px; letter-spacing: -0.015em; }
+.cs-embed__link { margin-top: 16px; }
+@media (max-width: 860px) { .cs-embed { grid-template-columns: 1fr; gap: 24px; } }
+
+/* Results stats grid */
+.cs-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  margin-top: 16px;
+}
+.cs-stat {
+  padding: 32px 24px;
+  border-right: 1px solid var(--rule);
+  display: grid;
+  gap: 8px;
+  position: relative;
+}
+.cs-stat:nth-child(3n) { border-right: none; }
+.cs-stat:nth-child(n+4) { border-top: 1px solid var(--rule); }
+.cs-stat__value {
+  font-weight: 800;
+  font-size: clamp(32px, 3.2vw, 48px);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.cs-stat__value em { font-family: var(--italic); font-style: italic; font-weight: 400; color: var(--orange); }
+.cs-stat__label {
+  font-size: 13px;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+@media (max-width: 760px) { .cs-stats { grid-template-columns: 1fr 1fr; }
+  .cs-stat:nth-child(3n) { border-right: 1px solid var(--rule); }
+  .cs-stat:nth-child(even) { border-right: none; }
+  .cs-stat:nth-child(n+3) { border-top: 1px solid var(--rule); }
+}
+
+/* Pull quote */
+.cs-quote {
+  padding: 80px 0;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.cs-quote__body {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.cs-quote__body em {
+  font-family: var(--italic); font-style: italic; font-weight: 400;
+}
+.cs-quote__attr {
+  display: flex; align-items: center; gap: 16px;
+  font-size: 15px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+.cs-quote__avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(135deg, var(--cream-2) 0 6px, var(--cream) 6px 12px);
+  border: 1.5px solid var(--ink);
+  display: grid; place-items: center;
+  font-weight: 700;
+}
+
+/* More work */
+.more {
+  padding: 96px 0 64px;
+  border-top: 1.5px solid var(--ink);
+  background: var(--cream-2);
+}
+.more h2 { margin: 0 0 48px; }
+.more__cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+@media (max-width: 760px) { .more__cards { grid-template-columns: 1fr; } }
+
+/* Case cards (also used in more section) */
+.case-card {
+  display: grid;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: var(--shadow-card-sm);
+  transition: transform 240ms cubic-bezier(.2,.7,.2,1), box-shadow 240ms;
+  cursor: pointer;
+}
+.case-card:hover { transform: translate(-4px, -4px); box-shadow: 8px 8px 0 0 var(--ink); }
+.case-card__thumb {
+  aspect-ratio: 4 / 5;
+  position: relative;
+  border-bottom: 1.5px solid var(--ink);
+}
+.case-card__thumb .ph { border: none; border-radius: 0; height: 100%; }
+.case-card__result {
+  position: absolute;
+  top: 16px; left: 16px;
+  background: var(--orange);
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+.case-card__body { padding: 24px; display: grid; gap: 14px; }
+.case-card__brand {
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 22px; letter-spacing: -0.02em;
+}
+.case-card__brand .arrow { font-size: 22px; transition: transform 200ms; }
+.case-card:hover .case-card__brand .arrow { transform: translate(4px, -4px); }
+.case-card__summary { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.case-card__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.case-card__tags .tag { font-size: 11px; padding: 4px 10px; }
+.case-card[data-accent="green"] .case-card__result { background: var(--green); color: white; }
+.case-card[data-accent="blue"] .case-card__result { background: var(--blue); color: white; }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo" aria-label="Kunwar Deep"><span class="logomark">Kunwar<em>Deep</em></span></a>
+    <div class="nav__links">
+      <a href="index.html">Home</a>
+      <a href="index.html#work">Work</a>
+      <a href="case-study.html" class="is-active">Case Studies</a>
+      <a href="insights.html">Insights</a>
+      <a href="index.html#about">About</a>
+    </div>
+    <div class="nav__cta-group">
+      <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener" class="ig-link" aria-label="Instagram @the_ecomjet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      </a>
+      <a href="index.html#mediakit" class="btn btn--ghost nav__cta">Get the media kit</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ BACK ============ -->
+<div class="wrap cs-back reveal">
+  <a href="index.html#case-studies"><span class="arr" style="display:inline-block; transform: rotate(180deg);">&#8594;</span> All work</a>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="wrap cs-header">
+  <div class="reveal">
+    <div class="cs-header__tags">
+      <span class="tag">[category]</span>
+      <span class="tag">[collab type]</span>
+      <span class="tag">[collab type]</span>
+    </div>
+    <h1 class="display h1">[BRAND]</h1>
+    <p class="lede" style="margin:0;">"[One sentence on what this collab was, in the creator's voice.]"</p>
+  </div>
+  <div class="cs-header__meta reveal">
+    <dl>
+      <dt>Brand</dt><dd>[BRAND]</dd>
+      <dt>Category</dt><dd>[category]</dd>
+      <dt>Format</dt><dd>[Reel / Series / Static]</dd>
+      <dt>Delivered</dt><dd>[Month, Year]</dd>
+      <dt>Audience fit</dt><dd>Founders &amp; marketers</dd>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap reveal">
+  <div class="cs-hero-img">
+    <div class="ph" data-label="[HERO IMAGE · reel cover or behind-the-scenes shot]"></div>
+  </div>
+</div>
+
+<!-- ============ THE BRIEF ============ -->
+<section class="wrap">
+  <div class="cs-row reveal">
+    <div>
+      <span class="kicker">What they wanted</span>
+      <h2 style="margin-top: 16px;">The <em>brief</em>.</h2>
+    </div>
+    <div class="cs-row__body">
+      <p><strong>[Two or three sentences:]</strong> who the brand is, what they hired me for, the goal, and any constraint that shaped the work. Keep it tight, the reader is here for the reel, not the recap.</p>
+      <p>Things to mention if relevant: target audience, the launch they were timing around, any messaging guardrails, and what success looked like for them on day one.</p>
+    </div>
+  </div>
+
+  <!-- ============ THE APPROACH ============ -->
+  <div class="cs-row reveal">
+    <div>
+      <span class="kicker">How I cracked it</span>
+      <h2 style="margin-top: 16px;">The <em>approach</em>.</h2>
+    </div>
+    <div class="cs-row__body">
+      <p><strong>The angle.</strong> [The creative angle in one line.] Why this angle, and what it was supposed to do for the brand.</p>
+      <p><strong>The framework.</strong> If a repeatable structure was used (Hook &rarr; Problem &rarr; Demo &rarr; Payoff, etc.), name it here. This is the section that shows judgment, so don't skimp.</p>
+      <p><strong>What I cut.</strong> A short note on what was tempting but wrong, and what got left on the cutting room floor. Optional, but it lands.</p>
+    </div>
+  </div>
+
+  <!-- ============ THE CONTENT ============ -->
+  <div class="cs-row reveal">
+    <div>
+      <span class="kicker">What we made</span>
+      <h2 style="margin-top: 16px;">The <em>content</em>.</h2>
+    </div>
+    <div class="cs-row__body">
+      <div class="cs-embed">
+        <div class="cs-embed__reel">
+          <div class="ph" data-label="[REEL EMBED]"></div>
+          <div class="cs-embed__play"><span>&#9654;</span></div>
+        </div>
+        <div class="cs-embed__meta">
+          <strong>[Reel title or first line]</strong>
+          Posted [date] · [duration]s · [format]<br>
+          Open the post to see comments and saves in the wild.
+          <div class="cs-embed__link">
+            <a href="#" class="btn--link">Watch on Instagram <span class="arr">&#8594;</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ THE RESULTS ============ -->
+  <div class="cs-row reveal">
+    <div>
+      <span class="kicker">What happened</span>
+      <h2 style="margin-top: 16px;">The <em>results</em>.</h2>
+    </div>
+    <div class="cs-row__body" style="max-width: none;">
+      <div class="cs-stats">
+        <div class="cs-stat">
+          <div class="cs-stat__value"><span class="placeholder">[VIEWS]</span></div>
+          <div class="cs-stat__label">Views</div>
+          <!-- STICKER SLOT: results-sparkle, replace inner SVG with your own asset -->
+          <span class="sticker-slot" data-slot="results-sparkle" style="top: -22px; right: -10px; width: 60px; --rot: 12deg;">
+            <svg viewBox="0 0 80 80" aria-hidden="true">
+              <path d="M40 4 L44 32 L72 36 L44 40 L40 72 L36 40 L8 36 L36 32 Z" fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat__value"><span class="placeholder">[LIKES]</span></div>
+          <div class="cs-stat__label">Likes</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat__value"><span class="placeholder">[SAVES]</span></div>
+          <div class="cs-stat__label">Saves</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat__value"><span class="placeholder">[SHARES]</span></div>
+          <div class="cs-stat__label">Shares</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat__value"><span class="placeholder">[COMMENTS]</span></div>
+          <div class="cs-stat__label">Comments</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat__value"><span class="placeholder">[DMs / signups]</span></div>
+          <div class="cs-stat__label">Action signal</div>
+        </div>
+      </div>
+      <p class="tiny muted" style="margin-top: 12px;">Numbers pulled manually from Instagram Insights · [DATE].</p>
+    </div>
+  </div>
+
+  <!-- ============ THE REFLECTION ============ -->
+  <div class="cs-row reveal">
+    <div>
+      <span class="kicker">The honest take</span>
+      <h2 style="margin-top: 16px;">What <em>made it work</em>.</h2>
+    </div>
+    <div class="cs-row__body">
+      <p>[A short note in your voice on why this one landed. Be specific. The first two seconds did X. The audience didn't expect Y. The script ended on a save-bait line because Z. People want this section to be honest, so be honest.]</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OPTIONAL QUOTE ============ -->
+<section class="wrap">
+  <div class="cs-quote reveal">
+    <span class="kicker">From the brand</span>
+    <p class="cs-quote__body">"[REAL QUOTE · from the brand or founder. Three or four sentences max. The thing they'd say out loud if asked.]"</p>
+    <div class="cs-quote__attr">
+      <div class="cs-quote__avatar">[N]</div>
+      <div>
+        <div style="font-weight:700;">[NAME]</div>
+        <div class="muted">[TITLE], [COMPANY]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MORE WORK ============ -->
+<section class="more">
+  <div class="wrap">
+    <div class="reveal" style="display:flex; justify-content: space-between; align-items: end; gap: 32px; margin-bottom: 48px; flex-wrap: wrap;">
+      <h2 class="display h2">Keep <em>looking</em>.</h2>
+      <a href="index.html#case-studies" class="btn--link">All case studies <span class="arr">&#8594;</span></a>
+    </div>
+    <div class="more__cards reveal">
+      <a href="case-study.html" class="case-card" data-accent="green">
+        <div class="case-card__thumb">
+          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
+          <span class="case-card__result">[HEADLINE RESULT]</span>
+        </div>
+        <div class="case-card__body">
+          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tags">
+            <span class="tag">[collab type]</span>
+            <span class="tag">[collab type]</span>
+          </div>
+          <p class="case-card__summary">"[One-line summary of the next collab.]"</p>
+        </div>
+      </a>
+      <a href="case-study.html" class="case-card" data-accent="blue">
+        <div class="case-card__thumb">
+          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
+          <span class="case-card__result">[HEADLINE RESULT]</span>
+        </div>
+        <div class="case-card__body">
+          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tags">
+            <span class="tag">[collab type]</span>
+            <span class="tag">[collab type]</span>
+          </div>
+          <p class="case-card__summary">"[One-line summary of the next collab.]"</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING CTA · DARK ============ -->
+<section class="section section--dark" id="mediakit" style="padding: 96px 0;">
+  <div class="wrap">
+    <div class="reveal" style="display:grid; gap:28px; max-width:880px; position:relative;">
+      <span class="pill" style="justify-self: start;">Still reading? Let's talk.</span>
+      <h2 class="display h2">Let's make something<br>worth <em>watching</em>.</h2>
+      <p class="lede" style="max-width:56ch;">Grab the media kit for rates, audience data and recent work. Or just reply to my email, I read every one.</p>
+    </div>
+    <div class="reveal" style="display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-top:32px;">
+      <a href="#" class="btn btn--primary" id="mediakit-dl">Get the media kit <span class="arr">&#8594;</span></a>
+      <span style="font-size:15px; color: var(--dark-text-2);">Prefer email? <a href="mailto:[YOUR EMAIL]" style="color:var(--dark-text); border-bottom:1px solid currentColor;">[YOUR EMAIL]</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <div class="nav__logo" style="color: var(--dark-text); margin-bottom: 20px;"><span class="logomark">Kunwar<em style="color: var(--orange);">Deep</em></span></div>
+        <p style="color: var(--dark-text-2); font-size: 15px; max-width: 32ch; margin: 0;">
+          Content built to be watched, then saved, then sent to the boss.
+        </p>
+      </div>
+      <div>
+        <h5>Pages</h5>
+        <div class="footer__list">
+          <a href="index.html">Home</a>
+          <a href="case-study.html">Case Studies</a>
+          <a href="insights.html">Insights</a>
+          <a href="index.html#about">About</a>
+        </div>
+      </div>
+      <div>
+        <h5>Reach me</h5>
+        <div class="footer__list">
+          <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a>
+          <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div>
+        <h5>The kit</h5>
+        <div class="footer__list">
+          <a href="index.html#mediakit">Media kit (PDF)</a>
+          <a href="insights.html">Audience data</a>
+          <a href="case-study.html">Recent work</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__watermark">@the_<em>ecomjet</em></div>
+    <div class="footer__bottom">
+      <span>Made by hand, not by template. &copy; 2026 Kunwar.</span>
+      <span>No em dashes were harmed in the making of this site.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ TWEAKS PANEL ============ -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks__head"><span>Tweaks</span><button id="tweaks-close" aria-label="Close">&times;</button></div>
+  <div class="tweaks__body">
+    <div class="tweaks__row">
+      <span>Primary accent</span>
+      <div class="tweaks__swatches" id="tw-accent">
+        <button data-color="#E55525" style="background:#E55525" class="is-active"></button>
+        <button data-color="#2F6B4F" style="background:#2F6B4F"></button>
+        <button data-color="#2B49C4" style="background:#2B49C4"></button>
+        <button data-color="#B0345A" style="background:#B0345A"></button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span>Italic serif</span>
+      <div class="tweaks__opts" id="tw-italic">
+        <button data-font="Instrument Serif" class="is-active">Instrument</button>
+        <button data-font="DM Serif Display">DM Serif</button>
+        <button data-font="Caveat">Caveat</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span>Stickers</span>
+      <div class="tweaks__opts" id="tw-stickers">
+        <button data-val="on" class="is-active">On</button>
+        <button data-val="off">Off</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span>Background</span>
+      <div class="tweaks__opts" id="tw-bg">
+        <button data-bg="warm" class="is-active">Warm cream</button>
+        <button data-bg="paper">Bright paper</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#E55525",
+  "italic": "Instrument Serif",
+  "stickers": "on",
+  "bg": "paper"
+}/*EDITMODE-END*/;
+</script>
+<script src="app.js"></script>
+</body>
+</html>
