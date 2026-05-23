@@ -161,20 +161,25 @@ if (!window.matchMedia("(pointer: coarse)").matches) {
 }
 
 /* ============= Media kit download placeholder ============= */
-document.querySelectorAll("#mediakit-dl").forEach(mk => {
-  mk.addEventListener("click", (e) => {
+document.querySelectorAll(".mediakit-dl").forEach(mk => {
+  mk.addEventListener("click", async (e) => {
+    // Check if PDF exists; if not, show a friendly toast instead of a 404
+    try {
+      const res = await fetch("media-kit.pdf", { method: "HEAD" });
+      if (res.ok) return; // let the browser handle the download normally
+    } catch (_) { /* fall through to toast */ }
     e.preventDefault();
-    // toast
     const t = document.createElement("div");
-    t.textContent = "Media kit · drop the PDF at /media-kit.pdf";
+    t.textContent = "Media kit coming soon — email kunwar@thecomjet.com to get it now";
     Object.assign(t.style, {
       position: "fixed", bottom: "28px", left: "50%", transform: "translateX(-50%)",
-      background: "#0F0D0B", color: "#F5EFE6", padding: "14px 20px",
+      background: "#0F0D0B", color: "#F5EFE6", padding: "14px 22px",
       borderRadius: "999px", fontSize: "14px", fontWeight: "600", zIndex: "300",
-      boxShadow: "0 12px 28px -10px rgba(0,0,0,0.4)"
+      boxShadow: "0 12px 28px -10px rgba(0,0,0,0.4)",
+      maxWidth: "calc(100vw - 40px)", textAlign: "center"
     });
     document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2400);
+    setTimeout(() => t.remove(), 3200);
   });
 });
 
