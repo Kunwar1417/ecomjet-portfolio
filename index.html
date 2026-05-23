@@ -33,12 +33,79 @@
 .hero__sub .lede { margin: 0 0 28px; }
 .hero__cta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 .hero__visual {
-  margin-top: 64px;
+  margin-top: 72px;
   position: relative;
-  aspect-ratio: 21 / 9;
-  border-radius: var(--r-lg);
+  padding: 40px 24px 60px;
 }
 .hero__visual .ph { width: 100%; height: 100%; border-radius: var(--r-lg); }
+
+/* Reel stack */
+.reel-stack {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 880px;
+  margin: 0 auto;
+  perspective: 1200px;
+}
+.reel-card {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: 18px;
+  overflow: hidden;
+  display: block;
+  background: var(--ink);
+  border: 1.5px solid var(--ink);
+  box-shadow: var(--shadow-card-sm);
+  transform: rotate(var(--tilt, 0deg)) translateY(var(--shift, 0));
+  transition: transform 420ms cubic-bezier(.34,1.56,.64,1),
+              box-shadow 280ms ease,
+              z-index 0s;
+  cursor: pointer;
+  text-decoration: none;
+  z-index: 1;
+}
+.reel-card:nth-child(1) { --tilt: -7deg; --shift: 16px; }
+.reel-card:nth-child(2) { --tilt:  3deg; --shift: -8px; z-index: 2; }
+.reel-card:nth-child(3) { --tilt: -5deg; --shift: 22px; }
+.reel-card__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 600ms cubic-bezier(.2,.7,.2,1);
+}
+.reel-card__play {
+  position: absolute;
+  inset: 0;
+  display: grid; place-items: center;
+  background: linear-gradient(180deg, transparent 55%, rgba(15,13,11,0.55));
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.reel-card__play svg {
+  width: 64px; height: 64px;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.4));
+  transform: scale(0.85);
+  transition: transform 280ms cubic-bezier(.34,1.56,.64,1);
+}
+.reel-card:hover {
+  transform: rotate(0deg) translateY(-12px) scale(1.05);
+  box-shadow: 8px 8px 0 0 var(--ink);
+  z-index: 5;
+}
+.reel-card:hover .reel-card__img { transform: scale(1.06); }
+.reel-card:hover .reel-card__play { opacity: 1; }
+.reel-card:hover .reel-card__play svg { transform: scale(1); }
+.reel-stack:hover .reel-card:not(:hover):nth-child(1) { --tilt: -11deg; --shift: 22px; }
+.reel-stack:hover .reel-card:not(:hover):nth-child(2) { --tilt:   7deg; --shift: -4px; }
+.reel-stack:hover .reel-card:not(:hover):nth-child(3) { --tilt:  -9deg; --shift: 28px; }
+
+@media (max-width: 760px) {
+  .reel-stack { gap: 12px; max-width: 100%; }
+  .reel-card { box-shadow: 3px 3px 0 0 var(--ink); border-width: 1.5px; }
+  .reel-card:hover { transform: rotate(0deg) translateY(-6px) scale(1.03); }
+  .hero__visual { padding: 24px 8px 40px; }
+}
 
 @media (max-width: 760px) {
   .hero__sub { grid-template-columns: 1fr; gap: 24px; }
@@ -82,7 +149,8 @@
   gap: 4px;
   min-width: 0;
 }
-.proof__num sup { font-size: 0.4em; font-weight: 600; }
+.proof__num sup { font-size: 0.55em; font-weight: 700; top: -0.15em; position: relative; }
+.proof__num--text { font-size: clamp(28px, 2.8vw, 40px); letter-spacing: -0.02em; line-height: 1.05; }
 .proof__label {
   font-size: 14px;
   color: var(--ink-2);
@@ -119,10 +187,31 @@
   animation: marquee 60s linear infinite;
 }
 .wall__track--reverse { animation-direction: reverse; animation-duration: 75s; }
-.wall:hover .wall__track { animation-play-state: paused; }
+.wall__rows:hover .wall__track { animation-play-state: paused; }
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+}
+.pulse-dot::before {
+  content: "";
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  background: var(--green);
+  opacity: 0.35;
+  animation: pulse-ring 1.8s cubic-bezier(0.4,0,0.6,1) infinite;
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.6); opacity: 0.55; }
+  70%  { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
 }
 .logo-tile {
   flex-shrink: 0;
@@ -139,13 +228,23 @@
   position: relative;
   transition: background 200ms, border-color 200ms;
   cursor: default;
+  text-decoration: none;
 }
+.logo-tile--linked { cursor: pointer; }
 .logo-tile__icon {
-  height: 26px;
+  height: 36px;
   width: auto;
-  fill: #F5EFE6;
+  max-width: 180px;
   display: block;
   flex-shrink: 0;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+  transition: opacity 200ms;
+}
+.logo-tile__icon--prewhite {
+  filter: none;
+  opacity: 0.9;
 }
 .logo-tile__name {
   font-weight: 700;
@@ -178,10 +277,10 @@
   opacity: 0;
   transition: opacity 200ms;
 }
-.logo-tile:hover { background: oklch(0.22 0.005 60); border-color: var(--orange); }
-.logo-tile:hover .logo-tile__icon,
-.logo-tile:hover .logo-tile__name { opacity: 0; }
-.logo-tile:hover .logo-tile__hover { opacity: 1; }
+.logo-tile--linked:hover { background: oklch(0.22 0.005 60); border-color: var(--orange); }
+.logo-tile--linked:hover .logo-tile__icon,
+.logo-tile--linked:hover .logo-tile__name { opacity: 0; }
+.logo-tile--linked:hover .logo-tile__hover { opacity: 1; }
 @media (max-width: 760px) {
   .wall__head { grid-template-columns: 1fr; gap: 24px; }
   .logo-tile { width: 160px; height: 76px; }
@@ -197,14 +296,37 @@
   position: relative;
 }
 .cat:last-child { border-right: none; }
-.cat__dot {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid var(--ink);
-  display: grid; place-items: center;
-  font-weight: 800;
-  font-size: 14px;
+.cat__sticker {
+  width: 56px; height: 56px;
+  display: block;
+  transform: rotate(var(--rot, -6deg));
+  transition: transform 320ms cubic-bezier(.34,1.56,.64,1);
+  filter: drop-shadow(0 2px 0 rgba(15,13,11,0.08));
+  animation: sticker-idle 5s ease-in-out infinite;
 }
+.cat__sticker svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.cat:nth-child(1) .cat__sticker { --rot: -8deg; animation-delay: 0s; }
+.cat:nth-child(2) .cat__sticker { --rot: 6deg;  animation-delay: -0.8s; }
+.cat:nth-child(3) .cat__sticker { --rot: -4deg; animation-delay: -1.6s; }
+.cat:nth-child(4) .cat__sticker { --rot: 8deg;  animation-delay: -2.4s; }
+.cat:nth-child(5) .cat__sticker { --rot: -10deg; animation-delay: -3.2s; }
+.cat:hover .cat__sticker {
+  transform: rotate(var(--rot, -6deg)) scale(1.15);
+  animation: sticker-wiggle 0.5s ease-in-out;
+}
+@keyframes sticker-idle {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -3px; }
+}
+@keyframes sticker-wiggle {
+  0%   { transform: rotate(var(--rot, -6deg)) scale(1.15); }
+  25%  { transform: rotate(calc(var(--rot, -6deg) + 8deg)) scale(1.18); }
+  50%  { transform: rotate(calc(var(--rot, -6deg) - 6deg)) scale(1.15); }
+  75%  { transform: rotate(calc(var(--rot, -6deg) + 4deg)) scale(1.17); }
+  100% { transform: rotate(var(--rot, -6deg)) scale(1.15); }
+}
+.no-stickers .cat__sticker { animation: none; }
+.no-stickers .cat__sticker { transform: rotate(0deg); }
 .cat__name { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
 .cat__desc { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
 .cat__brands { font-size: 12px; color: var(--ink-3); font-family: ui-monospace, monospace; letter-spacing: 0.02em; }
@@ -223,6 +345,9 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
   margin-top: 56px;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .case-card {
   display: grid;
@@ -241,6 +366,8 @@
   border-bottom: 1.5px solid var(--ink);
 }
 .case-card__thumb .ph { border: none; border-radius: 0; height: 100%; }
+.case-card__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 600ms cubic-bezier(.2,.7,.2,1); }
+.case-card:hover .case-card__thumb img { transform: scale(1.04); }
 .case-card__result {
   position: absolute;
   top: 16px; left: 16px;
@@ -276,35 +403,76 @@
 @media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }
 
 /* How I work */
-.how {
+.how__top {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1.4fr 1fr;
   gap: 80px;
-  align-items: start;
+  align-items: center;
+  margin-bottom: 64px;
 }
-.how__list { display: grid; gap: 0; counter-reset: step; }
-.how__item {
-  padding: 28px 0;
-  border-top: 1px solid var(--rule);
+.how__photo {
+  aspect-ratio: 4/5;
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1.5px solid var(--ink);
+  box-shadow: var(--shadow-card-sm);
+  background: var(--cream-2);
+  position: relative;
+}
+.how__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.how__photo .ph { border: none; border-radius: 0; height: 100%; }
+.how__list {
   display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 24px;
-  align-items: start;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
 }
-.how__item:last-child { border-bottom: 1px solid var(--rule); }
-.how__item::before {
-  counter-increment: step;
-  content: "0" counter(step);
-  font-family: var(--italic);
-  font-style: italic;
-  font-size: 32px;
-  color: var(--orange);
-  line-height: 1;
-  padding-top: 6px;
+.how__item {
+  padding: 32px 28px;
+  border-right: 1px solid var(--rule);
+  display: grid;
+  gap: 16px;
+  align-content: start;
 }
-.how__item h4 { margin: 0 0 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.015em; }
-.how__item p { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
-@media (max-width: 860px) { .how { grid-template-columns: 1fr; gap: 24px; } }
+.how__item:last-child { border-right: none; }
+.how__icon {
+  width: 44px; height: 44px;
+  display: block;
+  transform: rotate(var(--icon-rot, -4deg));
+  transition: transform 320ms cubic-bezier(.34,1.56,.64,1);
+}
+.how__icon svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.how__item:nth-child(1) .how__icon { --icon-rot: -6deg; }
+.how__item:nth-child(2) .how__icon { --icon-rot: 4deg; }
+.how__item:nth-child(3) .how__icon { --icon-rot: -3deg; }
+.how__item:nth-child(4) .how__icon { --icon-rot: 7deg; }
+.how__item:hover .how__icon {
+  transform: rotate(var(--icon-rot, -4deg)) scale(1.15);
+  animation: icon-wiggle 0.5s ease-in-out;
+}
+@keyframes icon-wiggle {
+  0%, 100% { transform: rotate(var(--icon-rot, -4deg)) scale(1.15); }
+  50%      { transform: rotate(calc(var(--icon-rot, -4deg) + 6deg)) scale(1.18); }
+}
+.how__item h4 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; }
+.how__item p { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.5; }
+
+@media (max-width: 1100px) {
+  .how__list { grid-template-columns: repeat(2, 1fr); }
+  .how__item:nth-child(2) { border-right: none; }
+  .how__item:nth-child(1), .how__item:nth-child(2) { border-bottom: 1px solid var(--rule); }
+}
+@media (max-width: 860px) {
+  .how__top { grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
+  .how__photo { max-width: 320px; margin: 0 auto; }
+  .how__list { grid-template-columns: 1fr; }
+  .how__item { border-right: none; border-bottom: 1px solid var(--rule); padding: 24px 0; }
+  .how__item:last-child { border-bottom: none; }
+}
 
 /* Testimonials */
 .notes-head {
@@ -367,7 +535,9 @@
   flex-shrink: 0;
   display: grid; place-items: center;
   font-weight: 700; font-size: 16px; color: var(--ink-2);
+  overflow: hidden;
 }
+.note__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .note__name { font-weight: 700; font-size: 15px; }
 .note__role { font-size: 13px; color: var(--ink-3); }
 .note[data-accent="orange"] .note__top { background: var(--orange); }
@@ -386,8 +556,8 @@
 .audience__row {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: baseline;
-  gap: 16px;
+  align-items: center;
+  gap: 24px;
   padding: 22px 0;
   border-top: 1px solid var(--rule);
 }
@@ -399,15 +569,38 @@
   text-transform: uppercase;
   font-weight: 500;
 }
+.audience__col {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+.audience__note {
+  font-size: 11px;
+  color: var(--ink-3);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-style: italic;
+}
 .audience__value {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: clamp(28px, 3vw, 44px);
-  letter-spacing: -0.03em;
+  font-family: var(--italic);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(36px, 3.6vw, 56px);
+  letter-spacing: -0.01em;
   line-height: 1;
+  color: var(--orange);
 }
 .audience__value em {
-  font-family: var(--italic); font-style: italic; font-weight: 400;
+  font-style: italic;
+  display: inline-flex;
+  align-items: baseline;
+}
+.audience__value .u {
+  font-family: var(--italic);
+  font-style: italic;
+  font-size: 0.7em;
+  margin-left: 0.04em;
   color: var(--orange);
 }
 @media (max-width: 860px) { .audience { grid-template-columns: 1fr; gap: 32px; } }
@@ -438,7 +631,7 @@
 <!-- ============ NAV ============ -->
 <nav class="nav">
   <div class="nav__inner">
-    <a href="index.html" class="nav__logo" aria-label="Kunwar Deep"><span class="logomark">Kunwar<em>Deep</em></span></a>
+    <a href="index.html" class="nav__logo" aria-label="Kunwar Deep"><span class="logomark">Kunwar<em>Deep</em></span><span class="nav__handle">· @the_ecomjet</span></a>
     <div class="nav__links">
       <a href="index.html" class="is-active">Home</a>
       <a href="index.html#work">Work</a>
@@ -483,7 +676,7 @@
     </h1>
     <div class="hero__sub reveal">
       <div>
-        <p class="lede">I create content around business and AI tools that's fun to watch and drives real action, for an audience of <strong>[FOLLOWERS]</strong> founders and marketers.</p>
+        <p class="lede">I create content around business and AI tools that's fun to watch and drives real action, for an audience of <strong>349K</strong> founders and marketers.</p>
         <div class="hero__cta">
           <a href="#mediakit" class="btn btn--primary">Get the media kit <span class="arr">&#8594;</span></a>
           <a href="#work" class="btn--link">See the work <span class="arr">&#8594;</span></a>
@@ -493,13 +686,26 @@
         <div style="font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color: var(--ink); margin-bottom:6px;">Currently</div>
         <div>Open to partnerships<br>for Q3 · Q4 '26.</div>
         <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-          <span style="width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;box-shadow:0 0 0 4px color-mix(in oklch, var(--green) 25%, transparent);"></span>
-          Replying within 24h
+          <span class="pulse-dot"></span>
+          3 slots open this month
         </div>
       </div>
     </div>
     <div class="hero__visual reveal">
-      <div class="ph" data-label="[HERO IMAGE · best-performing reel loop]"></div>
+      <div class="reel-stack">
+        <a class="reel-card" href="https://www.instagram.com/reel/DOPxMXzk6vV/" target="_blank" rel="noopener" aria-label="Master Plan reel — 4.3M views">
+          <img class="reel-card__img" src="reels/master-plan.jpg" alt="Master Plan reel cover" loading="lazy">
+          <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+        </a>
+        <a class="reel-card" href="https://www.instagram.com/reel/DKbgfMmTd3f/" target="_blank" rel="noopener" aria-label="Bubble Mask reel — 227K views">
+          <img class="reel-card__img" src="reels/bubble-mask.jpg" alt="Bubble Mask reel cover" loading="lazy">
+          <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+        </a>
+        <a class="reel-card" href="https://www.instagram.com/reel/DTH_ThNE1id/" target="_blank" rel="noopener" aria-label="Rent Me reel — 1M views">
+          <img class="reel-card__img" src="reels/rent-me.jpg" alt="Rent Me reel cover" loading="lazy">
+          <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+        </a>
+      </div>
     </div>
   </div>
 </header>
@@ -509,20 +715,20 @@
   <div class="wrap">
     <div class="proof__grid">
       <div class="proof__stat">
-        <div class="proof__num"><span class="placeholder">[FOLLOWERS]</span></div>
+        <div class="proof__num">349<sup>K</sup></div>
         <div class="proof__label">Founders &amp; marketers following</div>
       </div>
       <div class="proof__stat">
-        <div class="proof__num"><span class="placeholder">[TOTAL VIEWS]</span></div>
-        <div class="proof__label">Views driven across collabs</div>
+        <div class="proof__num">200<sup>K</sup></div>
+        <div class="proof__label">Avg views per reel<br><span class="tiny muted">(last 20, outliers removed)</span></div>
       </div>
       <div class="proof__stat">
-        <div class="proof__num"><span class="placeholder">[BRAND COUNT]</span><sup>+</sup></div>
+        <div class="proof__num">70<sup>+</sup></div>
         <div class="proof__label">Brands partnered with</div>
       </div>
       <div class="proof__stat">
-        <div class="proof__num"><span class="placeholder">[BEST REEL VIEWS]</span></div>
-        <div class="proof__label">Best-performing reel</div>
+        <div class="proof__num proof__num--text">Founders<br>&amp; marketers</div>
+        <div class="proof__label">Who's actually watching</div>
       </div>
     </div>
   </div>
@@ -535,7 +741,7 @@
       <div>
         <span class="kicker">The company I keep</span>
         <h2 class="display h2" style="margin-top: 24px;">
-          <em>[BRAND COUNT]</em> brands,<br>and counting.
+          <em>70+</em> brands,<br>and counting.
         </h2>
       </div>
       <div>
@@ -557,41 +763,72 @@
   <div class="wrap">
     <div class="reveal" style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: end;">
       <div>
-        <span class="kicker">A bit of range</span>
+        <span class="kicker">Categories I work with</span>
         <h2 class="display h2" style="margin-top: 24px;">I speak <em>your</em> category.</h2>
       </div>
-      <p class="lede">Most of my audience builds and markets software, so I've gone deep across the tools they actually use.</p>
+      <p class="lede">My audience are founders and marketers actively investing in tools for their business. These are the categories they actually shop in.</p>
     </div>
     <div class="cats reveal">
       <div class="cat">
-        <div class="cat__dot">01</div>
+        <span class="cat__sticker" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M14 22 L50 22 L50 52 Q50 56 46 56 L18 56 Q14 56 14 52 Z" fill="#B6A7F4" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M24 22 L24 16 Q24 12 28 12 L36 12 Q40 12 40 16 L40 22" fill="none" stroke="#0F0D0B" stroke-width="3" stroke-linecap="round"/>
+            <line x1="14" y1="34" x2="50" y2="34" stroke="#0F0D0B" stroke-width="2.5"/>
+            <circle cx="32" cy="34" r="3" fill="#0F0D0B"/>
+          </svg>
+        </span>
         <div class="cat__name">Business tools</div>
         <div class="cat__desc">Helping teams work smarter.</div>
-        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+        <div class="cat__brands">Intercom, Fiverr, Wondershare</div>
       </div>
       <div class="cat">
-        <div class="cat__dot" style="background: var(--orange); color: var(--ink); border-color: var(--ink);">02</div>
+        <span class="cat__sticker" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M34 6 L18 36 L30 36 L26 58 L46 26 L34 26 Z" fill="#F2E27A" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M8 14 L4 10 M12 8 L10 2 M16 18 L12 18" stroke="#E55525" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M56 48 L62 52 M52 56 L54 62 M48 46 L52 46" stroke="#E55525" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </span>
         <div class="cat__name">AI business tools</div>
         <div class="cat__desc">The agents and copilots changing how work gets done.</div>
-        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+        <div class="cat__brands">ChatGPT, Replit, Lindy AI</div>
       </div>
       <div class="cat">
-        <div class="cat__dot">03</div>
+        <span class="cat__sticker" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M32 4 L36 26 L58 30 L36 34 L32 60 L28 34 L6 30 L28 26 Z" fill="#E55525" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="32" cy="30" r="4" fill="#F2E27A" stroke="#0F0D0B" stroke-width="2"/>
+          </svg>
+        </span>
         <div class="cat__name">Generative AI tools</div>
         <div class="cat__desc">Image, video and creative AI that people love to watch.</div>
-        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+        <div class="cat__brands">Luma AI, Higgsfield, LTX Studio</div>
       </div>
       <div class="cat">
-        <div class="cat__dot">04</div>
+        <span class="cat__sticker" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M10 26 L10 38 L18 38 L42 50 L42 14 L18 26 Z" fill="#7BC59A" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M42 22 L52 18 M42 32 L54 32 M42 42 L52 46" stroke="#0F0D0B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M18 38 L20 56 L26 56 L24 42" fill="#7BC59A" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
         <div class="cat__name">Marketing tools</div>
         <div class="cat__desc">Speaking directly to the marketers in my audience.</div>
-        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+        <div class="cat__brands">AdCreative AI, GoHighLevel, HeyGen</div>
       </div>
       <div class="cat">
-        <div class="cat__dot">05</div>
-        <div class="cat__name">And more</div>
-        <div class="cat__desc">[SHORT DESCRIPTOR]</div>
-        <div class="cat__brands">[BRAND, BRAND, BRAND]</div>
+        <span class="cat__sticker" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M14 22 L50 22 L46 56 Q46 58 44 58 L20 58 Q18 58 18 56 Z" fill="#EFA3B5" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M22 22 Q22 8 32 8 Q42 8 42 22" fill="none" stroke="#0F0D0B" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="26" cy="32" r="2.5" fill="#0F0D0B"/>
+            <circle cx="38" cy="32" r="2.5" fill="#0F0D0B"/>
+          </svg>
+        </span>
+        <div class="cat__name">E-commerce</div>
+        <div class="cat__desc">The tools online sellers actually use to ship and scale.</div>
+        <div class="cat__brands">Printify, Spocket, Auto DS</div>
       </div>
     </div>
   </div>
@@ -606,12 +843,30 @@
         <h2 class="display h2" style="margin-top: 24px; position: relative;">
           Some work I'm <em>proud of</em>.
           <!-- STICKER SLOT: work-clap, replace inner SVG with your own asset -->
-          <span class="sticker-slot" data-slot="work-clap" style="top: -20px; left: 32%; width: 80px; --rot: -12deg;">
+          <span class="sticker-slot sticker-slot--clap" data-slot="work-clap" style="top: -28px; left: 30%; width: 88px; --rot: -10deg;">
             <svg viewBox="0 0 100 100" aria-hidden="true">
-              <path d="M30 32 Q24 28 22 36 L24 60 Q26 74 38 78 L60 80 Q72 78 74 66 L74 40 Q70 36 66 40 L66 56 L64 36 Q60 32 56 36 L58 56 L54 30 Q50 26 46 30 L48 56 L44 36 Q40 32 36 36 L38 58 Z"
-                fill="#F2E27A" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
-              <path d="M14 24 L4 22 M16 14 L10 4 M24 18 L20 8" stroke="#E55525" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <path d="M82 36 L94 32 M86 26 L96 22 M78 28 L86 18" stroke="#E55525" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <!-- Motion sparkle lines (top and sides) -->
+              <g class="clap-rays" stroke="#E55525" stroke-width="3" stroke-linecap="round" fill="none">
+                <line x1="50" y1="8" x2="50" y2="20"/>
+                <line x1="30" y1="14" x2="36" y2="24"/>
+                <line x1="70" y1="14" x2="64" y2="24"/>
+                <line x1="14" y1="34" x2="24" y2="38"/>
+                <line x1="86" y1="34" x2="76" y2="38"/>
+              </g>
+              <!-- Left hand (lilac) -->
+              <g class="clap-left">
+                <path d="M48 38 L30 42 Q22 44 22 52 L24 72 Q26 82 38 84 L50 86 L50 38 Z"
+                      fill="#B6A7F4" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+                <!-- finger lines -->
+                <path d="M30 50 L30 62 M36 46 L36 60 M42 44 L42 60" stroke="#0F0D0B" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+              </g>
+              <!-- Right hand (yellow) -->
+              <g class="clap-right">
+                <path d="M52 38 L70 42 Q78 44 78 52 L76 72 Q74 82 62 84 L50 86 L50 38 Z"
+                      fill="#F2E27A" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+                <!-- finger lines -->
+                <path d="M70 50 L70 62 M64 46 L64 60 M58 44 L58 60" stroke="#0F0D0B" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+              </g>
             </svg>
           </span>
         </h2>
@@ -622,46 +877,47 @@
     <div class="cases reveal">
       <a href="case-study.html" class="case-card" data-accent="orange">
         <div class="case-card__thumb">
-          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
-          <span class="case-card__result">[HEADLINE RESULT]</span>
+          <img src="reels/lindy-ai.jpg" alt="Lindy AI collab cover" loading="lazy">
+          <span class="case-card__result">4 collabs</span>
         </div>
         <div class="case-card__body">
-          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__brand">Lindy AI <span class="arrow">&#8599;</span></div>
           <div class="case-card__tags">
-            <span class="tag">[collab type]</span>
-            <span class="tag">[collab type]</span>
+            <span class="tag">Challenge</span>
+            <span class="tag">Founder POV</span>
           </div>
-          <p class="case-card__summary">"[One-line summary of what this collab was and how it landed.]"</p>
+          <p class="case-card__summary">Four challenge-based reels, each one built around a different use case for business owners. The series drove 5,000+ link clicks back to Lindy.</p>
         </div>
       </a>
 
       <a href="case-study.html" class="case-card" data-accent="green">
         <div class="case-card__thumb">
-          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
-          <span class="case-card__result">[HEADLINE RESULT]</span>
+          <img src="reels/heygen.jpg" alt="HeyGen collab cover" loading="lazy">
+          <span class="case-card__result">2 viral hits</span>
         </div>
         <div class="case-card__body">
-          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__brand">HeyGen <span class="arrow">&#8599;</span></div>
           <div class="case-card__tags">
-            <span class="tag">[collab type]</span>
-            <span class="tag">[collab type]</span>
+            <span class="tag">Tutorial</span>
+            <span class="tag">Educational</span>
+            <span class="tag">For marketers</span>
           </div>
-          <p class="case-card__summary">"[One-line summary of what this collab was and how it landed.]"</p>
+          <p class="case-card__summary">Two educational reels showing marketers how to use HeyGen for their own video content. The collab generated 2,000+ link clicks.</p>
         </div>
       </a>
 
       <a href="case-study.html" class="case-card" data-accent="blue">
         <div class="case-card__thumb">
-          <div class="ph" data-label="[REEL THUMBNAIL]"></div>
-          <span class="case-card__result">[HEADLINE RESULT]</span>
+          <img src="reels/particl-ai.jpg" alt="Particl AI collab cover" loading="lazy">
+          <span class="case-card__result">8M+ views</span>
         </div>
         <div class="case-card__body">
-          <div class="case-card__brand">[BRAND] <span class="arrow">&#8599;</span></div>
+          <div class="case-card__brand">Particl AI <span class="arrow">&#8599;</span></div>
           <div class="case-card__tags">
-            <span class="tag">[collab type]</span>
-            <span class="tag">[collab type]</span>
+            <span class="tag">Challenge</span>
+            <span class="tag">For e-com founders</span>
           </div>
-          <p class="case-card__summary">"[One-line summary of what this collab was and how it landed.]"</p>
+          <p class="case-card__summary">Five challenge-based reels with outcome-driven payoffs, built around Particl as the core workflow for e-commerce owners finding trending products to sell. The series drove 1,200+ link clicks.</p>
         </div>
       </a>
     </div>
@@ -671,41 +927,65 @@
 <!-- ============ HOW I WORK ============ -->
 <section class="section" id="about" style="border-top: 1.5px solid var(--ink); background: var(--cream-2);">
   <div class="wrap">
-    <div class="how reveal">
-      <div>
-        <span class="kicker">How this goes</span>
-        <h2 class="display h2" style="margin: 24px 0 28px;">
-          Easy to <em>work with</em>,<br>hard to ignore.
-        </h2>
-        <p class="lede">Technically I'm a doctor. Practically, I've spent the last few years making content that founders and marketers stop scrolling for. Here's how I approach a partnership.</p>
-        <div style="margin-top: 32px;">
-          <div class="ph" style="aspect-ratio: 4/5; max-width: 360px;" data-label="[CREATOR PHOTO]"></div>
+    <div class="reveal">
+      <div class="how__top">
+        <div>
+          <span class="kicker">How this goes</span>
+          <h2 class="display h2" style="margin: 24px 0 28px;">
+            Easy to <em>work with</em>,<br>hard to ignore.
+          </h2>
+          <p class="lede">I've spent the last few years making content that founders and marketers stop scrolling for. Here's how I approach a partnership.</p>
+        </div>
+        <div class="how__photo">
+          <img src="photos/Kunwar.jpg" alt="Kunwar Deep" loading="lazy" style="object-position: center 25%;">
         </div>
       </div>
       <div class="how__list">
         <div class="how__item">
-          <div>
-            <h4>The hook comes first.</h4>
-            <p>If the first two seconds don't earn attention, nothing else matters. Every script starts there.</p>
-          </div>
+          <span class="how__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="18" fill="#F2E27A" stroke="#0F0D0B" stroke-width="2.5"/>
+              <path d="M24 12 L24 24 L32 28" fill="none" stroke="#0F0D0B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="24" cy="24" r="1.8" fill="#0F0D0B"/>
+            </svg>
+          </span>
+          <h4>Fast turnaround.</h4>
+          <p>From brief to posted reel in 7–14 days. No ghosting, no surprise delays.</p>
         </div>
         <div class="how__item">
-          <div>
-            <h4>Built to convert, not just to please.</h4>
-            <p>Watchable is the floor. The goal is saves, shares, DMs and signups, the things you can take to your boss.</p>
-          </div>
+          <span class="how__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M10 24 Q10 14 20 14 L34 14" fill="none" stroke="#0F0D0B" stroke-width="2.8" stroke-linecap="round"/>
+              <path d="M28 8 L36 14 L28 20" fill="#B6A7F4" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M38 24 Q38 34 28 34 L14 34" fill="none" stroke="#0F0D0B" stroke-width="2.8" stroke-linecap="round"/>
+              <path d="M20 28 L12 34 L20 40" fill="#B6A7F4" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h4>Revisions built in.</h4>
+          <p>Tweaks to the script, edit, or angle until it lands right. Not capped.</p>
         </div>
         <div class="how__item">
-          <div>
-            <h4>A real point of view.</h4>
-            <p>I only take on tools I can speak about honestly, so the content lands as a recommendation, not an ad.</p>
-          </div>
+          <span class="how__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M24 8 L29 19 L41 20 L32 28 L35 40 L24 33 L13 40 L16 28 L7 20 L19 19 Z"
+                    fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+              <circle cx="24" cy="24" r="3" fill="#F2E27A" stroke="#0F0D0B" stroke-width="2"/>
+            </svg>
+          </span>
+          <h4>Never feels salesy.</h4>
+          <p>I only pick brands my audience actually wants to try, so the content lands as a recommendation.</p>
         </div>
         <div class="how__item">
-          <div>
-            <h4>Quick, clean, no hand-holding.</h4>
-            <p>Clear scripts, on-time delivery, and content that fits how I already talk to my audience. [confirm/adjust turnaround]</p>
-          </div>
+          <span class="how__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <rect x="6" y="10" width="36" height="28" rx="3" fill="#7BC59A" stroke="#0F0D0B" stroke-width="2.5"/>
+              <line x1="6" y1="18" x2="42" y2="18" stroke="#0F0D0B" stroke-width="2"/>
+              <path d="M12 30 L18 24 L22 28 L28 20 L34 26" fill="none" stroke="#0F0D0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="34" cy="26" r="1.5" fill="#0F0D0B"/>
+            </svg>
+          </span>
+          <h4>Detailed performance reports.</h4>
+          <p>Post-launch I share what worked, what to improve, and the audience insights from your reel.</p>
         </div>
       </div>
     </div>
@@ -737,41 +1017,15 @@
     </div>
 
     <div class="notes-track" id="notes-track">
-      <div class="note" data-accent="orange">
-        <div class="note__top"></div>
-        <div class="note__body">
-          <p class="note__quote">"[REAL QUOTE · paste yours and I'll fit it. Two or three sentences that capture how the partnership felt and what it delivered.]"</p>
-          <div class="note__attr">
-            <div class="note__avatar">[N]</div>
-            <div>
-              <div class="note__name">[NAME]</div>
-              <div class="note__role">[TITLE], [COMPANY]</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="note" data-accent="green">
-        <div class="note__top"></div>
-        <div class="note__body">
-          <p class="note__quote">"[REAL QUOTE · what they said about the work, the process, or the results.]"</p>
-          <div class="note__attr">
-            <div class="note__avatar">[N]</div>
-            <div>
-              <div class="note__name">[NAME]</div>
-              <div class="note__role">[TITLE], [COMPANY]</div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="note" data-accent="blue">
         <div class="note__top"></div>
         <div class="note__body">
-          <p class="note__quote">"[REAL QUOTE · ideally a line that names a number, a feeling, or a specific outcome.]"</p>
+          <p class="note__quote">"The LTX team loved it. Adam even called Kunwar his favorite human being ever 😄"</p>
           <div class="note__attr">
-            <div class="note__avatar">[N]</div>
+            <div class="note__avatar"><img src="photos/avatars/Shakeel.jpg" alt="Shakeel Fazul" loading="lazy"></div>
             <div>
-              <div class="note__name">[NAME]</div>
-              <div class="note__role">[TITLE], [COMPANY]</div>
+              <div class="note__name">Shakeel Fazul</div>
+              <div class="note__role">LTX Studio</div>
             </div>
           </div>
         </div>
@@ -779,19 +1033,44 @@
       <div class="note" data-accent="plum">
         <div class="note__top"></div>
         <div class="note__body">
-          <p class="note__quote">"[REAL QUOTE · a fourth one to keep the carousel honest. Replace or remove as needed.]"</p>
+          <p class="note__quote">"A+ structure and follow-up on the report. Excellent work, very impressed. We'd love to leverage you for paid ads as we scale."</p>
           <div class="note__attr">
-            <div class="note__avatar">[N]</div>
+            <div class="note__avatar"><img src="photos/avatars/everett.jpg" alt="Everett Butler" loading="lazy"></div>
             <div>
-              <div class="note__name">[NAME]</div>
-              <div class="note__role">[TITLE], [COMPANY]</div>
+              <div class="note__name">Everett Butler</div>
+              <div class="note__role">Lindy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" data-accent="green">
+        <div class="note__top"></div>
+        <div class="note__body">
+          <p class="note__quote">"A real pleasure working with you. Very professional, creative, and super easy to collaborate with."</p>
+          <div class="note__attr">
+            <div class="note__avatar"><img src="photos/avatars/lior.jpg" alt="Lior Taubenblatt" loading="lazy"></div>
+            <div>
+              <div class="note__name">Lior Taubenblatt</div>
+              <div class="note__role">Fiverr</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note" data-accent="orange">
+        <div class="note__top"></div>
+        <div class="note__body">
+          <p class="note__quote">"Absolutely love this. Fantastic work — can't wait for the team to see it."</p>
+          <div class="note__attr">
+            <div class="note__avatar"><img src="photos/avatars/kate.jpg" alt="Kate Kurth" loading="lazy"></div>
+            <div>
+              <div class="note__name">Kate Kurth</div>
+              <div class="note__role">Luma AI</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <p class="tiny muted" style="margin-top: 8px;">Real quotes only. Nothing here is fabricated.</p>
   </div>
 </section>
 
@@ -802,27 +1081,39 @@
       <div>
         <span class="kicker">Who's actually watching</span>
         <h2 class="display h2" style="margin: 24px 0 24px;">
-          The followers <em>are</em><br>the buyers.
+          My audience <em>are</em><br>early adopters.
         </h2>
-        <p class="lede"><strong>[FOLLOWERS]</strong> people, and most of them build or market software for a living. That's the whole point.</p>
-        <a href="insights.html" class="btn--link" style="margin-top: 28px;">See the full numbers <span class="arr">&#8594;</span></a>
+        <p class="lede"><strong>349K</strong> founders and marketers actively investing in tools for their business. The ones who actually try, buy, and recommend what they see.</p>
+        <a href="insights.html" class="btn--link" style="margin-top: 28px;">See full insights <span class="arr">&#8594;</span></a>
       </div>
       <div class="audience__stats">
         <div class="audience__row">
-          <span class="audience__label">Founders &amp; marketers</span>
-          <span class="audience__value"><em>[XX]</em>%</span>
+          <span class="audience__label">Business owners &amp; aspiring founders</span>
+          <span class="audience__col">
+            <span class="audience__value"><em>80<span class="u">%</span></em></span>
+            <span class="audience__note">surveyed via Instagram stories + newsletter polls</span>
+          </span>
+        </div>
+        <div class="audience__row">
+          <span class="audience__label">Age range</span>
+          <span class="audience__col">
+            <span class="audience__value"><em>18&ndash;45<span class="u">yrs</span></em></span>
+            <span class="audience__note">95% of audience</span>
+          </span>
         </div>
         <div class="audience__row">
           <span class="audience__label">Engagement rate</span>
-          <span class="audience__value"><em>[XX]</em>%</span>
+          <span class="audience__col">
+            <span class="audience__value"><em>8<span class="u">%</span></em></span>
+            <span class="audience__note">gold standard</span>
+          </span>
         </div>
         <div class="audience__row">
           <span class="audience__label">Avg. views per reel</span>
-          <span class="audience__value"><span class="placeholder">[AVG VIEWS]</span></span>
-        </div>
-        <div class="audience__row">
-          <span class="audience__label">Top regions</span>
-          <span class="audience__value" style="font-size: clamp(18px, 1.8vw, 24px); font-weight: 600; letter-spacing: -0.01em;"><span class="placeholder" style="font-size: 14px;">[REGION], [REGION], [REGION]</span></span>
+          <span class="audience__col">
+            <span class="audience__value"><em>200<span class="u">K</span></em></span>
+            <span class="audience__note">last 30 reels, viral outliers removed</span>
+          </span>
         </div>
       </div>
     </div>
@@ -836,14 +1127,32 @@
       <span class="pill" style="justify-self: start;">Still reading? Let's talk.</span>
       <h2 class="display h2" style="position: relative;">
         Let's make something<br>worth <em>watching</em>.
-        <!-- STICKER SLOT: cta-closing, empty placeholder — drop your own asset here -->
-        <span class="sticker-slot sticker-slot--empty" data-slot="cta-closing" style="right: 2%; top: -28px; width: 88px;"></span>
+        <!-- STICKER SLOT: cta-closing, rocket -->
+        <span class="sticker-slot" data-slot="cta-closing" style="right: -10px; bottom: -20px; width: 96px; --rot: 14deg;">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <!-- Flame trail -->
+            <path d="M38 78 Q34 86 38 94 Q42 88 44 84 Q46 90 50 94 Q54 88 56 84 Q58 90 62 94 Q66 86 62 78 Z"
+                  fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M44 78 Q46 84 50 88 Q54 84 56 78 Z" fill="#F2E27A" stroke="#0F0D0B" stroke-width="2"/>
+            <!-- Rocket body -->
+            <path d="M50 8 Q62 22 62 50 L62 78 L38 78 L38 50 Q38 22 50 8 Z"
+                  fill="#B6A7F4" stroke="#0F0D0B" stroke-width="3" stroke-linejoin="round"/>
+            <!-- Window -->
+            <circle cx="50" cy="38" r="6" fill="#F2E27A" stroke="#0F0D0B" stroke-width="2.5"/>
+            <circle cx="50" cy="38" r="2" fill="#0F0D0B"/>
+            <!-- Fins -->
+            <path d="M38 60 L28 74 L38 70 Z" fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M62 60 L72 74 L62 70 Z" fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Body line -->
+            <line x1="38" y1="56" x2="62" y2="56" stroke="#0F0D0B" stroke-width="2" opacity="0.6"/>
+          </svg>
+        </span>
       </h2>
       <p class="lede" style="max-width: 56ch;">Grab the media kit for rates, audience data and recent work. Or just reply to my email, I read every one.</p>
     </div>
     <div class="cta-block reveal">
       <a href="#" class="btn btn--primary" id="mediakit-dl">Get the media kit <span class="arr">&#8594;</span></a>
-      <span class="fallback">Prefer email? <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a></span>
+      <span class="fallback">Prefer email? <a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a></span>
     </div>
   </div>
 </section>
@@ -853,7 +1162,8 @@
   <div class="wrap">
     <div class="footer__top">
       <div>
-        <div class="nav__logo" style="color: var(--dark-text); margin-bottom: 20px;"><span class="logomark">Kunwar<em style="color: var(--orange);">Deep</em></span></div>
+        <div class="nav__logo" style="color: var(--dark-text); margin-bottom: 8px;"><span class="logomark">Kunwar<em style="color: var(--orange);">Deep</em></span></div>
+        <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener" style="color: var(--dark-text-2); font-size: 13px; letter-spacing: 0.02em; display: inline-block; margin-bottom: 20px; text-decoration: none;">· @the_ecomjet</a>
         <p style="color: var(--dark-text-2); font-size: 15px; max-width: 32ch; margin: 0;">
           Content built to be watched, then saved, then sent to the boss. For brands that need their audience to actually care.
         </p>
@@ -870,10 +1180,9 @@
       <div>
         <h5>Reach me</h5>
         <div class="footer__list">
-          <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a>
+          <a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a>
           <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener">Instagram</a>
-          <a href="#">LinkedIn</a>
-          <a href="#">X / Twitter</a>
+          <a href="https://www.linkedin.com/in/kunwar-deep-583626234/" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
       <div>
@@ -885,10 +1194,9 @@
         </div>
       </div>
     </div>
-    <div class="footer__watermark">@the_<em>ecomjet</em></div>
+    <div class="footer__watermark">Kunwar<em>Deep</em></div>
     <div class="footer__bottom">
-      <span>Made by hand, not by template. &copy; 2026 Kunwar.</span>
-      <span>No em dashes were harmed in the making of this site.</span>
+      <span>Made by hand. &copy; 2026 Kunwar.</span>
     </div>
   </div>
 </footer>

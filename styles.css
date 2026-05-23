@@ -242,9 +242,22 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 .nav__logo {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
+  gap: 10px;
   color: inherit;
   flex-shrink: 0;
+}
+.nav__handle {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-3);
+  transition: color 200ms ease;
+}
+.nav__logo:hover .nav__handle { color: var(--orange); }
+@media (max-width: 760px) {
+  .nav__handle { display: none; }
 }
 .nav__cta-group {
   display: inline-flex;
@@ -388,12 +401,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
    3. The slot's position, size and tilt are preserved. */
 .sticker-slot {
   position: absolute;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.85));
   transform-origin: center;
-  transition: transform 400ms cubic-bezier(.34,1.56,.64,1);
+  transition: transform 400ms cubic-bezier(.34,1.56,.64,1), filter 240ms ease;
   display: block;
   transform: rotate(var(--rot, 0deg));
+  animation: sticker-float 6s ease-in-out infinite;
+  z-index: 4;
 }
 .sticker-slot > svg,
 .sticker-slot > img {
@@ -402,7 +418,97 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   height: auto;
 }
 .sticker-slot:hover {
-  transform: rotate(calc(var(--rot, 0deg) + 8deg)) scale(1.08);
+  filter: drop-shadow(3px 5px 0 rgba(0,0,0,0.9));
+  animation: none;
+}
+
+/* Idle float — staggered per slot so they don't move in lockstep */
+@keyframes sticker-float {
+  0%, 100% { transform: rotate(var(--rot, 0deg)) translateY(0); }
+  50%      { transform: rotate(var(--rot, 0deg)) translateY(-4px); }
+}
+.sticker-slot[data-slot="hero-smile"]   { animation-delay: 0s; }
+.sticker-slot[data-slot="hero-sparkle"] { animation-delay: -1.5s; }
+.sticker-slot[data-slot="work-clap"]    { animation-delay: -3s; }
+.sticker-slot[data-slot="love-heart"]   { animation-delay: -4.5s; }
+.sticker-slot[data-slot="cta-closing"]  { animation-delay: -2.2s; }
+
+/* ---- Per-sticker hover behavior ---- */
+
+/* Smile: wink + bounce */
+.sticker-slot[data-slot="hero-smile"]:hover {
+  transform: rotate(calc(var(--rot, 0deg) + 6deg)) scale(1.12);
+  animation: smile-bounce 0.6s ease-in-out;
+}
+@keyframes smile-bounce {
+  0%   { transform: rotate(var(--rot, 0deg)) scale(1); }
+  40%  { transform: rotate(calc(var(--rot, 0deg) - 10deg)) scale(1.15); }
+  70%  { transform: rotate(calc(var(--rot, 0deg) + 8deg)) scale(1.1); }
+  100% { transform: rotate(calc(var(--rot, 0deg) + 6deg)) scale(1.12); }
+}
+
+/* Sparkle: spin */
+.sticker-slot[data-slot="hero-sparkle"]:hover {
+  transform: rotate(calc(var(--rot, 0deg) + 360deg)) scale(1.15);
+  transition: transform 700ms cubic-bezier(.34,1.56,.64,1);
+}
+
+/* Clap: clap motion (hands come together, rays burst out) */
+.sticker-slot[data-slot="work-clap"]:hover {
+  transform: rotate(var(--rot, 0deg)) scale(1.1);
+}
+.sticker-slot[data-slot="work-clap"]:hover .clap-left  { animation: clap-left  0.45s cubic-bezier(.34,1.56,.64,1) infinite; }
+.sticker-slot[data-slot="work-clap"]:hover .clap-right { animation: clap-right 0.45s cubic-bezier(.34,1.56,.64,1) infinite; }
+.sticker-slot[data-slot="work-clap"]:hover .clap-rays  { animation: clap-rays  0.45s ease-out infinite; }
+@keyframes clap-left {
+  0%, 100% { transform: translateX(-4px); }
+  50%      { transform: translateX(0); }
+}
+@keyframes clap-right {
+  0%, 100% { transform: translateX(4px); }
+  50%      { transform: translateX(0); }
+}
+@keyframes clap-rays {
+  0%   { opacity: 0.4; transform: scale(0.9); }
+  50%  { opacity: 1;   transform: scale(1.1); }
+  100% { opacity: 0.4; transform: scale(0.9); }
+}
+.clap-left, .clap-right, .clap-rays {
+  transform-origin: 50% 60%;
+  transition: transform 240ms ease;
+}
+
+/* Heart: heartbeat pulse */
+.sticker-slot[data-slot="love-heart"]:hover {
+  transform: rotate(var(--rot, 0deg));
+  animation: heart-beat 0.7s ease-in-out infinite;
+}
+@keyframes heart-beat {
+  0%, 100% { transform: rotate(var(--rot, 0deg)) scale(1); }
+  20%      { transform: rotate(var(--rot, 0deg)) scale(1.18); }
+  40%      { transform: rotate(var(--rot, 0deg)) scale(1.05); }
+  60%      { transform: rotate(var(--rot, 0deg)) scale(1.22); }
+  80%      { transform: rotate(var(--rot, 0deg)) scale(1.05); }
+}
+
+/* Rocket: lift-off shake */
+.sticker-slot[data-slot="cta-closing"]:hover {
+  animation: rocket-launch 0.6s ease-in-out infinite;
+}
+@keyframes rocket-launch {
+  0%, 100% { transform: rotate(var(--rot, 0deg)) translateY(0) scale(1.1); }
+  25%      { transform: rotate(calc(var(--rot, 0deg) - 3deg)) translateY(-6px) scale(1.12); }
+  50%      { transform: rotate(var(--rot, 0deg)) translateY(-12px) scale(1.14); }
+  75%      { transform: rotate(calc(var(--rot, 0deg) + 3deg)) translateY(-6px) scale(1.12); }
+}
+
+/* Reduced motion: no float, no infinite hover animations */
+@media (prefers-reduced-motion: reduce) {
+  .sticker-slot { animation: none; }
+  .sticker-slot:hover { transform: rotate(var(--rot, 0deg)) scale(1.08); animation: none; }
+  .sticker-slot:hover .clap-left,
+  .sticker-slot:hover .clap-right,
+  .sticker-slot:hover .clap-rays { animation: none; }
 }
 .sticker-slot--empty {
   pointer-events: auto;
@@ -490,15 +596,17 @@ body.no-stickers .sticker-slot { display: none; }
   letter-spacing: -0.05em;
   line-height: 0.85;
   color: transparent;
-  -webkit-text-stroke: 1.5px oklch(0.32 0.005 60);
+  -webkit-text-stroke: 1px oklch(0.24 0.005 60);
   margin: -20px 0 -40px;
   white-space: nowrap;
   overflow: hidden;
+  opacity: 0.55;
+  text-align: center;
 }
 .footer__watermark em {
   font-family: var(--italic);
   font-style: italic;
-  -webkit-text-stroke: 1.5px var(--orange);
+  -webkit-text-stroke: 1px oklch(0.28 0.02 50);
   font-weight: 400;
 }
 
