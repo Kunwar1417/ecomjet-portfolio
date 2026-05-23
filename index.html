@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
 <title>Kunwar · Brand Partnerships</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,8 +78,22 @@
   margin: 0 auto;
   perspective: 1200px;
 }
+.reel-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transform: rotate(var(--tilt, 0deg)) translateY(var(--shift, 0));
+  transition: transform 420ms cubic-bezier(.34,1.56,.64,1);
+  text-decoration: none;
+  color: inherit;
+}
+.reel-item:nth-child(1) { --tilt: -7deg; --shift: 16px; }
+.reel-item:nth-child(2) { --tilt:  3deg; --shift: -8px; z-index: 2; position: relative; }
+.reel-item:nth-child(3) { --tilt: -5deg; --shift: 22px; }
 .reel-card {
   position: relative;
+  width: 100%;
   aspect-ratio: 9 / 16;
   border-radius: 18px;
   overflow: hidden;
@@ -86,17 +101,17 @@
   background: var(--ink);
   border: 1.5px solid var(--ink);
   box-shadow: var(--shadow-card-sm);
-  transform: rotate(var(--tilt, 0deg)) translateY(var(--shift, 0));
-  transition: transform 420ms cubic-bezier(.34,1.56,.64,1),
-              box-shadow 280ms ease,
-              z-index 0s;
+  transition: box-shadow 280ms ease;
   cursor: pointer;
-  text-decoration: none;
-  z-index: 1;
 }
-.reel-card:nth-child(1) { --tilt: -7deg; --shift: 16px; }
-.reel-card:nth-child(2) { --tilt:  3deg; --shift: -8px; z-index: 2; }
-.reel-card:nth-child(3) { --tilt: -5deg; --shift: 22px; }
+.reel-item__caption {
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.35;
+  max-width: 22ch;
+}
+.reel-item__brand { font-weight: 700; color: var(--ink); }
+.reel-item__cat { color: var(--ink-3); font-weight: 500; }
 .reel-card__img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -117,25 +132,26 @@
   transform: scale(0.85);
   transition: transform 280ms cubic-bezier(.34,1.56,.64,1);
 }
-.reel-card:hover {
+.reel-item:hover {
   transform: rotate(0deg) translateY(-12px) scale(1.05);
-  box-shadow: 8px 8px 0 0 var(--ink);
   z-index: 5;
 }
-.reel-card:hover .reel-card__img { transform: scale(1.06); }
-.reel-card:hover .reel-card__play { opacity: 1; }
-.reel-card:hover .reel-card__play svg { transform: scale(1); }
-.reel-stack:hover .reel-card:not(:hover):nth-child(1) { --tilt: -11deg; --shift: 22px; }
-.reel-stack:hover .reel-card:not(:hover):nth-child(2) { --tilt:   7deg; --shift: -4px; }
-.reel-stack:hover .reel-card:not(:hover):nth-child(3) { --tilt:  -9deg; --shift: 28px; }
+.reel-item:hover .reel-card { box-shadow: 8px 8px 0 0 var(--ink); }
+.reel-item:hover .reel-card__img { transform: scale(1.06); }
+.reel-item:hover .reel-card__play { opacity: 1; }
+.reel-item:hover .reel-card__play svg { transform: scale(1); }
+.reel-stack:hover .reel-item:not(:hover):nth-child(1) { --tilt: -11deg; --shift: 22px; }
+.reel-stack:hover .reel-item:not(:hover):nth-child(2) { --tilt:   7deg; --shift: -4px; }
+.reel-stack:hover .reel-item:not(:hover):nth-child(3) { --tilt:  -9deg; --shift: 28px; }
 
 @media (max-width: 760px) {
   .reel-stack { gap: 8px; max-width: 100%; }
   .reel-card { box-shadow: 3px 3px 0 0 var(--ink); border-width: 1.5px; border-radius: 12px; }
-  .reel-card:nth-child(1) { --tilt: -4deg; --shift: 8px; }
-  .reel-card:nth-child(2) { --tilt: 2deg;  --shift: -4px; }
-  .reel-card:nth-child(3) { --tilt: -3deg; --shift: 12px; }
-  .reel-card:hover { transform: rotate(0deg) translateY(-6px) scale(1.03); }
+  .reel-item:nth-child(1) { --tilt: -4deg; --shift: 8px; }
+  .reel-item:nth-child(2) { --tilt: 2deg;  --shift: -4px; }
+  .reel-item:nth-child(3) { --tilt: -3deg; --shift: 12px; }
+  .reel-item:hover { transform: rotate(0deg) translateY(-6px) scale(1.03); }
+  .reel-item__caption { font-size: 11px; }
   .reel-card__play svg { width: 44px; height: 44px; }
   .hero__visual { padding: 24px 4px 32px; margin-top: 32px; }
 }
@@ -471,6 +487,7 @@
 }
 .case-card__brand .arrow { font-size: 22px; transition: transform 200ms; }
 .case-card:hover .case-card__brand .arrow { transform: translate(4px, -4px); }
+.case-card__tagline { font-size: 12px; color: var(--ink-3); font-weight: 500; margin-top: -6px; }
 .case-card__summary { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
 .case-card__tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .case-card__tags .tag { font-size: 11px; padding: 4px 10px; }
@@ -760,7 +777,7 @@
     <div class="nav__links">
       <a href="index.html" class="is-active">Home</a>
       <a href="index.html#work">Work</a>
-      <a href="case-study.html">Case Studies</a>
+      <a href="case-studies.html">Case Studies</a>
       <a href="insights.html">Insights</a>
       <a href="index.html#about">About</a>
     </div>
@@ -818,17 +835,26 @@
     </div>
     <div class="hero__visual reveal">
       <div class="reel-stack">
-        <a class="reel-card" href="https://www.instagram.com/reel/DOPxMXzk6vV/" target="_blank" rel="noopener" aria-label="Master Plan reel — 4.3M views">
-          <img class="reel-card__img" src="reels/master-plan.jpg" alt="Master Plan reel cover" loading="lazy">
-          <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+        <a class="reel-item" href="https://www.instagram.com/reel/DOPxMXzk6vV/" target="_blank" rel="noopener" aria-label="Master Plan reel for Particl AI, 4.3M views">
+          <div class="reel-card">
+            <img class="reel-card__img" src="reels/master-plan.jpg" alt="Master Plan reel cover" loading="lazy">
+            <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+          </div>
+          <div class="reel-item__caption"><span class="reel-item__brand">Particl AI</span> <span class="reel-item__cat">· E-com intelligence</span></div>
         </a>
-        <a class="reel-card" href="https://www.instagram.com/reel/DKbgfMmTd3f/" target="_blank" rel="noopener" aria-label="Bubble Mask reel — 227K views">
-          <img class="reel-card__img" src="reels/bubble-mask.jpg" alt="Bubble Mask reel cover" loading="lazy">
-          <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+        <a class="reel-item" href="https://www.instagram.com/reel/DKbgfMmTd3f/" target="_blank" rel="noopener" aria-label="Bubble Mask reel for Lindy AI, 227K views">
+          <div class="reel-card">
+            <img class="reel-card__img" src="reels/bubble-mask.jpg" alt="Bubble Mask reel cover" loading="lazy">
+            <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+          </div>
+          <div class="reel-item__caption"><span class="reel-item__brand">Lindy AI</span> <span class="reel-item__cat">· AI agents platform</span></div>
         </a>
-        <a class="reel-card" href="https://www.instagram.com/reel/DTH_ThNE1id/" target="_blank" rel="noopener" aria-label="Rent Me reel — 1M views">
-          <img class="reel-card__img" src="reels/rent-me.jpg" alt="Rent Me reel cover" loading="lazy">
-          <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+        <a class="reel-item" href="https://www.instagram.com/reel/DTH_ThNE1id/" target="_blank" rel="noopener" aria-label="Rent Me reel for Relume, 1M views">
+          <div class="reel-card">
+            <img class="reel-card__img" src="reels/rent-me.jpg" alt="Rent Me reel cover" loading="lazy">
+            <div class="reel-card__play"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="rgba(255,255,255,0.95)"/><path d="M26 21 L46 32 L26 43 Z" fill="#0F0D0B"/></svg></div>
+          </div>
+          <div class="reel-item__caption"><span class="reel-item__brand">Relume</span> <span class="reel-item__cat">· AI website builder</span></div>
         </a>
       </div>
     </div>
@@ -995,17 +1021,18 @@
           </span>
         </h2>
       </div>
-      <a href="case-study.html" class="btn--link">All case studies <span class="arr">&#8594;</span></a>
+      <a href="case-studies.html" class="btn--link">All case studies <span class="arr">&#8594;</span></a>
     </div>
 
     <div class="cases reveal">
-      <a href="case-study.html" class="case-card" data-accent="orange">
+      <a href="case-study-lindy.html" class="case-card" data-accent="orange">
         <div class="case-card__thumb">
           <img src="reels/lindy-ai.jpg" alt="Lindy AI collab cover" loading="lazy">
-          <span class="case-card__result">4 collabs</span>
+          <span class="case-card__result">Acquisition</span>
         </div>
         <div class="case-card__body">
           <div class="case-card__brand">Lindy AI <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tagline">AI automation platform for business workflows</div>
           <div class="case-card__tags">
             <span class="tag">Challenge</span>
             <span class="tag">Founder POV</span>
@@ -1014,13 +1041,14 @@
         </div>
       </a>
 
-      <a href="case-study.html" class="case-card" data-accent="green">
+      <a href="case-study-heygen.html" class="case-card" data-accent="green">
         <div class="case-card__thumb">
           <img src="reels/heygen.jpg" alt="HeyGen collab cover" loading="lazy">
-          <span class="case-card__result">2 viral hits</span>
+          <span class="case-card__result">Acquisition</span>
         </div>
         <div class="case-card__body">
           <div class="case-card__brand">HeyGen <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tagline">AI video generation platform for marketers</div>
           <div class="case-card__tags">
             <span class="tag">Tutorial</span>
             <span class="tag">Educational</span>
@@ -1030,13 +1058,14 @@
         </div>
       </a>
 
-      <a href="case-study.html" class="case-card" data-accent="blue">
+      <a href="case-study-particl.html" class="case-card" data-accent="blue">
         <div class="case-card__thumb">
           <img src="reels/particl-ai.jpg" alt="Particl AI collab cover" loading="lazy">
-          <span class="case-card__result">8M+ views</span>
+          <span class="case-card__result">Awareness</span>
         </div>
         <div class="case-card__body">
           <div class="case-card__brand">Particl AI <span class="arrow">&#8599;</span></div>
+          <div class="case-card__tagline">AI e-commerce intelligence & trend tracking</div>
           <div class="case-card__tags">
             <span class="tag">Challenge</span>
             <span class="tag">For e-com founders</span>
@@ -1296,7 +1325,7 @@
         <h5>Pages</h5>
         <div class="footer__list">
           <a href="index.html">Home</a>
-          <a href="case-study.html">Case Studies</a>
+          <a href="case-studies.html">Case Studies</a>
           <a href="insights.html">Insights</a>
           <a href="#about">About</a>
         </div>
@@ -1314,7 +1343,7 @@
         <div class="footer__list">
           <a href="media-kit.pdf" class="mediakit-dl" download>Media kit (PDF)</a>
           <a href="insights.html">Audience data</a>
-          <a href="case-study.html">Recent work</a>
+          <a href="case-studies.html">Recent work</a>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
 <title>The numbers · Kunwar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +31,11 @@
   font-weight: 600;
   background: var(--paper);
   box-shadow: var(--shadow-card-sm);
+  transition: transform 200ms, box-shadow 200ms;
+}
+a.ins-handle:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--ink);
 }
 .ins-handle__count { color: var(--orange); font-family: var(--italic); font-style: italic; font-size: 1.15em; }
 @media (max-width: 860px) { .ins-header__inner { grid-template-columns: 1fr; gap: 24px; } }
@@ -86,6 +92,8 @@
 }
 .reach-grid .big em {
   font-family: var(--italic); font-style: italic; font-weight: 400; color: var(--orange);
+  font-size: 0.9em;
+  margin-right: 8px;
 }
 .reach-grid .sub { font-size: 14px; color: var(--ink-2); margin-top: 8px; }
 @media (max-width: 760px) { .reach-grid { grid-template-columns: 1fr; }
@@ -105,8 +113,8 @@
 .bar { display: grid; gap: 8px; }
 .bar__top { display: flex; justify-content: space-between; align-items: baseline; }
 .bar__label { font-size: 14px; font-weight: 600; }
-.bar__value { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
-.bar__value em { font-family: var(--italic); font-style: italic; font-weight: 400; }
+.bar__value { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--ink); }
+.bar__value em { font-family: var(--sans); font-style: normal; font-weight: 800; color: var(--ink); }
 .bar__track {
   height: 14px;
   background: var(--cream-2);
@@ -159,7 +167,7 @@
 .eng-grid > div:last-child { border-right: none; }
 .eng-grid h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .eng-grid .big { font-weight: 800; font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.03em; line-height: 1; }
-.eng-grid .big em { font-family: var(--italic); font-style: italic; font-weight: 400; color: var(--orange); }
+.eng-grid .big em { font-family: var(--italic); font-style: italic; font-weight: 400; color: var(--orange); font-size: 0.9em; margin-right: 8px; }
 .eng-grid .sub { font-size: 13px; color: var(--ink-2); margin-top: 8px; }
 @media (max-width: 860px) { .eng-grid { grid-template-columns: 1fr 1fr; }
   .eng-grid > div:nth-child(2) { border-right: none; }
@@ -230,6 +238,17 @@
 .honesty p { margin: 0; font-size: 15px; color: var(--ink-2); }
 .honesty strong { color: var(--ink); }
 @media (max-width: 540px) { .honesty { grid-template-columns: 1fr; text-align: left; } }
+
+@media (max-width: 540px) {
+  .eng-grid { grid-template-columns: 1fr; }
+  .eng-grid > div { border-right: none; border-bottom: 1px solid var(--rule); padding: 20px; }
+  .eng-grid > div:last-child { border-bottom: none; }
+  .eng-grid > div:nth-child(n+3) { border-top: none; }
+
+  .reach-grid > div { padding: 22px 18px; }
+  .honesty { padding: 24px; }
+  .ins-row { padding: 40px 0; }
+}
 </style>
 </head>
 <body>
@@ -241,7 +260,7 @@
     <div class="nav__links">
       <a href="index.html">Home</a>
       <a href="index.html#work">Work</a>
-      <a href="case-study.html">Case Studies</a>
+      <a href="case-studies.html">Case Studies</a>
       <a href="insights.html" class="is-active">Insights</a>
       <a href="index.html#about">About</a>
     </div>
@@ -259,18 +278,18 @@
   <div class="wrap">
     <div class="ins-header__inner reveal">
       <div>
-        <span class="kicker">The data room</span>
-        <h1 class="display h1">The <em>numbers</em>,<br>no spin.</h1>
-        <p class="lede" style="margin:0;">Everything a brand wants to know before saying yes. Updated by hand, straight from Instagram Insights.</p>
+        <span class="kicker">The audience</span>
+        <h1 class="display h1">Who's <em>watching</em>.</h1>
+        <p class="lede" style="margin:0;">A breakdown of my audience and how they engage. Pulled straight from Instagram Insights so you can see what a partnership actually puts in front of people.</p>
       </div>
       <div style="display:grid; gap:16px; justify-items:start;">
-        <span class="ins-handle">
+        <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener" class="ins-handle" style="text-decoration:none; color:inherit; transition: transform 200ms, box-shadow 200ms;">
           <span style="font-weight:800;">@the_ecomjet</span>
           <span style="opacity:0.4;">/</span>
-          <span class="placeholder">[FOLLOWERS]</span>
+          <span><em>349K</em></span>
           <span style="font-size:14px; color: var(--ink-2);">followers</span>
-        </span>
-        <p class="tiny muted" style="max-width: 30ch;">All figures self-reported from Instagram Insights as of <strong>[DATE]</strong>. No inflated numbers, no bought followers.</p>
+        </a>
+        <p class="tiny muted" style="max-width: 30ch;">All figures from Instagram Insights as of <strong>May 23, 2026</strong>.</p>
       </div>
     </div>
   </div>
@@ -287,18 +306,18 @@
       <div class="reach-grid">
         <div>
           <h3>Followers</h3>
-          <div class="big"><span class="placeholder">[FOLLOWERS]</span></div>
-          <div class="sub">As of [DATE]</div>
+          <div class="big">349<em>K</em></div>
+          <div class="sub">As of May 23, 2026</div>
         </div>
         <div>
           <h3>Growth</h3>
-          <div class="big"><em>+[XX]</em>%</div>
-          <div class="sub">In the last [TIMEFRAME]</div>
+          <div class="big"><em>+9</em>%</div>
+          <div class="sub">In the last 90 days</div>
         </div>
         <div>
-          <h3>Avg. Brand Reel Views</h3>
-          <div class="big"><em>180K</em></div>
-          <div class="sub">Outliers removed</div>
+          <h3>Avg. reel views</h3>
+          <div class="big">200<em>K</em></div>
+          <div class="sub">Last 30 reels, viral outliers removed</div>
         </div>
       </div>
     </div>
@@ -308,50 +327,48 @@
   <div class="ins-row reveal">
     <div class="ins-row__head">
       <span class="kicker">Who they are</span>
-      <h2>They build &amp; market<br><em>software</em>, for a living.</h2>
+      <h2>Mostly <em>founders</em> and marketers.</h2>
     </div>
     <div class="aud">
       <div>
         <h3 style="margin: 0 0 18px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Profession</h3>
         <div class="bars" id="bars">
-          <div class="bar" style="--w:62%;">
-            <div class="bar__top"><span class="bar__label">Founders &amp; operators</span><span class="bar__value"><em>[XX]</em>%</span></div>
+          <div class="bar" style="--w:60%;">
+            <div class="bar__top"><span class="bar__label">Founders &amp; operators</span><span class="bar__value"><em>60</em>%</span></div>
             <div class="bar__track"><div class="bar__fill"></div></div>
           </div>
-          <div class="bar" style="--w:48%;">
-            <div class="bar__top"><span class="bar__label">Marketers</span><span class="bar__value"><em>[XX]</em>%</span></div>
+          <div class="bar" style="--w:20%;">
+            <div class="bar__top"><span class="bar__label">Marketers</span><span class="bar__value"><em>20</em>%</span></div>
             <div class="bar__track"><div class="bar__fill"></div></div>
           </div>
-          <div class="bar" style="--w:30%;">
-            <div class="bar__top"><span class="bar__label">Builders / engineers</span><span class="bar__value"><em>[XX]</em>%</span></div>
+          <div class="bar" style="--w:5%;">
+            <div class="bar__top"><span class="bar__label">Other creators</span><span class="bar__value"><em>5</em>%</span></div>
             <div class="bar__track"><div class="bar__fill"></div></div>
           </div>
-          <div class="bar" style="--w:14%;">
-            <div class="bar__top"><span class="bar__label">Other</span><span class="bar__value"><em>[XX]</em>%</span></div>
+          <div class="bar" style="--w:15%;">
+            <div class="bar__top"><span class="bar__label">Other</span><span class="bar__value"><em>15</em>%</span></div>
             <div class="bar__track"><div class="bar__fill"></div></div>
           </div>
         </div>
-        <p class="tiny muted" style="margin-top: 16px;">Self-reported via DMs and bio scrapes. Not a clean science, but close enough for a buying decision.</p>
+        <p class="tiny muted" style="margin-top: 16px;">Surveyed via Instagram story polls and newsletter responses.</p>
       </div>
       <div>
-        <h3 style="margin: 0 0 18px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Top regions</h3>
+        <h3 style="margin: 0 0 18px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Where they are</h3>
         <div class="geo">
-          <div class="geo__row"><span class="geo__rank">01</span><span class="geo__name">[REGION]</span><span class="geo__pct">[XX]%</span></div>
-          <div class="geo__row"><span class="geo__rank">02</span><span class="geo__name">[REGION]</span><span class="geo__pct">[XX]%</span></div>
-          <div class="geo__row"><span class="geo__rank">03</span><span class="geo__name">[REGION]</span><span class="geo__pct">[XX]%</span></div>
-          <div class="geo__row"><span class="geo__rank">04</span><span class="geo__name">[REGION]</span><span class="geo__pct">[XX]%</span></div>
-          <div class="geo__row"><span class="geo__rank">05</span><span class="geo__name">[REGION]</span><span class="geo__pct">[XX]%</span></div>
+          <div class="geo__row"><span class="geo__rank">01</span><span class="geo__name">India &amp; South Asia</span><span class="geo__pct">70%</span></div>
+          <div class="geo__row"><span class="geo__rank">02</span><span class="geo__name">North America &amp; UK</span><span class="geo__pct">18%</span></div>
+          <div class="geo__row"><span class="geo__rank">03</span><span class="geo__name">Other (EU, UAE, AU)</span><span class="geo__pct">12%</span></div>
         </div>
         <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div>
             <h3 style="margin: 0 0 6px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Age band</h3>
-            <div style="font-weight: 700; font-size: 22px; letter-spacing: -0.02em;">[AGE BAND]</div>
-            <div class="tiny muted">Mostly [AGE BAND]</div>
+            <div style="font-weight: 700; font-size: 22px; letter-spacing: -0.02em;">18 to 45</div>
+            <div class="tiny muted">95% of the audience</div>
           </div>
           <div>
             <h3 style="margin: 0 0 6px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Gender split</h3>
-            <div style="font-weight: 700; font-size: 22px; letter-spacing: -0.02em;">[XX] / [XX]</div>
-            <div class="tiny muted">M / F / NB</div>
+            <div style="font-weight: 700; font-size: 22px; letter-spacing: -0.02em;">80 / 20</div>
+            <div class="tiny muted">M / F</div>
           </div>
         </div>
       </div>
@@ -368,81 +385,31 @@
       <div class="eng-grid">
         <div>
           <h3>Engagement rate</h3>
-          <div class="big"><em>[XX]</em>%</div>
+          <div class="big"><em>9.5</em>%</div>
           <div class="sub">vs ~1.5% Instagram avg.</div>
         </div>
         <div>
           <h3>Avg. views / reel</h3>
-          <div class="big"><span class="placeholder">[AVG VIEWS]</span></div>
-          <div class="sub">Last 30 reels</div>
+          <div class="big">200<em>K</em></div>
+          <div class="sub">Last 30 reels, viral outliers removed</div>
         </div>
         <div>
-          <h3>Saves / reel</h3>
-          <div class="big"><span class="placeholder">[SAVES]</span></div>
-          <div class="sub">The signal that matters most.</div>
+          <h3>Avg. partnership</h3>
+          <div class="big">~2<em> yrs</em></div>
+          <div class="sub">Most brands stay 1.5 to 2 years across multiple campaigns</div>
         </div>
         <div>
-          <h3>Shares / reel</h3>
-          <div class="big"><span class="placeholder">[SHARES]</span></div>
-          <div class="sub">Sent to a colleague.</div>
+          <h3>Organic reach</h3>
+          <div class="big">100<em>%</em></div>
+          <div class="sub">I've never run Instagram ads to grow my account or reels. Never.</div>
         </div>
       </div>
       <p style="margin-top: 20px; font-size: 15px; color: var(--ink-2); max-width: 64ch;">
-        <strong>On DMs &amp; comments:</strong> [A two-line note in your voice on the quality of replies. Mention if founders are commenting, if there are buying-intent DMs, if comments tend to tag colleagues.]
+        <strong>On DMs &amp; comments:</strong> Most DMs are from viewers asking how to use a tool I covered, or how to fix a workflow they're stuck on. That tells me my audience isn't watching for entertainment, they're watching to act.
       </p>
     </div>
   </div>
 
-  <!-- ============ TOP PERFORMING ============ -->
-  <div class="ins-row reveal">
-    <div class="ins-row__head">
-      <span class="kicker">The ceiling</span>
-      <h2>Top-<em>performing</em>.</h2>
-    </div>
-    <div>
-      <div class="top-grid">
-        <div class="top-card">
-          <div class="top-card__thumb">
-            <div class="ph" data-label="[REEL]"></div>
-            <span class="top-card__rank">1</span>
-          </div>
-          <div class="top-card__body">
-            <div class="top-card__title">[REEL TITLE]</div>
-            <div class="top-card__stats">
-              <span><strong>[VIEWS]</strong> views</span>
-              <span><strong>[XX]</strong>% eng.</span>
-            </div>
-          </div>
-        </div>
-        <div class="top-card">
-          <div class="top-card__thumb">
-            <div class="ph" data-label="[REEL]"></div>
-            <span class="top-card__rank">2</span>
-          </div>
-          <div class="top-card__body">
-            <div class="top-card__title">[REEL TITLE]</div>
-            <div class="top-card__stats">
-              <span><strong>[VIEWS]</strong> views</span>
-              <span><strong>[XX]</strong>% eng.</span>
-            </div>
-          </div>
-        </div>
-        <div class="top-card">
-          <div class="top-card__thumb">
-            <div class="ph" data-label="[REEL]"></div>
-            <span class="top-card__rank">3</span>
-          </div>
-          <div class="top-card__body">
-            <div class="top-card__title">[REEL TITLE]</div>
-            <div class="top-card__stats">
-              <span><strong>[VIEWS]</strong> views</span>
-              <span><strong>[XX]</strong>% eng.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- ============ HONESTY ============ -->
@@ -451,7 +418,7 @@
     <div class="honesty__icon">i</div>
     <p>
       <strong>How this data is sourced.</strong>
-      All figures pulled manually from Instagram Insights as of <strong>[DATE]</strong>. No inflated numbers, no bought followers, no scraped APIs. If anything changes, this page changes. What you see is what you get.
+      All figures pulled manually from Instagram Insights as of <strong>May 23, 2026</strong>. No inflated numbers, no bought followers, no scraped APIs. If anything changes, this page changes. What you see is what you get.
     </p>
   </div>
 </section>
@@ -466,7 +433,7 @@
     </div>
     <div class="reveal" style="display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-top:32px;">
       <a href="#" class="btn btn--primary" id="mediakit-dl">Get the media kit <span class="arr">&#8594;</span></a>
-      <span style="font-size:15px; color: var(--dark-text-2);">Prefer email? <a href="mailto:[YOUR EMAIL]" style="color:var(--dark-text); border-bottom:1px solid currentColor;">[YOUR EMAIL]</a></span>
+      <span style="font-size:15px; color: var(--dark-text-2);">Prefer email? <a href="mailto:kunwar@thecomjet.com" style="color:var(--dark-text); border-bottom:1px solid currentColor;">kunwar@thecomjet.com</a></span>
     </div>
   </div>
 </section>
@@ -485,7 +452,7 @@
         <h5>Pages</h5>
         <div class="footer__list">
           <a href="index.html">Home</a>
-          <a href="case-study.html">Case Studies</a>
+          <a href="case-studies.html">Case Studies</a>
           <a href="insights.html">Insights</a>
           <a href="index.html#about">About</a>
         </div>
@@ -493,7 +460,7 @@
       <div>
         <h5>Reach me</h5>
         <div class="footer__list">
-          <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a>
+          <a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a>
           <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener">Instagram</a>
           <a href="#">LinkedIn</a>
         </div>
@@ -503,7 +470,7 @@
         <div class="footer__list">
           <a href="index.html#mediakit">Media kit (PDF)</a>
           <a href="insights.html">Audience data</a>
-          <a href="case-study.html">Recent work</a>
+          <a href="case-studies.html">Recent work</a>
         </div>
       </div>
     </div>
