@@ -82,7 +82,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 @media (max-width: 760px) {
   .wrap { padding: 0 20px; }
-  .section { padding: 64px 0; }
+  .section { padding: 56px 0; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 0 18px; }
+  .section { padding: 44px 0; }
 }
 
 /* =============== Type =============== */
@@ -287,6 +291,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 @media (max-width: 860px) {
   .nav__links { display: none; }
   .nav__inner { padding: 14px 20px; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .nav__inner { padding: 12px 18px; gap: 8px; }
+  .logomark { font-size: 17px; }
+  .nav__cta { padding: 8px 14px; font-size: 13px; }
 }
 
 @media (max-width: 400px) {

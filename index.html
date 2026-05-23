@@ -101,23 +101,31 @@
 .reel-stack:hover .reel-card:not(:hover):nth-child(3) { --tilt:  -9deg; --shift: 28px; }
 
 @media (max-width: 760px) {
-  .reel-stack { gap: 12px; max-width: 100%; }
-  .reel-card { box-shadow: 3px 3px 0 0 var(--ink); border-width: 1.5px; }
+  .reel-stack { gap: 8px; max-width: 100%; }
+  .reel-card { box-shadow: 3px 3px 0 0 var(--ink); border-width: 1.5px; border-radius: 12px; }
+  .reel-card:nth-child(1) { --tilt: -4deg; --shift: 8px; }
+  .reel-card:nth-child(2) { --tilt: 2deg;  --shift: -4px; }
+  .reel-card:nth-child(3) { --tilt: -3deg; --shift: 12px; }
   .reel-card:hover { transform: rotate(0deg) translateY(-6px) scale(1.03); }
-  .hero__visual { padding: 24px 8px 40px; }
+  .reel-card__play svg { width: 44px; height: 44px; }
+  .hero__visual { padding: 24px 4px 32px; margin-top: 32px; }
 }
 
 @media (max-width: 760px) {
   .hero__sub { grid-template-columns: 1fr; gap: 24px; }
-  .hero { padding-bottom: 64px; }
+  .hero { padding-top: 32px; padding-bottom: 48px; }
+  .hero__headline { margin-bottom: 24px; }
 }
 
 /* Sticker positioning — sized & placed per-slot. Swap the inner SVG, layout stays. */
 .sticker-slot[data-slot="hero-smile"] { top: -10px; right: 6%; width: 96px; --rot: -8deg; }
 .sticker-slot[data-slot="hero-sparkle"] { bottom: 18%; left: -2%; width: 64px; --rot: 14deg; }
 @media (max-width: 760px) {
-  .sticker-slot[data-slot="hero-smile"] { width: 64px; right: 0; }
-  .sticker-slot[data-slot="hero-sparkle"] { width: 44px; }
+  .sticker-slot[data-slot="hero-smile"] { width: 56px; right: -4px; top: -16px; }
+  .sticker-slot[data-slot="hero-sparkle"] { width: 40px; }
+  .sticker-slot[data-slot="work-clap"] { width: 56px !important; top: -18px !important; left: 22% !important; }
+  .sticker-slot[data-slot="love-heart"] { width: 44px !important; top: -22px !important; }
+  .sticker-slot[data-slot="cta-closing"] { width: 64px !important; right: -4px !important; bottom: -14px !important; }
 }
 
 /* Proof bar */
@@ -163,6 +171,22 @@
   .proof__stat:nth-child(odd) { padding-left: 0; }
   .proof__stat:nth-child(2) { border-right: none; }
   .proof__stat:nth-child(3) { border-right: 1px solid var(--rule); }
+}
+@media (max-width: 560px) {
+  .proof { padding: 32px 0; }
+  .proof__grid { grid-template-columns: 1fr; gap: 0; }
+  .proof__stat {
+    padding: 18px 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--rule);
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .proof__stat:last-child { border-bottom: none; }
+  .proof__num { font-size: 40px; justify-self: end; line-height: 1; }
+  .proof__num--text { font-size: 22px; line-height: 1.05; text-align: right; justify-self: end; }
+  .proof__label { font-size: 13px; }
 }
 
 /* Logo wall (dark) */
@@ -282,8 +306,11 @@
 .logo-tile--linked:hover .logo-tile__name { opacity: 0; }
 .logo-tile--linked:hover .logo-tile__hover { opacity: 1; }
 @media (max-width: 760px) {
-  .wall__head { grid-template-columns: 1fr; gap: 24px; }
-  .logo-tile { width: 160px; height: 76px; }
+  .wall__head { grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+  .logo-tile { width: 140px; height: 64px; border-radius: 10px; }
+  .logo-tile__icon { height: 26px; max-width: 110px; }
+  .wall__rows { gap: 10px; margin: 0 -20px; padding: 0 20px; }
+  .wall__track { gap: 10px; }
 }
 
 /* Categories */
@@ -400,7 +427,13 @@
 @media (max-width: 980px) { .cases { grid-template-columns: 1fr 1fr; }
   .cases > :nth-child(3) { grid-column: 1 / -1; }
 }
-@media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .cases { grid-template-columns: 1fr; gap: 20px; margin-top: 36px; }
+  .case-card__body { padding: 20px; gap: 12px; }
+  .case-card__brand { font-size: 19px; }
+  .case-card__summary { font-size: 14px; }
+  .case-card__result { font-size: 13px; padding: 6px 12px; top: 12px; left: 12px; }
+}
 
 /* How I work */
 .how__top {
@@ -472,6 +505,13 @@
   .how__list { grid-template-columns: 1fr; }
   .how__item { border-right: none; border-bottom: 1px solid var(--rule); padding: 24px 0; }
   .how__item:last-child { border-bottom: none; }
+}
+@media (max-width: 480px) {
+  .how__photo { max-width: 260px; }
+  .how__item { padding: 20px 0; gap: 12px; }
+  .how__icon { width: 38px; height: 38px; }
+  .how__item h4 { font-size: 17px; }
+  .how__item p { font-size: 13px; }
 }
 
 /* Testimonials */
@@ -604,6 +644,21 @@
   color: var(--orange);
 }
 @media (max-width: 860px) { .audience { grid-template-columns: 1fr; gap: 32px; } }
+@media (max-width: 560px) {
+  .audience__row {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 18px 0;
+    align-items: center;
+  }
+  .audience__label {
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+  }
+  .audience__value { font-size: 36px; }
+  .audience__note { font-size: 10px; }
+}
 
 /* Closing CTA */
 .cta-head {
@@ -621,8 +676,22 @@
 .cta-block .fallback a:hover { color: var(--orange); }
 
 @media (max-width: 480px) {
-  .notes-track { margin: 0 -20px; padding: 8px 20px 32px; }
-  .note { min-width: 300px; }
+  .notes-track { margin: 0 -20px; padding: 8px 20px 32px; gap: 16px; }
+  .note { min-width: 280px; flex: 0 0 85%; }
+  .note__body { padding: 22px; gap: 18px; }
+  .note__quote { font-size: 16px; }
+}
+
+/* Closing CTA section padding */
+.section--cta-closing { padding: 120px 0; }
+@media (max-width: 760px) {
+  .section--cta-closing { padding: 64px 0; }
+  .notes-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px; }
+  .notes-nav button { width: 44px; height: 44px; font-size: 18px; }
+}
+@media (max-width: 640px) {
+  .cat { padding: 20px 0 24px; }
+  .cat__sticker { width: 48px; height: 48px; }
 }
 </style>
 </head>
@@ -1121,7 +1190,7 @@
 </section>
 
 <!-- ============ CLOSING CTA · DARK ============ -->
-<section class="section section--dark" id="mediakit" style="padding: 120px 0;">
+<section class="section section--dark section--cta-closing" id="mediakit">
   <div class="wrap">
     <div class="cta-head reveal">
       <span class="pill" style="justify-self: start;">Still reading? Let's talk.</span>
