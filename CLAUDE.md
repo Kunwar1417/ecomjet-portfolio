@@ -14,18 +14,21 @@
 | File | Purpose | Status |
 |---|---|---|
 | `index.html` | Home / portfolio | Design complete, content polished |
-| `case-studies.html` | Index page listing all case studies | Done, 3 cards live |
+| `case-studies.html` | Index page listing all case studies | Done, 5 cards live |
 | `case-study-lindy.html` | Lindy AI case study | Fully populated with real data |
 | `case-study-heygen.html` | HeyGen case study | Fully populated with real data |
 | `case-study-particl.html` | Particl AI case study | Fully populated with real data |
+| `case-study-emergent.html` | Emergent case study | Fully populated with real data |
+| `case-study-ltx.html` | LTX Studio case study | Fully populated with real data |
 | `insights.html` | Audience & analytics | Fully populated with real audience data |
+| `invoice.html` | Private invoice generator (served at `/invoice`) | Live, self-contained |
 
 ## Assets
 
 ```
 photos/   Kunwar.jpg avatar, campaign photos
-logos/    43 brand logos (SVG + PNG)
-reels/    per-reel cover JPGs: lindy-1..4, heygen-1..2, particl-1..5
+logos/    brand logos (SVG + PNG)
+reels/    per-reel cover JPGs: lindy-1..4, heygen-1..2, particl-1..5, emergent-1..6, ltx-1..5
 ```
 
 ---
@@ -63,12 +66,12 @@ Without it, `app.js` writes `undefined` into the `--orange` variable and the pag
 
 ## Case study template (`case-study-{brand}.html`)
 
-Shared CSS lives in `case-study.css`. Each page imports both stylesheets:
+Shared CSS lives in `case-study.css`. Each page imports both stylesheets (both carry version queries):
 ```html
-<link rel="stylesheet" href="styles.css" />
-<link rel="stylesheet" href="case-study.css?v=4" />
+<link rel="stylesheet" href="styles.css?v=2" />
+<link rel="stylesheet" href="case-study.css?v=7" />
 ```
-Bump the `?v=` query when CSS changes to bust browser cache.
+Bump the `?v=` query (on whichever file changed, across ALL pages) when CSS changes to bust browser cache. Mobile Safari will otherwise serve stale CSS.
 
 **Section order (top to bottom)**
 1. Nav (shared markup, "Case Studies" active state)
@@ -133,6 +136,14 @@ Grid drops to 2 columns at 1000px, 1 column at 680px.
 | Lindy AI | `--plum` | `reels/lindy-1..4.jpg` | https://www.instagram.com/reel/{id}/ |
 | HeyGen | `--green` | `reels/heygen-1..2.jpg` | same |
 | Particl AI | `--blue` | `reels/particl-1..5.jpg` | same |
+| Emergent | `--orange` | `reels/emergent-1..6.jpg` | same |
+| LTX Studio | `--pink` | `reels/ltx-1..5.jpg` | same |
+
+**Logo notes for new brands:**
+- Emergent: `logos/emergent.svg`, rendered white via `filter: brightness(0) invert(1)`
+- LTX Studio: use `logos/LTXstudio.png` (full "Ltx Studio" lockup, transparent bg, RGBA) with `filter: brightness(0) invert(1); max-width: 160px`. Do NOT use `logos/ltx-studio.svg` (it is the "Ltx" wordmark only, missing "Studio").
+
+**Reels without Notion reports:** the slider script hides the "Performance report" button per-reel when `report === '#'`. Set `report: '#'` for reels that have no Notion link (Emergent reels 4-6, LTX reels 3-5). This logic lives in the inline slider `update()` function via `reportLink.style.display = r.report === '#' ? 'none' : ''`.
 
 When a brand appears in another case study's "Keep looking" cards, the same accent applies, with the logo rendered white via `filter: brightness(0) invert(1)`.
 
@@ -146,8 +157,26 @@ When a brand appears in another case study's "Keep looking" cards, the same acce
 - Hero reel-stack hover tilt
 - Sticker slot rotation
 - Reads `TWEAK_DEFAULTS` to set `--orange`, italic font, etc.
+- **Mobile nav toggle**: wires up `.nav__hamburger` to toggle `.nav--open` on `.nav`, which reveals the `.nav__mobile` drawer. Tapping any drawer link closes it.
 
 Each case study has its own inline slider script (defines `BRAND_REELS` array, wires up prev/next, updates DOM on click). The script lives just above `<script src="app.js"></script>`.
+
+### Mobile navigation (shared markup on every page)
+
+The nav has two parts: the always-visible `.nav__inner` bar and a `.nav__mobile` drawer that is a **sibling** of `.nav__inner` inside `<nav class="nav">` (NOT a child of `.nav__inner`, or it breaks the flex layout). Structure:
+
+```html
+<nav class="nav">
+  <div class="nav__inner">
+    ...logo, .nav__links (desktop), .nav__hamburger, .nav__cta-group...
+  </div>
+  <div class="nav__mobile">
+    ...Home / Work / Case Studies / Insights / About / media kit btn...
+  </div>
+</nav>
+```
+
+At `≤860px`: `.nav__links` hides, `.nav__hamburger` + drawer take over, and `.nav__cta` (media kit button in the bar) hides to declutter. At `≤400px` the IG icon also hides. The hamburger animates into an X via `aria-expanded="true"`.
 
 ---
 
@@ -182,8 +211,13 @@ If a brand needs a new logo file, drop SVG into `logos/`. The white filter is ap
 
 - No build step. Pure HTML/CSS/JS, opens directly in browser.
 - Dev server: `python3 -m http.server 3000` from project root, visit http://localhost:3000
+- Test mobile on a real phone via `http://<mac-ip>:3000` (same Wi-Fi). Get IP with `ipconfig getifaddr en0`.
 - Design is locked. Do not alter the visual system without explicit ask.
-- Bump `case-study.css?v=N` when changing shared CSS to force browser cache refresh.
+- **Cache busting:** mobile Safari caches CSS aggressively. Both `styles.css?v=N` and `case-study.css?v=N` carry version queries. Bump the `?v=N` on the relevant stylesheet link **across all pages** whenever you edit that CSS file, or changes won't show on devices that already loaded the site. (`styles.css` is currently `?v=2`, `case-study.css` is `?v=7`.)
+
+### CSS gotcha: padding shorthand zeroes out `.wrap` side padding
+
+Several full-width sections carry both `.wrap` (which supplies horizontal padding) AND a section class. If that section class sets `padding: Xpx 0 Ypx` (shorthand), the `0` **overrides the left/right padding from `.wrap`**, pushing content to the screen bezel on mobile. Fix: use `padding-top` / `padding-bottom` only on those section classes, never the 4-value shorthand with `0` sides. This bit `.cs-header` and `.cs-index`; both now use `padding-block` style declarations. Mobile `.wrap` padding is 28px (`≤760px`) / 24px (`≤480px`); desktop is 32px.
 
 ---
 
@@ -209,11 +243,15 @@ Hosted on Vercel as a static site. No build command, output is the repo root.
 - Featured case study cards use `Acquisition / Acquisition / Awareness` pills (not vanity metrics like view counts)
 - Audience pitch: 349K founders and marketers
 
-**Case studies (`case-studies.html` + 3 per-brand pages):**
-- All 3 brand pages fully populated with real campaign data
+**Case studies (`case-studies.html` + 5 per-brand pages):**
+- 5 brands live: Lindy AI, HeyGen, Particl AI, Emergent, LTX Studio. All fully populated with real campaign data.
+- Emergent: AI app builder, `--orange`, 6 reels / 5 campaigns, 454K views, 1,050 links, 57% CTR, 7% eng. Persona-per-reel angle (build an app for a specific use case). Notion reports for reels 1-3 only.
+- LTX Studio: AI video production (by Lightricks), `--pink`, 5 reels / 5 campaigns, 5.26M views, 41K links, 45% CTR, 9% eng. Format-per-reel angle (BMW ad, Lay's ad, superhero short, 2x YouTube-in-10-min). Notion reports for reels 1-2 only.
 - The brief, approach, content slider, results grid, and reflection are all data-backed copy (no placeholders)
 - Reel slider per case study driven by `BRAND_REELS` JS array with cover, concept, icp, views, eng, ig, report fields
 - Results grid: Partnerships, Total views, Links sent, Link CTR, Avg engagement, Best reel
+- Per-reel "Performance report" button auto-hides when `report === '#'` (reels without a Notion link)
+- Mobile: hamburger nav drawer on all pages; `.wrap`/section padding fixed so headings don't touch the bezel
 
 **Insights page (`insights.html`):**
 - 349K followers as of May 23, 2026
@@ -232,6 +270,28 @@ Hosted on Vercel as a static site. No build command, output is the repo root.
 - Header ledes follow the pattern: `[N reels] [for which audience] [what you showed] [headline stat]`
 
 **Final deployed version:** Live on https://theecomjet.com
+
+---
+
+## Invoice generator (`invoice.html`, private, at `/invoice`)
+
+Self-contained private tool to generate brand invoices as PDFs. Replaces manual Canva work. Redesigned "statement" layout (NOT a copy of the old Canva file): warm-cream ground, deep-navy ink (`#14213A`), brand blue (`#2B49C4`) spent only on the total bar / rules / labels, a slim 3mm blue left spine, header + footer panel bands. Bricolage Grotesque throughout with one Instrument Serif italic accent (on "Total *due*"). NOT linked from any nav; carries `<meta name="robots" content="noindex, nofollow">`. Sends no data anywhere.
+
+- **Architecture:** single file, no backend, no build, no external CSS/JS deps (self-contained inline `<style>` + vanilla JS IIFE; does NOT pull `styles.css` or `app.js`). Served at `/invoice` via Vercel clean URLs (locally only `/invoice.html` works; `python3 -m http.server` does not do clean URLs).
+- **Layout:** two-pane on screen (form left, live A4 preview right, scaled via a JS `fitDoc()` transform + a zoom slider). Print stylesheet (`@media print`) shows only `.inv-doc` at true A4, resets the transform, preserves colors. Export = browser "Save as PDF".
+- **India vs International toggle** drives everything via `is-india`/`is-intl` app classes + `.india-only`/`.intl-only` field visibility:
+  - India: rail word "Tax invoice", SAC column (default `998366`), IGST 18%, ₹ (`en-IN` grouping → ₹2,95,000), Supplier block shows `NEVER SETTLE` + `Proprietor: Kunwardeep` (one word, per legal docs) + GSTIN + PAN, billed-to shows optional brand GST + Place of supply, payments = Kotak block + UPI ID (legible text line) + `photos/upi-qr.png`.
+  - International: rail word "Invoice", no SAC, Tax 0%, $ (`en-US`), Reference column hidden entirely (unless a partnership code is added), payments = US bank block (ACH + bank address), optional Stripe line via checkbox. No PayPal.
+  - Table header is "Item" on both. Total bar reads "Total due" on both.
+- **Numbering:** ONE shared counter, format `KD-YYYY-NNNN`, auto-rolls per year. **Self-healing / derived, not a stored counter:** the next number is always `max(saved invoice numbers for the year) + 1`, seeded at 15 for 2026 (→ first suggested `KD-2026-0016`). Exploring or misclicks never waste a number; a number is only "consumed" when you Download its PDF. Field is editable.
+- **Saved-invoice archive (the "one place"):** Download PDF saves the ENTIRE invoice (type, brand, address, items, amounts, terms, date) to `localStorage` key `kd_invoices` (array, source of truth for both the archive list and the derived next-number). The "Saved invoices" list under the form is clickable: click a row → `loadForm()` reloads it fully for view/edit/re-download; each row has a delete (×). Re-downloading an existing number updates it in place. `localStorage` is per-browser, so always generate from the same machine/browser (no cross-device sync without a backend).
+- **"New invoice" button** is now safe: warns before clearing if the current invoice has content and hasn't been downloaded (saved). No blind counter advance.
+- **Line items:** multiple rows (add/remove), free-text description with a `datalist` quick-pick of common deliverables, subtotal auto-sums. First line of a description is the title; extra lines become grey sub-text.
+- **Payment terms:** preset `<select>` (7 days / 30 days / 100% advance) + a **50/50 split** option that reveals a milestone toggle (50% advance / final 50%) which labels the line item and writes the correct balance sentence, + a "Custom…" free-text override.
+- **Partnership code** is an optional checkbox (off by default), like Stripe.
+- **PDF filename** auto-set from invoice number + brand (`document.title` swapped just before `window.print()`, then restored).
+- **Hardcoded constants** live in the `ME` object at the top of the inline `<script>` (registered address, GSTIN, PAN, Kotak bank details, US bank details, and the live `stripe` payment link — a "customer chooses price" Stripe Payment Link, reused for every invoice; the invoice prints an "Enter the total shown on your invoice." note beside it).
+- **Two user-supplied asset PNGs** (both present, with `onerror` fallbacks): `photos/signature.png` (signature above the sign line; white background dropped via `mix-blend-mode: multiply` on the cream) and `photos/upi-qr.png` (India UPI QR).
 
 ## External references
 
