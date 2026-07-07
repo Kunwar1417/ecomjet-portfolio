@@ -5,7 +5,8 @@
 .cs-back a:hover .arr { transform: translateX(-4px); }
 
 .cs-header {
-  padding: 32px 0 80px;
+  padding-top: 32px;
+  padding-bottom: 80px;
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 64px;
@@ -342,7 +343,7 @@
 }
 
 /* ---- Case studies index page ---- */
-.cs-index { padding: 80px 0 96px; }
+.cs-index { padding-top: 80px; padding-bottom: 96px; }
 .cs-index__head {
   display: grid;
   gap: 20px;
@@ -355,7 +356,12 @@
   gap: 24px;
 }
 @media (max-width: 1000px) { .cs-index__grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 680px) { .cs-index__grid { grid-template-columns: 1fr; } }
+@media (max-width: 680px) {
+  .cs-index__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
 .cs-index .more-card__logo-band { height: 140px; padding: 24px 32px; }
 .cs-index .more-card__logo-band img { max-height: 90px; max-width: 260px; }
 
@@ -400,7 +406,7 @@
 
   .cs-index .more-card__logo-band { height: 120px; padding: 18px 24px; }
   .cs-index .more-card__logo-band img { max-height: 80px; max-width: 100%; }
-  .cs-index { padding: 56px 0 72px; }
+  .cs-index { padding-top: 56px; padding-bottom: 72px; }
 }
 
 @media (max-width: 480px) {

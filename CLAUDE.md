@@ -230,8 +230,31 @@ Hosted on Vercel as a static site. No build command, output is the repo root.
 - GitHub remote: `https://github.com/Kunwar1417/ecomjet-portfolio.git` (branch `main`)
 - Deploy to production: `npx vercel --prod --yes` from project root
 - Preview deploy: `npx vercel --yes` (no flag)
-- Git push to `main` also triggers a Vercel deploy via the GitHub integration, so committing + pushing is sufficient in most cases.
 - Direct `.vercel.app` URLs are protected by Vercel Deployment Protection (401 without login). The custom domain bypasses this and serves publicly.
+
+### URLs are `.html` — this project does NOT strip extensions
+
+Despite an earlier assumption, this Vercel project serves files at their literal path **with `.html`**. There is no clean-URL rewrite: `/insights` and `/case-studies` 404; only `/insights.html`, `/case-studies.html`, and **`/invoice.html`** work. If clean URLs are ever wanted, add a `vercel.json` with `"cleanUrls": true` (currently absent).
+
+### CRITICAL: the GitHub→Vercel auto-deploy is currently INACTIVE
+
+A `git push` to `main` does **not** reliably trigger a Vercel deploy right now (the integration went stale; a push updated GitHub but produced no new deployment). **Do not assume push = deploy.** Deploy manually with `vercel --prod`, then verify the live URL. (If the GitHub integration is later reconnected in the Vercel dashboard, pushes will auto-deploy again — and safely, because they build from committed GitHub code, not the local working tree.)
+
+### CRITICAL: SAFE DEPLOY RUNBOOK (protects against accidental local file deletions)
+
+Background: the local working tree has, at times, contained **accidental deletions of image files that the live site depends on** (e.g. `photos/Kunwar.jpg`, `reels/*.jpg`). A naive `vercel --prod` from the project root deploys the **current folder contents**, so any locally-deleted file would vanish from the live site. The committed git history always has the correct, intact files. **Therefore: always deploy from committed history, never from a dirty working tree.**
+
+Safe deploy procedure (deletes nothing, ignores working-tree mess):
+1. Ensure the intended state is committed on `main` (`git status` should ideally be clean; at minimum, no unintended `^ D` deletions).
+2. Clone the repo to a temp dir: `git clone <this repo path> /tmp/deploy-clean`
+3. Copy the Vercel link into it: `cp -R .vercel /tmp/deploy-clean/.vercel`
+4. Deploy from the clone: `cd /tmp/deploy-clean && npx vercel --prod --yes`
+5. **Verify** live: `curl -s -o /dev/null -w "%{http_code}" https://theecomjet.com/invoice.html` (expect 200) and spot-check a few images (`/photos/Kunwar.jpg`, `/reels/lindy-1.jpg` → 200).
+6. Delete the temp clone.
+
+Recovering accidentally-deleted files (they are safe in git forever): `git checkout HEAD -- <path>` restores any committed file to disk. `git status | grep "^ D"` lists pending deletions to watch for.
+
+The repo `.gitignore` ignores `.vercel` and `**/.DS_Store` (macOS junk). Do not commit `.DS_Store` files.
 
 ---
 
@@ -269,15 +292,19 @@ Hosted on Vercel as a static site. No build command, output is the repo root.
 - Email everywhere: kunwar@thecomjet.com
 - Header ledes follow the pattern: `[N reels] [for which audience] [what you showed] [headline stat]`
 
-**Final deployed version:** Live on https://theecomjet.com
+**Invoice generator (`invoice.html`):**
+- Private, self-contained invoice PDF tool. **Live at https://theecomjet.com/invoice.html** (note `.html`). Full details in the "Invoice generator" section above.
+- Redesigned statement layout, India/International toggle, self-healing `KD-YYYY-NNNN` numbering from a `localStorage` archive, click-to-reload saved invoices, 50/50 split milestone handling, signature + UPI QR embedded, live "customer chooses price" Stripe link.
+
+**Final deployed version:** Live on https://theecomjet.com (invoice tool shipped via the safe clean-clone deploy runbook; all existing pages + images verified 200 post-deploy).
 
 ---
 
-## Invoice generator (`invoice.html`, private, at `/invoice`)
+## Invoice generator (`invoice.html`, private, live at `/invoice.html`)
 
 Self-contained private tool to generate brand invoices as PDFs. Replaces manual Canva work. Redesigned "statement" layout (NOT a copy of the old Canva file): warm-cream ground, deep-navy ink (`#14213A`), brand blue (`#2B49C4`) spent only on the total bar / rules / labels, a slim 3mm blue left spine, header + footer panel bands. Bricolage Grotesque throughout with one Instrument Serif italic accent (on "Total *due*"). NOT linked from any nav; carries `<meta name="robots" content="noindex, nofollow">`. Sends no data anywhere.
 
-- **Architecture:** single file, no backend, no build, no external CSS/JS deps (self-contained inline `<style>` + vanilla JS IIFE; does NOT pull `styles.css` or `app.js`). Served at `/invoice` via Vercel clean URLs (locally only `/invoice.html` works; `python3 -m http.server` does not do clean URLs).
+- **Architecture:** single file, no backend, no build, no external CSS/JS deps (self-contained inline `<style>` + vanilla JS IIFE; does NOT pull `styles.css` or `app.js`). Lives at repo root, served at **`/invoice.html`** (this project has no clean-URL rewrite — see Deployment; `/invoice` 404s, always use `/invoice.html`).
 - **Layout:** two-pane on screen (form left, live A4 preview right, scaled via a JS `fitDoc()` transform + a zoom slider). Print stylesheet (`@media print`) shows only `.inv-doc` at true A4, resets the transform, preserves colors. Export = browser "Save as PDF".
 - **India vs International toggle** drives everything via `is-india`/`is-intl` app classes + `.india-only`/`.intl-only` field visibility:
   - India: rail word "Tax invoice", SAC column (default `998366`), IGST 18%, ₹ (`en-IN` grouping → ₹2,95,000), Supplier block shows `NEVER SETTLE` + `Proprietor: Kunwardeep` (one word, per legal docs) + GSTIN + PAN, billed-to shows optional brand GST + Place of supply, payments = Kotak block + UPI ID (legible text line) + `photos/upi-qr.png`.

@@ -1,6 +1,24 @@
 /* ============= Brand wall data ============= */
 document.documentElement.classList.add("js");
 
+/* ---- Mobile nav toggle ---- */
+const hamburger = document.querySelector('.nav__hamburger');
+const navEl = document.querySelector('.nav');
+if (hamburger && navEl) {
+  hamburger.addEventListener('click', () => {
+    const open = navEl.classList.toggle('nav--open');
+    hamburger.setAttribute('aria-expanded', open);
+    hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  document.querySelector('.nav__mobile')?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navEl.classList.remove('nav--open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Open menu');
+    });
+  });
+}
+
 // PNG logos are already pre-rendered as white-on-transparent — skip the invert filter
 const PRE_WHITE = new Set([
   "Higgsfield","LTX Studio","Use Style",
