@@ -258,7 +258,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .pay-alt { margin-top: 4mm; font-size: 11.5px; }
 .pay-alt .or { font-family: var(--serif); font-style: italic; color: var(--muted); margin-right: 2mm; }
 .pay-alt b { font-weight: 700; }
-.pay-alt .stripe-link { font-size: 12px; font-weight: 600; color: var(--ink); margin-top: 1mm; word-break: break-all; }
+/* Stripe: understated secondary option — one quiet sentence, single link treatment */
+.pay-stripe { margin-top: 5mm; font-size: 11px; color: var(--muted); line-height: 1.5; }
+.stripe-btn { color: var(--blue); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
+.stripe-btn:hover { color: var(--blue-d); }
+.stripe-hint { color: var(--muted); }
 .pay-qr-wrap { display: flex; align-items: center; gap: 4mm; margin-top: 4mm; }
 .pay-qr { width: 24mm; height: 24mm; object-fit: contain; border: 1px solid var(--line); background: #fff; padding: 1mm; border-radius: 1.5mm; flex-shrink: 0; }
 .pay-upi { display: flex; flex-direction: column; gap: 0.5mm; }
@@ -720,7 +724,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
         '<span class="k">Bank</span><span class="v">' + b.bank + '</span>' +
         '<span class="k">Bank address</span><span class="v">' + b.bankAddr + '</span>' +
         '</div>';
-      if (stripeChk.checked) h += '<div class="pay-alt"><span class="or">or pay by card via</span><b>Stripe</b><div class="stripe-link">' + esc(ME.stripe) + '</div><div class="upi-note">Enter the total shown on your invoice.</div></div>';
+      if (stripeChk.checked) h += '<div class="pay-stripe">Prefer card? <a class="stripe-btn" href="' + esc(ME.stripe) + '">Pay with Stripe</a> <span class="stripe-hint">(enter the invoice total at checkout)</span></div>';
       dPay.innerHTML = h;
     }
 
