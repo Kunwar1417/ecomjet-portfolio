@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
+<title>AiSensy × Kunwar · Partnership proposal (PDF)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   PRINT-OPTIMIZED PROPOSAL · AiSensy
+   Self-contained (does NOT load styles.css / case-study.css),
+   so page geometry is tuned for A4 print-to-PDF.
+   Tokens copied from the site design system.
+   ========================================================= */
+:root {
+  --cream: #f6f2ea;
+  --cream-2: #ece6da;
+  --paper: #fdfbf6;
+  --ink: #1c1a17;
+  --ink-2: #46433d;
+  --ink-3: #77726a;
+  --rule: #ddd6c8;
+  --orange: #E55525;
+  --orange-deep: #C9421A;
+  --green: #2F6B4F;
+  --blue: #2B49C4;
+  --pink: #B0345A;
+  --plum: #6E2A4E;
+  --butter: #F2E27A;
+  --dark: #17140f;
+  --dark-2: #23201a;
+  --dark-text: #f4f0e8;
+  --dark-text-2: #b3ac9e;
+  --sans: 'Bricolage Grotesque', system-ui, sans-serif;
+  --italic: 'Instrument Serif', Georgia, serif;
+  --shadow-card: 6px 6px 0 0 var(--ink);
+  --shadow-card-sm: 4px 4px 0 0 var(--ink);
+  --r-sm: 10px; --r-md: 18px; --r-lg: 28px; --r-pill: 999px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: var(--sans); color: var(--ink); background: #d8d2c6; line-height: 1.5; }
+
+em { font-family: var(--italic); font-style: italic; font-weight: 400; color: var(--orange); }
+
+/* ---- Page model: A4 sheets, centered on screen, edge-to-edge in print ---- */
+.page {
+  position: relative;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm 20mm 18mm;
+  margin: 0 auto 12px;
+  background: var(--cream);
+  overflow: hidden;
+}
+.page--dark { background: var(--dark); color: var(--dark-text); }
+.page--cover { background: var(--cream); }
+
+/* Running footer on each page */
+.pg-foot {
+  position: absolute; left: 20mm; right: 20mm; bottom: 12mm;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; letter-spacing: 0.04em; color: var(--ink-3);
+  text-transform: uppercase; border-top: 1px solid var(--rule); padding-top: 8px;
+}
+.page--dark .pg-foot { color: var(--dark-text-2); border-color: rgba(255,255,255,0.14); }
+.pg-foot .logomark { font-weight: 700; letter-spacing: -0.01em; text-transform: none; font-size: 12px; color: var(--ink); }
+.page--dark .pg-foot .logomark { color: var(--dark-text); }
+.pg-foot .logomark em { color: var(--orange); }
+
+/* ---- Shared type ---- */
+.kicker { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 14px; }
+.page--dark .kicker { color: var(--butter); }
+h1.display { font-size: 46px; line-height: 1.04; letter-spacing: -0.02em; font-weight: 700; }
+h2.sec { font-size: 30px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px; }
+h2.sec em { font-size: 1.05em; }
+.lede { font-size: 18px; line-height: 1.5; color: var(--ink-2); }
+.page--dark .lede { color: var(--dark-text-2); }
+p { margin-bottom: 1em; }
+p:last-child { margin-bottom: 0; }
+.body { font-size: 15px; line-height: 1.6; color: var(--ink-2); max-width: 62ch; }
+.body strong { color: var(--ink); font-weight: 700; }
+.tiny { font-size: 11px; color: var(--ink-3); line-height: 1.5; }
+
+/* ---- Cover ---- */
+.cover-inner { height: 257mm; display: flex; flex-direction: column; }
+.cover-lockup {
+  display: inline-flex; align-items: center; gap: 16px;
+  background: var(--plum); color: var(--dark-text);
+  border: 1.5px solid var(--ink); border-radius: var(--r-pill);
+  padding: 10px 12px 10px 22px; box-shadow: var(--shadow-card-sm);
+  font-weight: 600; font-size: 15px; align-self: flex-start;
+}
+.cover-lockup .x { opacity: 0.5; font-size: 18px; }
+.cover-lockup .chip { background: var(--dark-text); color: var(--ink); border-radius: var(--r-pill); padding: 7px 16px; font-weight: 700; }
+.cover-title { margin-top: auto; }
+.cover-title h1 { font-size: 58px; line-height: 1.02; letter-spacing: -0.025em; font-weight: 700; }
+.cover-sub { font-size: 19px; color: var(--ink-2); max-width: 46ch; margin-top: 22px; }
+.cover-meta { margin-top: 40px; display: flex; gap: 44px; flex-wrap: wrap; }
+.cover-meta div { }
+.cover-meta dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); font-weight: 700; margin-bottom: 4px; }
+.cover-meta dd { font-size: 15px; font-weight: 600; }
+.cover-meta dd a { color: var(--ink); text-decoration: none; }
+.cover-badge {
+  position: absolute; top: 20mm; right: 20mm; width: 78px; transform: rotate(10deg);
+}
+
+/* ---- Stat grid ---- */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1.5px solid var(--ink); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-card-sm); background: var(--paper); }
+.stat { padding: 22px 18px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.stat:nth-child(3n) { border-right: none; }
+.stat:nth-child(n+4) { border-bottom: none; }
+.stat__value { font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+.stat__value em { font-size: 0.55em; }
+.stat__label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; color: var(--ink-2); margin-top: 8px; }
+
+/* ---- Personal-use callout (dark card on light page) ---- */
+.callout { background: var(--dark); color: var(--dark-text); border: 1.5px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: 34px 36px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+.callout__mark { width: 56px; }
+.callout h3 { font-size: 21px; margin-bottom: 10px; color: var(--dark-text); }
+.callout p { color: var(--dark-text-2); font-size: 15.5px; line-height: 1.55; max-width: 58ch; margin: 0; }
+.callout p strong { color: var(--dark-text); }
+
+/* ---- Deliverables ---- */
+.deliver { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid var(--ink); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-card-sm); background: var(--paper); }
+.deliver__cell { padding: 22px 24px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.deliver__cell:nth-child(2n) { border-right: none; }
+.deliver__cell:nth-child(n+3) { border-bottom: none; }
+.deliver__num { font-family: var(--italic); font-style: italic; color: var(--orange); font-size: 22px; display: block; margin-bottom: 6px; }
+.deliver__cell h4 { font-size: 16px; margin-bottom: 6px; }
+.deliver__cell p { font-size: 14px; color: var(--ink-2); line-height: 1.5; margin: 0; }
+
+/* ---- Pricing tiers ---- */
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.tier { position: relative; background: var(--paper); border: 1.5px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card-sm); padding: 24px 20px; display: flex; flex-direction: column; }
+.tier--feature { background: var(--cream-2); box-shadow: var(--shadow-card); }
+.tier__flag { position: absolute; top: -12px; left: 18px; background: var(--orange); color: #fff; border: 1.5px solid var(--ink); border-radius: var(--r-pill); padding: 3px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+.tier__campaigns { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); }
+.tier__price { font-size: 40px; font-weight: 700; line-height: 1; margin: 10px 0 2px; letter-spacing: -0.02em; }
+.tier__price em { font-size: 0.5em; }
+.tier__unit { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.tier__total { font-size: 12px; color: var(--ink-3); margin-top: 5px; }
+.tier__rule { border: none; border-top: 1px solid var(--rule); margin: 16px 0 14px; }
+.tier__list { list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 13.5px; color: var(--ink-2); }
+.tier__list li { display: flex; gap: 9px; line-height: 1.35; }
+.tier__list .tick { color: var(--green); font-weight: 800; flex: none; }
+.tier__note { margin-top: 14px; font-size: 12px; color: var(--ink-3); }
+
+/* ---- Proof URL rows ---- */
+.proof-list { list-style: none; margin-top: 8px; border: 1.5px solid var(--ink); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-card-sm); background: var(--paper); }
+.proof-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 14px 20px; border-bottom: 1px solid var(--rule); }
+.proof-list li:last-child { border-bottom: none; }
+.proof-list .brand { font-weight: 700; font-size: 15px; }
+.proof-list .brand span { font-weight: 400; color: var(--ink-3); font-size: 13px; }
+.proof-list .url { font-size: 12.5px; color: var(--orange-deep); font-family: var(--italic); font-style: italic; font-size: 15px; }
+
+/* ---- Logo strip ---- */
+.logos { display: flex; flex-wrap: wrap; align-items: center; gap: 28px 40px; padding: 4px 0; }
+.logos img { height: 26px; width: auto; filter: grayscale(1); opacity: 0.9; }
+
+/* ---- Process steps ---- */
+.steps { display: grid; gap: 14px; }
+.step { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; }
+.step__n { width: 30px; height: 30px; flex: none; border-radius: var(--r-pill); background: var(--orange); color: #fff; border: 1.5px solid var(--ink); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.step__t { font-size: 15px; color: var(--ink-2); padding-top: 3px; }
+.step__t strong { color: var(--ink); }
+
+/* ---- Contact block on last page ---- */
+.contact { background: var(--paper); border: 1.5px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: 30px 34px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.contact h3 { font-size: 22px; margin-bottom: 6px; }
+.contact p { font-size: 14px; color: var(--ink-2); margin: 0; }
+.contact a { color: var(--ink); font-weight: 700; text-decoration: none; }
+.contact .cbtn { background: var(--orange); color: #fff; border: 1.5px solid var(--ink); border-radius: var(--r-pill); padding: 12px 22px; font-weight: 700; font-size: 15px; box-shadow: var(--shadow-card-sm); white-space: nowrap; text-decoration: none; }
+
+.mt-s { margin-top: 18px; } .mt-m { margin-top: 26px; } .mt-l { margin-top: 36px; }
+.section-gap > * + * { margin-top: 30px; }
+
+/* screen-only helper bar */
+.printbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: var(--ink); color: var(--cream); font-family: var(--sans); font-size: 13px; text-align: center; padding: 8px; }
+.printbar button { font: inherit; background: var(--orange); color: #fff; border: none; border-radius: 6px; padding: 5px 14px; margin-left: 10px; cursor: pointer; font-weight: 700; }
+body { padding-top: 40px; }
+
+/* =========================================================
+   PRINT RULES
+   ========================================================= */
+@page { size: A4; margin: 0; }
+@media print {
+  body { background: #fff; padding-top: 0; }
+  .printbar { display: none; }
+  .page { margin: 0; box-shadow: none; page-break-after: always; break-after: page; }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .callout, .tier, .deliver, .stats, .proof-list, .contact, .step { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div class="printbar">
+  This is the print version. To save as PDF: <strong>Print &rarr; Destination: Save as PDF &rarr; enable "Background graphics"</strong>.
+  <button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<!-- ================= PAGE 1 · COVER ================= -->
+<section class="page page--cover">
+  <svg class="cover-badge" viewBox="0 0 80 80" aria-hidden="true">
+    <path d="M40 4 L45 33 L74 38 L45 43 L40 76 L35 43 L6 38 L35 33 Z" fill="#E55525" stroke="#1c1a17" stroke-width="2.5" stroke-linejoin="round"/>
+  </svg>
+  <div class="cover-inner">
+    <div class="cover-lockup">
+      <span class="chip">Kunwar Deep</span>
+      <span class="x">&times;</span>
+      <span>AiSensy</span>
+    </div>
+
+    <div class="cover-title">
+      <span class="kicker">Partnership proposal</span>
+      <h1>Putting AiSensy in<br>front of people who'd<br><em>actually use it</em>.</h1>
+      <p class="cover-sub">A short plan for an awareness campaign on Instagram, with a few options to choose from depending on how far you'd like to take it.</p>
+
+      <div class="cover-meta">
+        <div>
+          <dt>Prepared for</dt>
+          <dd>AiSensy</dd>
+        </div>
+        <div>
+          <dt>Prepared by</dt>
+          <dd>Kunwar Deep &middot; @the_ecomjet</dd>
+        </div>
+        <div>
+          <dt>Date</dt>
+          <dd>July 2026</dd>
+        </div>
+        <div>
+          <dt>Contact</dt>
+          <dd><a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a></dd>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>Partnership proposal &middot; AiSensy</span>
+  </div>
+</section>
+
+<!-- ================= PAGE 2 · THE OPPORTUNITY ================= -->
+<section class="page">
+  <span class="kicker">What you're after</span>
+  <h2 class="sec">The <em>goal</em>.</h2>
+  <div class="body section-gap">
+    <p>You reached out about awareness: getting AiSensy in front of a large, relevant audience on Instagram. This is a short plan for exactly that.</p>
+    <p>My audience is <strong>344K people</strong> who follow me for AI tools, automation and running smarter businesses. A good share of them are founders, operators and small-business owners, people who already message customers on WhatsApp every day, which is who AiSensy is built for.</p>
+    <p>Awareness usually builds on repetition rather than a single impression. One reel gets seen; a short series gets remembered. That's the only reason there's more than one option later in this document, so you can pick how far you'd like to take it.</p>
+  </div>
+
+  <div class="mt-l">
+    <span class="kicker">Who you'd reach</span>
+    <div class="stats mt-s">
+      <div class="stat"><div class="stat__value">344<em>K</em></div><div class="stat__label">Followers</div></div>
+      <div class="stat"><div class="stat__value">AI &amp;<em></em></div><div class="stat__label">Automation niche</div></div>
+      <div class="stat"><div class="stat__value">India<em></em></div><div class="stat__label">Core audience</div></div>
+      <div class="stat"><div class="stat__value">Founders</div><div class="stat__label">Top audience segment</div></div>
+      <div class="stat"><div class="stat__value">Operators</div><div class="stat__label">Second segment</div></div>
+      <div class="stat"><div class="stat__value">SMBs</div><div class="stat__label">Third segment</div></div>
+    </div>
+    <p class="tiny mt-s">Full audience breakdown and analytics are on my site at theecomjet.com/insights.</p>
+  </div>
+
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>The goal &middot; 02</span>
+  </div>
+</section>
+
+<!-- ================= PAGE 3 · WHY ME ================= -->
+<section class="page">
+  <span class="kicker">A quick reason this fits</span>
+  <h2 class="sec">I already <em>use it</em>.</h2>
+
+  <div class="callout mt-s">
+    <svg class="callout__mark" viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M40 6 L45 33 L72 38 L45 43 L40 74 L35 43 L8 38 L35 33 Z" fill="#E55525" stroke="#1c1a17" stroke-width="2.5" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h3>AiSensy already runs in my own business.</h3>
+      <p>I use AiSensy for my skin clinic, WhatsApp reminders, booking confirmations and patient follow-ups. So when it comes up on camera, it isn't a script read, it's me showing a tool I actually use. <strong>That tends to land better than an ad</strong>, because the audience can tell the difference.</p>
+    </div>
+  </div>
+
+  <div class="body mt-l section-gap">
+    <p>It also means the content stays honest. I can show real use cases instead of talking around features, which is usually what makes people stop, save the reel, and remember the name later.</p>
+  </div>
+
+  <div class="mt-l">
+    <span class="kicker">Some recent numbers</span>
+    <h2 class="sec" style="margin-top:12px;">Recent <em>campaigns</em>.</h2>
+    <div class="stats mt-s">
+      <div class="stat"><div class="stat__value">6.4<em>M</em></div><div class="stat__label">Particl &middot; views</div></div>
+      <div class="stat"><div class="stat__value">5.3<em>M</em></div><div class="stat__label">LTX Studio &middot; views</div></div>
+      <div class="stat"><div class="stat__value">2.2<em>M</em></div><div class="stat__label">HeyGen &middot; views</div></div>
+      <div class="stat"><div class="stat__value">1<em>M+</em></div><div class="stat__label">Lindy &middot; views</div></div>
+      <div class="stat"><div class="stat__value">11<em>%</em></div><div class="stat__label">Best avg engagement</div></div>
+      <div class="stat"><div class="stat__value">5</div><div class="stat__label">Brands partnered</div></div>
+    </div>
+    <p class="tiny mt-s">Figures from Instagram Insights across recent AI-tool campaigns. Case-study links are on the following pages.</p>
+  </div>
+
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>Why me &middot; 03</span>
+  </div>
+</section>
+
+<!-- ================= PAGE 4 · ONE CAMPAIGN ================= -->
+<section class="page">
+  <span class="kicker">The unit</span>
+  <h2 class="sec">What one <em>campaign</em> includes.</h2>
+  <p class="body">Every option is priced per campaign. A campaign isn't only a video, it's a full push with a clear next step for anyone who's interested:</p>
+
+  <div class="deliver mt-m">
+    <div class="deliver__cell">
+      <span class="deliver__num">01</span>
+      <h4>The reel</h4>
+      <p>One fully scripted, shot and edited Instagram reel built around a real AiSensy use case.</p>
+    </div>
+    <div class="deliver__cell">
+      <span class="deliver__num">02</span>
+      <h4>Story frames</h4>
+      <p>A supporting story sequence to push the reel, add context and give a second touchpoint.</p>
+    </div>
+    <div class="deliver__cell">
+      <span class="deliver__num">03</span>
+      <h4>DM automation</h4>
+      <p>A keyword-triggered DM flow so interested viewers get your link automatically, no manual replies.</p>
+    </div>
+    <div class="deliver__cell">
+      <span class="deliver__num">04</span>
+      <h4>Bio link</h4>
+      <p>Your link featured in bio for the campaign window, so every profile visit has a clear next step.</p>
+    </div>
+  </div>
+
+  <div class="body mt-l section-gap">
+    <p>The DM automation and bio link matter here specifically, since AiSensy lives on WhatsApp. The natural next step for an interested viewer is a message, and the campaign is built to route them there.</p>
+  </div>
+
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>One campaign &middot; 04</span>
+  </div>
+</section>
+
+<!-- ================= PAGE 5 · OPTIONS ================= -->
+<section class="page">
+  <span class="kicker">The options</span>
+  <h2 class="sec">Partnership <em>options</em>.</h2>
+  <p class="body">Three ways in. The per-campaign rate comes down as the count goes up, so you can match it to your budget and how far you'd like to take the awareness push.</p>
+
+  <div class="tiers mt-l">
+    <div class="tier">
+      <div class="tier__campaigns">1 campaign</div>
+      <div class="tier__price">&#8377;2.5<em>L</em></div>
+      <div class="tier__unit">for one campaign</div>
+      <div class="tier__total">One reel, one push.</div>
+      <hr class="tier__rule">
+      <ul class="tier__list">
+        <li><span class="tick">&#10003;</span> 1 reel + story frames</li>
+        <li><span class="tick">&#10003;</span> DM automation + bio link</li>
+        <li><span class="tick">&#10003;</span> Performance report</li>
+      </ul>
+      <p class="tier__note">A good way to test the audience first.</p>
+    </div>
+
+    <div class="tier">
+      <div class="tier__campaigns">2 campaigns</div>
+      <div class="tier__price">&#8377;2.0<em>L</em></div>
+      <div class="tier__unit">per campaign</div>
+      <div class="tier__total">&#8377;4.0L total &middot; 2 reels</div>
+      <hr class="tier__rule">
+      <ul class="tier__list">
+        <li><span class="tick">&#10003;</span> Everything in a single campaign, &times;2</li>
+        <li><span class="tick">&#10003;</span> Two use cases, wider reach</li>
+        <li><span class="tick">&#10003;</span> Lower rate per campaign</li>
+      </ul>
+      <p class="tier__note">A second touch is where recall starts.</p>
+    </div>
+
+    <div class="tier tier--feature">
+      <span class="tier__flag">Best value</span>
+      <div class="tier__campaigns">3 campaigns</div>
+      <div class="tier__price">&#8377;1.8<em>L</em></div>
+      <div class="tier__unit">per campaign</div>
+      <div class="tier__total">&#8377;5.4L total &middot; 3 reels</div>
+      <hr class="tier__rule">
+      <ul class="tier__list">
+        <li><span class="tick">&#10003;</span> Everything in a single campaign, &times;3</li>
+        <li><span class="tick">&#10003;</span> Lowest per-campaign rate</li>
+        <li><span class="tick">&#10003;</span> Three use cases across the series</li>
+        <li><span class="tick">&#10003;</span> Priority scheduling</li>
+      </ul>
+      <p class="tier__note">The option I'd suggest for awareness.</p>
+    </div>
+  </div>
+
+  <div class="body mt-l section-gap">
+    <p>A single reel is a fine place to start if you'd like to test the audience. If awareness is the main goal, a short series usually does more, since the same people seeing AiSensy two or three times in different use cases is what makes it stick. No pressure either way.</p>
+  </div>
+
+  <p class="tiny mt-l">All prices in INR, exclusive of applicable taxes. A campaign = 1 reel + story frames + DM automation + bio link. Rates held for 30 days from the date on the cover.</p>
+
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>Options &middot; 05</span>
+  </div>
+</section>
+
+<!-- ================= PAGE 6 · PROOF (URLs) ================= -->
+<section class="page">
+  <span class="kicker">The detail, if you want it</span>
+  <h2 class="sec">Case <em>studies</em>.</h2>
+  <p class="body">Each of these is a full write-up on my site: what we made, who it was for, and how it performed. The links are live.</p>
+
+  <ul class="proof-list mt-m">
+    <li>
+      <span class="brand">Lindy AI <span>&middot; AI automation &middot; 1M+ views</span></span>
+      <span class="url">theecomjet.com/case-study-lindy</span>
+    </li>
+    <li>
+      <span class="brand">Particl AI <span>&middot; e-commerce intelligence &middot; 6.4M views</span></span>
+      <span class="url">theecomjet.com/case-study-particl</span>
+    </li>
+    <li>
+      <span class="brand">HeyGen <span>&middot; AI video &middot; 2.2M views</span></span>
+      <span class="url">theecomjet.com/case-study-heygen</span>
+    </li>
+    <li>
+      <span class="brand">LTX Studio <span>&middot; AI video production &middot; 5.3M views</span></span>
+      <span class="url">theecomjet.com/case-study-ltx</span>
+    </li>
+    <li>
+      <span class="brand">Emergent <span>&middot; no-code app building &middot; 454K views</span></span>
+      <span class="url">theecomjet.com/case-study-emergent</span>
+    </li>
+  </ul>
+
+  <div class="mt-l">
+    <span class="kicker">Brands I've partnered with</span>
+    <div class="logos mt-s">
+      <img src="logos/lindy-ai.svg" alt="Lindy AI">
+      <img src="logos/heygen.svg" alt="HeyGen">
+      <img src="logos/particl-ai.svg" alt="Particl AI">
+      <img src="logos/ltx-studio.svg" alt="LTX Studio">
+      <img src="logos/emergent.svg" alt="Emergent">
+    </div>
+  </div>
+
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>Case studies &middot; 06</span>
+  </div>
+</section>
+
+<!-- ================= PAGE 7 · PROCESS + CONTACT ================= -->
+<section class="page">
+  <span class="kicker">What happens next</span>
+  <h2 class="sec">How we'd <em>run it</em>.</h2>
+
+  <div class="steps mt-m">
+    <div class="step">
+      <div class="step__n">1</div>
+      <div class="step__t"><strong>Pick an option.</strong> Reply with the one that fits. If it's a series, we lock dates up front.</div>
+    </div>
+    <div class="step">
+      <div class="step__n">2</div>
+      <div class="step__t"><strong>Concepts.</strong> I send the use-case angle for each reel before shooting, so you know what's going out.</div>
+    </div>
+    <div class="step">
+      <div class="step__n">3</div>
+      <div class="step__t"><strong>Shoot &amp; ship.</strong> I handle scripting, filming and editing. You approve, then it goes live with the DM automation and bio link set up.</div>
+    </div>
+    <div class="step">
+      <div class="step__n">4</div>
+      <div class="step__t"><strong>Report.</strong> After each campaign you get the real numbers: views, engagement and link clicks.</div>
+    </div>
+  </div>
+
+  <div class="contact mt-l">
+    <div>
+      <h3>Happy to start whenever you are.</h3>
+      <p>Reply with the option you'd like, or just tell me what you're aiming for. Email: <a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a></p>
+    </div>
+    <a class="cbtn" href="mailto:kunwar@thecomjet.com?subject=AiSensy%20partnership">Reply to start &rarr;</a>
+  </div>
+
+  <div class="body mt-l">
+    <p class="tiny">Kunwar Deep &middot; @the_ecomjet &middot; theecomjet.com &middot; Prepared for AiSensy, July 2026.</p>
+  </div>
+
+  <div class="pg-foot">
+    <span class="logomark">Kunwar<em>Deep</em></span>
+    <span>Next steps &middot; 07</span>
+  </div>
+</section>
+
+</body>
+</html>
