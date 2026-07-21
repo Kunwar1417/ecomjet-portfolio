@@ -135,22 +135,6 @@ a.ins-handle:hover {
 .bar:nth-child(4) .bar__fill { background: var(--plum); }
 .bars.is-in .bar__fill { width: var(--w); }
 
-.geo {
-  display: grid; gap: 0;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-}
-.geo__row {
-  display: grid; grid-template-columns: 24px 1fr auto;
-  align-items: center; gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px dashed var(--rule);
-}
-.geo__row:last-child { border-bottom: none; }
-.geo__rank { font-family: var(--italic); font-style: italic; color: var(--orange); font-size: 22px; line-height: 1; }
-.geo__name { font-weight: 600; }
-.geo__pct { font-weight: 700; font-variant-numeric: tabular-nums; }
-
 /* Engagement quality grid */
 .eng-grid {
   display: grid;
@@ -364,13 +348,7 @@ a.ins-handle:hover {
         <p class="tiny muted" style="margin-top: 16px;">Surveyed via Instagram story polls and newsletter responses.</p>
       </div>
       <div>
-        <h3 style="margin: 0 0 18px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Where they are</h3>
-        <div class="geo">
-          <div class="geo__row"><span class="geo__rank">01</span><span class="geo__name">India &amp; South Asia</span><span class="geo__pct">70%</span></div>
-          <div class="geo__row"><span class="geo__rank">02</span><span class="geo__name">North America &amp; UK</span><span class="geo__pct">18%</span></div>
-          <div class="geo__row"><span class="geo__rank">03</span><span class="geo__name">Other (EU, UAE, AU)</span><span class="geo__pct">12%</span></div>
-        </div>
-        <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div>
             <h3 style="margin: 0 0 6px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;">Age band</h3>
             <div style="font-weight: 700; font-size: 22px; letter-spacing: -0.02em;">18 to 45</div>
