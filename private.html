@@ -50,30 +50,40 @@
 .p-group__count { font-size: 13px; color: var(--ink-3); font-weight: 600; }
 
 .p-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
-.p-card {
+/* The whole card is the link. */
+a.p-card {
   background: var(--paper);
   border: 1.5px solid var(--ink);
   border-radius: var(--r-sm);
   padding: 20px 22px;
   box-shadow: var(--shadow-card-sm);
   display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+  transition: transform 180ms cubic-bezier(.2,.7,.2,1), box-shadow 180ms;
 }
+a.p-card:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 0 var(--ink); }
+a.p-card:hover .p-card__link { color: var(--orange); }
 .p-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .p-card__link {
   font-size: 17px; font-weight: 800; letter-spacing: -0.02em;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition: color 180ms;
 }
-.p-card__link a { border-bottom: 1.5px solid var(--rule); }
-.p-card__link a:hover { color: var(--orange); border-bottom-color: var(--orange); }
 .p-card__what { font-size: 14.5px; color: var(--ink-2); line-height: 1.5; margin: 10px 0 0; }
+.p-card__what code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px; background: var(--cream-2);
+  padding: 2px 6px; border-radius: 5px; color: var(--ink-2);
+}
+/* Only the exception is tagged. Everything on this page is noindex by definition. */
 .p-card__tag {
   font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   padding: 4px 10px; border-radius: var(--r-pill);
-  border: 1.5px solid var(--ink); color: var(--ink);
+  background: var(--orange); border: 1.5px solid var(--ink); color: #fff;
   white-space: nowrap; flex-shrink: 0;
 }
-.p-card__tag.is-warn { background: var(--orange); color: #fff; }
-.p-card--warn { border-color: var(--orange); box-shadow: 4px 4px 0 0 var(--orange); }
+a.p-card--warn { border-color: var(--orange); box-shadow: 4px 4px 0 0 var(--orange); }
+a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
 
 .p-note { margin-top: 18px; font-size: 14px; color: var(--ink-3); line-height: 1.6; }
 .p-note code {
@@ -105,7 +115,7 @@
 <header class="wrap p-head">
   <span class="kicker">Private index</span>
   <h1 class="display h3">Every page not linked from the <em>site</em>.</h1>
-  <p class="lede">These pages are live and anyone with the URL can open them. They stay unlisted because nothing links to them and each one carries a noindex tag, not because they are password protected.</p>
+  <p class="lede">These pages are live and anyone with the URL can open them. They stay unlisted because nothing links to them, not because they are password protected. Anything tagged below is an exception worth fixing.</p>
 
   <div class="p-warn">
     <span class="p-warn__i">!</span>
@@ -123,20 +133,18 @@
       <span class="p-group__count">For your use, never sent to anyone</span>
     </div>
     <div class="p-cards">
-      <div class="p-card">
+      <a class="p-card" href="/invoice">
         <div class="p-card__top">
-          <div class="p-card__link"><a href="/invoice">/invoice</a></div>
-          <span class="p-card__tag">noindex</span>
+          <span class="p-card__link">/invoice</span>
         </div>
         <p class="p-card__what">Invoice generator. Builds and prints a client invoice.</p>
-      </div>
-      <div class="p-card">
+      </a>
+      <a class="p-card" href="/private">
         <div class="p-card__top">
-          <div class="p-card__link"><a href="/private">/private</a></div>
-          <span class="p-card__tag">noindex</span>
+          <span class="p-card__link">/private</span>
         </div>
         <p class="p-card__what">This page. The index of everything unlisted.</p>
-      </div>
+      </a>
     </div>
   </section>
 
@@ -147,20 +155,19 @@
       <span class="p-group__count">Shared deliberately, one recipient at a time</span>
     </div>
     <div class="p-cards">
-      <div class="p-card">
+      <a class="p-card" href="/rates">
         <div class="p-card__top">
-          <div class="p-card__link"><a href="/rates">/rates</a></div>
-          <span class="p-card__tag">noindex</span>
+          <span class="p-card__link">/rates</span>
         </div>
         <p class="p-card__what">Rate card. For cold or early pricing questions, before a full proposal is worth building.</p>
-      </div>
-      <div class="p-card p-card--warn">
+      </a>
+      <a class="p-card p-card--warn" href="/media-kit">
         <div class="p-card__top">
-          <div class="p-card__link"><a href="/media-kit">/media-kit</a></div>
-          <span class="p-card__tag is-warn">indexable</span>
+          <span class="p-card__link">/media-kit</span>
+          <span class="p-card__tag">indexable</span>
         </div>
         <p class="p-card__what">Media kit as a web page. Not the same as the <code>media-kit.pdf</code> the nav links to.</p>
-      </div>
+      </a>
     </div>
     <p class="p-note"><strong>/media-kit has no noindex tag.</strong> It is live and Google is free to index it if it ever finds the URL. Decide whether it should be public (add it to <code>sitemap.xml</code>) or private (add the noindex meta and a <code>robots.txt</code> line), then update this card.</p>
   </section>
