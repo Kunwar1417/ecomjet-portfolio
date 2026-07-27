@@ -49,7 +49,7 @@
 .p-group__head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
 .p-group__count { font-size: 13px; color: var(--ink-3); font-weight: 600; }
 
-.p-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+.p-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
 /* The whole card is the link. */
 a.p-card {
   background: var(--paper);
@@ -63,7 +63,7 @@ a.p-card {
 }
 a.p-card:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 0 var(--ink); }
 a.p-card:hover .p-card__link { color: var(--orange); }
-.p-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.p-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .p-card__link {
   font-size: 17px; font-weight: 800; letter-spacing: -0.02em;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -102,7 +102,10 @@ a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
   padding: 2px 6px; border-radius: 5px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 820px) {
+  .p-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
   .p-cards { grid-template-columns: 1fr; gap: 14px; }
 }
 @media (max-width: 760px) {
@@ -126,40 +129,24 @@ a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
 <div class="wrap">
 <div class="p-body">
 
-  <!-- ============ TOOLS ============ -->
+  <!-- ============ LIVE PRIVATE PAGES ============ -->
   <section class="p-group">
     <div class="p-group__head">
-      <h2>Tools</h2>
-      <span class="p-group__count">For your use, never sent to anyone</span>
+      <h2>Live pages</h2>
+      <span class="p-group__count">Reachable by anyone with the URL</span>
     </div>
     <div class="p-cards">
       <a class="p-card" href="/invoice">
         <div class="p-card__top">
           <span class="p-card__link">/invoice</span>
         </div>
-        <p class="p-card__what">Invoice generator. Builds and prints a client invoice.</p>
+        <p class="p-card__what">Invoice generator. For your use, never sent to a brand.</p>
       </a>
-      <a class="p-card" href="/private">
-        <div class="p-card__top">
-          <span class="p-card__link">/private</span>
-        </div>
-        <p class="p-card__what">This page. The index of everything unlisted.</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- ============ SENT TO BRANDS ============ -->
-  <section class="p-group">
-    <div class="p-group__head">
-      <h2>Sent to brands</h2>
-      <span class="p-group__count">Shared deliberately, one recipient at a time</span>
-    </div>
-    <div class="p-cards">
       <a class="p-card" href="/rates">
         <div class="p-card__top">
           <span class="p-card__link">/rates</span>
         </div>
-        <p class="p-card__what">Rate card. For cold or early pricing questions, before a full proposal is worth building.</p>
+        <p class="p-card__what">Rate card. Sent for cold or early pricing questions, before a full proposal is worth building.</p>
       </a>
       <a class="p-card p-card--warn" href="/media-kit">
         <div class="p-card__top">
