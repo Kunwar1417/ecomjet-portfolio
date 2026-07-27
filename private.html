@@ -92,15 +92,7 @@ a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
   padding: 2px 6px; border-radius: 5px;
 }
 
-.p-check { margin-top: 60px; padding-bottom: 90px; }
-.p-check ol { margin: 20px 0 0; padding-left: 22px; }
-.p-check li { font-size: 15px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
-.p-check li strong { color: var(--ink); }
-.p-check code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12.5px; background: var(--cream-2);
-  padding: 2px 6px; border-radius: 5px;
-}
+.p-last { padding-bottom: 96px; }
 
 @media (max-width: 820px) {
   .p-cards { grid-template-columns: repeat(2, 1fr); }
@@ -122,7 +114,7 @@ a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
 
   <div class="p-warn">
     <span class="p-warn__i">!</span>
-    <p><strong>This page is private too.</strong> Do not link to it from anywhere, and do not send it to a brand. If you want this list somewhere safer, keep it in a note app instead and delete this file.</p>
+    <p><strong>This page is private too.</strong> Do not link to it from anywhere, and do not send it to a brand.</p>
   </div>
 </header>
 
@@ -160,37 +152,12 @@ a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
   </section>
 
   <!-- ============ PROPOSALS ============ -->
-  <section class="p-group">
+  <section class="p-group p-last">
     <div class="p-group__head">
       <h2>Proposals</h2>
-      <span class="p-group__count">Local only, not deployed</span>
+      <span class="p-group__count">Not deployed</span>
     </div>
-    <p class="p-note" style="margin-top: 20px;">Per-brand pitch decks live in the repo as <code>proposal-{brand}-print.html</code> and are usually exported to PDF and emailed rather than deployed. They all carry noindex. As of today none of them are live, they return 404. If you ever deploy one, it becomes a real URL and belongs in this list.</p>
-    <p class="p-note"><strong>Why this matters most here.</strong> Each proposal names a brand and quotes a price. If one brand finds another brand's proposal, your whole pricing ladder is visible and every future negotiation starts from your lowest number. Keep them out of the deployed site unless you have a reason.</p>
-  </section>
-
-  <!-- ============ HOW TO KEEP THIS TRUE ============ -->
-  <section class="p-check">
-    <div class="p-group__head">
-      <h2>Adding a new private page</h2>
-      <span class="p-group__count">Four steps, all required</span>
-    </div>
-    <ol>
-      <li>Put <code>&lt;meta name="robots" content="noindex, nofollow" /&gt;</code> in the head, directly under the viewport tag. <strong>This is the one that actually works</strong>, since it tells search engines not to list the page even if they reach it some other way.</li>
-      <li>Add a <code>Disallow:</code> line to <code>robots.txt</code> for both the clean path and the <code>.html</code> one.</li>
-      <li>Keep it out of <code>sitemap.xml</code>, which should only ever list public pages.</li>
-      <li><strong>Add a card to this page</strong>, so the list stays complete.</li>
-    </ol>
-
-    <div class="p-group__head" style="margin-top: 52px;">
-      <h2>Checking nothing leaked</h2>
-      <span class="p-group__count">Worth doing every few months</span>
-    </div>
-    <ol>
-      <li>Search Google for <code>site:theecomjet.com</code> and read the results. Only public pages should appear.</li>
-      <li>If a private page shows up, <strong>robots.txt will not remove it</strong>. Blocking the crawl stops Google from ever seeing the noindex tag. Use the removal tool in Search Console instead.</li>
-      <li>From the repo, <code>grep -L 'name="robots"' *.html</code> lists every page missing a noindex tag. Cross-check anything unexpected against this list.</li>
-    </ol>
+    <p class="p-note" style="margin-top: 20px;">The per-brand pitch decks (<code>proposal-{brand}-print.html</code>) live in the repo only. They are emailed as PDFs, not put on the site, so none of them have a URL. If one is ever deployed it belongs in the list above.</p>
   </section>
 
 </div>

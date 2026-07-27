@@ -32,7 +32,13 @@
 
 ⚠️ `media-kit.html` is live and has **no** `noindex`, and nothing links to it. Decide whether it is public or private, then fix it either way. Tracked on `/private`.
 
-**Making a page private:** noindex meta + `robots.txt` line + keep out of `sitemap.xml` + add a row to `private.html`. All four.
+**Making a page private:** all four, in order of what actually matters:
+1. `<meta name="robots" content="noindex, nofollow" />` in the head, under the viewport tag. **This is the one that works** (it stops listing even if a crawler reaches the page another way).
+2. A `Disallow:` line in `robots.txt` for both the clean path and the `.html` one.
+3. Keep it out of `sitemap.xml`.
+4. Add a card to `private.html` so the index stays complete.
+
+**Auditing:** `grep -L 'name="robots"' *.html` lists pages with no noindex tag. Search `site:theecomjet.com` to see what Google actually has. If a private page is already indexed, `robots.txt` will not remove it (blocking the crawl prevents Google from seeing the noindex); use Search Console removal.
 
 **Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice and rates tools live.
 
