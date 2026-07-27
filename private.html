@@ -16,17 +16,16 @@
    For Kunwar only. noindex, and linked from nowhere.
    ============================================================ */
 
-.p-head { padding-top: 76px; }
+.p-head { padding-top: 76px; max-width: 880px; }
 .p-head h1 { margin-top: 22px; }
-.p-head .lede { margin-top: 20px; max-width: 62ch; }
+.p-head .lede { margin-top: 20px; font-size: 18px; }
 
 .p-warn {
   display: flex; gap: 14px; align-items: flex-start;
-  margin-top: 32px; padding: 18px 22px;
+  margin-top: 30px; padding: 18px 22px;
   background: var(--cream-2);
   border: 1.5px solid var(--ink);
   border-radius: var(--r-sm);
-  max-width: 74ch;
 }
 .p-warn__i {
   flex-shrink: 0;
@@ -39,44 +38,52 @@
 .p-warn p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
 .p-warn strong { color: var(--ink); }
 
-.p-group { margin-top: 56px; }
+/* Everything below the header sits in a readable column, never full width. */
+.p-body { max-width: 880px; }
+
+.p-group { margin-top: 52px; }
 .p-group__head {
   display: flex; align-items: baseline; gap: 14px;
-  padding-bottom: 14px; border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 13px; border-bottom: 1.5px solid var(--ink);
 }
-.p-group__head h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+.p-group__head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
 .p-group__count { font-size: 13px; color: var(--ink-3); font-weight: 600; }
 
-.p-row {
-  display: grid;
-  grid-template-columns: 1.1fr 1.6fr auto;
-  gap: 28px;
-  align-items: baseline;
-  padding: 17px 0;
-  border-bottom: 1px solid var(--rule);
+.p-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+.p-card {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-sm);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-card-sm);
+  display: flex; flex-direction: column;
 }
-.p-row__link { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
-.p-row__link a { border-bottom: 1.5px solid var(--rule); }
-.p-row__link a:hover { color: var(--orange); border-bottom-color: var(--orange); }
-.p-row__what { font-size: 14.5px; color: var(--ink-2); line-height: 1.5; }
-.p-row__tag {
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 4px 11px; border-radius: var(--r-pill);
-  border: 1px solid var(--rule); color: var(--ink-3);
-  white-space: nowrap;
+.p-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.p-card__link {
+  font-size: 17px; font-weight: 800; letter-spacing: -0.02em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.p-row__tag.is-ok { border-color: var(--ink); color: var(--ink); }
-.p-row__tag.is-warn { background: var(--orange); border-color: var(--ink); color: #fff; }
+.p-card__link a { border-bottom: 1.5px solid var(--rule); }
+.p-card__link a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+.p-card__what { font-size: 14.5px; color: var(--ink-2); line-height: 1.5; margin: 10px 0 0; }
+.p-card__tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  border: 1.5px solid var(--ink); color: var(--ink);
+  white-space: nowrap; flex-shrink: 0;
+}
+.p-card__tag.is-warn { background: var(--orange); color: #fff; }
+.p-card--warn { border-color: var(--orange); box-shadow: 4px 4px 0 0 var(--orange); }
 
-.p-note { margin-top: 18px; font-size: 14px; color: var(--ink-3); line-height: 1.6; max-width: 74ch; }
+.p-note { margin-top: 18px; font-size: 14px; color: var(--ink-3); line-height: 1.6; }
 .p-note code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12.5px; background: var(--cream-2);
   padding: 2px 6px; border-radius: 5px;
 }
 
-.p-check { margin-top: 64px; padding-bottom: 90px; }
-.p-check ol { margin: 20px 0 0; padding-left: 22px; max-width: 74ch; }
+.p-check { margin-top: 60px; padding-bottom: 90px; }
+.p-check ol { margin: 20px 0 0; padding-left: 22px; }
 .p-check li { font-size: 15px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
 .p-check li strong { color: var(--ink); }
 .p-check code {
@@ -85,9 +92,8 @@
   padding: 2px 6px; border-radius: 5px;
 }
 
-@media (max-width: 860px) {
-  .p-row { grid-template-columns: 1fr auto; gap: 10px 20px; }
-  .p-row__what { grid-column: 1 / -1; }
+@media (max-width: 700px) {
+  .p-cards { grid-template-columns: 1fr; gap: 14px; }
 }
 @media (max-width: 760px) {
   .p-head { padding-top: 48px; }
@@ -107,83 +113,94 @@
   </div>
 </header>
 
-<!-- ============ TOOLS ============ -->
-<section class="wrap p-group">
-  <div class="p-group__head">
-    <h2>Tools</h2>
-    <span class="p-group__count">For your use, never sent to anyone</span>
-  </div>
+<div class="wrap">
+<div class="p-body">
 
-  <div class="p-row">
-    <div class="p-row__link"><a href="/invoice">/invoice</a></div>
-    <div class="p-row__what">Invoice generator. Builds and prints a client invoice.</div>
-    <div class="p-row__tag is-ok">noindex</div>
-  </div>
+  <!-- ============ TOOLS ============ -->
+  <section class="p-group">
+    <div class="p-group__head">
+      <h2>Tools</h2>
+      <span class="p-group__count">For your use, never sent to anyone</span>
+    </div>
+    <div class="p-cards">
+      <div class="p-card">
+        <div class="p-card__top">
+          <div class="p-card__link"><a href="/invoice">/invoice</a></div>
+          <span class="p-card__tag">noindex</span>
+        </div>
+        <p class="p-card__what">Invoice generator. Builds and prints a client invoice.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-card__top">
+          <div class="p-card__link"><a href="/private">/private</a></div>
+          <span class="p-card__tag">noindex</span>
+        </div>
+        <p class="p-card__what">This page. The index of everything unlisted.</p>
+      </div>
+    </div>
+  </section>
 
-  <div class="p-row">
-    <div class="p-row__link"><a href="/private">/private</a></div>
-    <div class="p-row__what">This page. The index of everything unlisted.</div>
-    <div class="p-row__tag is-ok">noindex</div>
-  </div>
-</section>
+  <!-- ============ SENT TO BRANDS ============ -->
+  <section class="p-group">
+    <div class="p-group__head">
+      <h2>Sent to brands</h2>
+      <span class="p-group__count">Shared deliberately, one recipient at a time</span>
+    </div>
+    <div class="p-cards">
+      <div class="p-card">
+        <div class="p-card__top">
+          <div class="p-card__link"><a href="/rates">/rates</a></div>
+          <span class="p-card__tag">noindex</span>
+        </div>
+        <p class="p-card__what">Rate card. For cold or early pricing questions, before a full proposal is worth building.</p>
+      </div>
+      <div class="p-card p-card--warn">
+        <div class="p-card__top">
+          <div class="p-card__link"><a href="/media-kit">/media-kit</a></div>
+          <span class="p-card__tag is-warn">indexable</span>
+        </div>
+        <p class="p-card__what">Media kit as a web page. Not the same as the <code>media-kit.pdf</code> the nav links to.</p>
+      </div>
+    </div>
+    <p class="p-note"><strong>/media-kit has no noindex tag.</strong> It is live and Google is free to index it if it ever finds the URL. Decide whether it should be public (add it to <code>sitemap.xml</code>) or private (add the noindex meta and a <code>robots.txt</code> line), then update this card.</p>
+  </section>
 
-<!-- ============ SENT TO BRANDS ============ -->
-<section class="wrap p-group">
-  <div class="p-group__head">
-    <h2>Sent to brands</h2>
-    <span class="p-group__count">Shared deliberately, one recipient at a time</span>
-  </div>
+  <!-- ============ PROPOSALS ============ -->
+  <section class="p-group">
+    <div class="p-group__head">
+      <h2>Proposals</h2>
+      <span class="p-group__count">Local only, not deployed</span>
+    </div>
+    <p class="p-note" style="margin-top: 20px;">Per-brand pitch decks live in the repo as <code>proposal-{brand}-print.html</code> and are usually exported to PDF and emailed rather than deployed. They all carry noindex. As of today none of them are live, they return 404. If you ever deploy one, it becomes a real URL and belongs in this list.</p>
+    <p class="p-note"><strong>Why this matters most here.</strong> Each proposal names a brand and quotes a price. If one brand finds another brand's proposal, your whole pricing ladder is visible and every future negotiation starts from your lowest number. Keep them out of the deployed site unless you have a reason.</p>
+  </section>
 
-  <div class="p-row">
-    <div class="p-row__link"><a href="/rates">/rates</a></div>
-    <div class="p-row__what">Rate card. For cold or early pricing questions, before a full proposal is worth building.</div>
-    <div class="p-row__tag is-ok">noindex</div>
-  </div>
+  <!-- ============ HOW TO KEEP THIS TRUE ============ -->
+  <section class="p-check">
+    <div class="p-group__head">
+      <h2>Adding a new private page</h2>
+      <span class="p-group__count">Four steps, all required</span>
+    </div>
+    <ol>
+      <li>Put <code>&lt;meta name="robots" content="noindex, nofollow" /&gt;</code> in the head, directly under the viewport tag. <strong>This is the one that actually works</strong>, since it tells search engines not to list the page even if they reach it some other way.</li>
+      <li>Add a <code>Disallow:</code> line to <code>robots.txt</code> for both the clean path and the <code>.html</code> one.</li>
+      <li>Keep it out of <code>sitemap.xml</code>, which should only ever list public pages.</li>
+      <li><strong>Add a card to this page</strong>, so the list stays complete.</li>
+    </ol>
 
-  <div class="p-row">
-    <div class="p-row__link"><a href="/media-kit">/media-kit</a></div>
-    <div class="p-row__what">Media kit as a web page. Not the same as the <code>media-kit.pdf</code> download that the nav links to.</div>
-    <div class="p-row__tag is-warn">indexable</div>
-  </div>
+    <div class="p-group__head" style="margin-top: 52px;">
+      <h2>Checking nothing leaked</h2>
+      <span class="p-group__count">Worth doing every few months</span>
+    </div>
+    <ol>
+      <li>Search Google for <code>site:theecomjet.com</code> and read the results. Only public pages should appear.</li>
+      <li>If a private page shows up, <strong>robots.txt will not remove it</strong>. Blocking the crawl stops Google from ever seeing the noindex tag. Use the removal tool in Search Console instead.</li>
+      <li>From the repo, <code>grep -L 'name="robots"' *.html</code> lists every page missing a noindex tag. Cross-check anything unexpected against this list.</li>
+    </ol>
+  </section>
 
-  <p class="p-note"><strong>/media-kit has no noindex tag.</strong> It is live and Google is free to index it if it ever finds the URL. Decide whether it should be public (add it to <code>sitemap.xml</code>) or private (add the noindex meta and a <code>robots.txt</code> line), then update this row.</p>
-</section>
-
-<!-- ============ PROPOSALS ============ -->
-<section class="wrap p-group">
-  <div class="p-group__head">
-    <h2>Proposals</h2>
-    <span class="p-group__count">Local only, not deployed</span>
-  </div>
-
-  <p class="p-note" style="margin-top: 20px;">Per-brand pitch decks live in the repo as <code>proposal-{brand}-print.html</code> and are usually exported to PDF and emailed rather than deployed. They all carry noindex. As of today none of them are live, they return 404. If you ever deploy one, it becomes a real URL and belongs in this list.</p>
-
-  <p class="p-note"><strong>Why this matters most here.</strong> Each proposal names a brand and quotes a price. If one brand finds another brand's proposal, your whole pricing ladder is visible and every future negotiation starts from your lowest number. Keep them out of the deployed site unless you have a reason.</p>
-</section>
-
-<!-- ============ HOW TO KEEP THIS TRUE ============ -->
-<section class="wrap p-check">
-  <div class="p-group__head">
-    <h2>Adding a new private page</h2>
-    <span class="p-group__count">Four steps, all required</span>
-  </div>
-  <ol>
-    <li>Put <code>&lt;meta name="robots" content="noindex, nofollow" /&gt;</code> in the head, directly under the viewport tag. <strong>This is the one that actually works</strong>, since it tells search engines not to list the page even if they reach it some other way.</li>
-    <li>Add a <code>Disallow:</code> line to <code>robots.txt</code> for both the clean path and the <code>.html</code> one.</li>
-    <li>Keep it out of <code>sitemap.xml</code>, which should only ever list public pages.</li>
-    <li><strong>Add a row to this page</strong>, so the list stays complete.</li>
-  </ol>
-
-  <div class="p-group__head" style="margin-top: 52px;">
-    <h2>Checking nothing leaked</h2>
-    <span class="p-group__count">Worth doing every few months</span>
-  </div>
-  <ol>
-    <li>Search Google for <code>site:theecomjet.com</code> and read the results. Only public pages should appear.</li>
-    <li>If a private page shows up, <strong>robots.txt will not remove it</strong>. Blocking the crawl stops Google from ever seeing the noindex tag. Use the removal tool in Search Console instead.</li>
-    <li>From the repo, <code>grep -L 'name="robots"' *.html</code> lists every page missing a noindex tag. Cross-check anything unexpected against this list.</li>
-  </ol>
-</section>
+</div>
+</div>
 
 <!-- Edit-mode defaults persisted by host -->
 <script>
