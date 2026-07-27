@@ -5,6 +5,8 @@ Allow: /
 # Each of these also carries a noindex meta tag.
 Disallow: /invoice
 Disallow: /invoice.html
+Disallow: /media-kit
+Disallow: /media-kit.html
 Disallow: /rates
 Disallow: /rates.html
 Disallow: /private

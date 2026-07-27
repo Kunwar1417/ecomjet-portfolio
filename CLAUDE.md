@@ -29,8 +29,17 @@
 | `invoice.html` | Invoice generator. See docs/invoice-tool.md. |
 | `rates.html` | Rate card at `/rates`, sent for cold/early pricing questions. Carries the site nav + footer (outbound links only, which does not make it discoverable). Warm inquiries get a full proposal instead. See docs/proposals.md. |
 | `proposal-{brand}-print.html` | Per-brand pitch pages (landscape PDF). Built from `proposal-template-print.html`. Usually exported to PDF and emailed, **not deployed**. See docs/proposals.md. |
+| `media-kit.html` | Source for the downloadable `media-kit.pdf`. 6-page Letter layout. The "Get the media kit" buttons link to the **PDF**, never to this page. To update the kit: edit here, then re-print (see below). |
 
-⚠️ `media-kit.html` is live and has **no** `noindex`, and nothing links to it. Decide whether it is public or private, then fix it either way. Tracked on `/private`.
+**Re-printing `media-kit.pdf`** (no Chrome in /Applications; use the puppeteer-cached Chrome):
+```sh
+python3 -m http.server 8899          # serve root, so fonts + images load
+~/.cache/puppeteer/chrome-headless-shell/*/chrome-headless-shell-mac-arm64/chrome-headless-shell \
+  --no-sandbox --disable-gpu --hide-scrollbars --force-color-profile=srgb \
+  --user-data-dir=/tmp/cdp-mk --no-pdf-header-footer --virtual-time-budget=15000 \
+  --print-to-pdf=media-kit.pdf http://localhost:8899/media-kit.html
+```
+`@page { size: Letter; margin: 0 }` in the file drives page size, so pass no paper flags. The full-Chrome `--headless=new` + CDP `Page.printToPDF` route hangs on this page; the headless-shell binary above works.
 
 **Making a page private:** all four, in order of what actually matters:
 1. `<meta name="robots" content="noindex, nofollow" />` in the head, under the viewport tag. **This is the one that works** (it stops listing even if a crawler reaches the page another way).
