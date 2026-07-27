@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
+<title>Working together · Kunwar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=2" />
+<style>
+/* ============================================================
+   Working together, private page at /rates.
+   Sent on request. Not linked from nav or footer anywhere.
+   ============================================================ */
+
+/* ---------- Header: heading left, audience proof right ---------- */
+.r-head { padding-top: 76px; }
+.r-head h1 { margin-top: 24px; max-width: 20ch; }
+.r-head .lede { margin-top: 22px; max-width: 58ch; }
+
+/* ---------- The two options ---------- */
+.pkgs {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.pkg {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-md);
+  padding: 34px 36px 30px;
+  box-shadow: var(--shadow-card-sm);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.pkg--f { background: var(--dark); color: var(--dark-text); box-shadow: var(--shadow-card); }
+.pkg--q { background: var(--cream-2); box-shadow: none; }
+.pkg__flag {
+  position: absolute; top: -13px; left: 30px;
+  background: var(--orange); color: #fff;
+  border: 1.5px solid var(--ink); border-radius: var(--r-pill);
+  padding: 5px 15px;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.pkg__name { font-size: 32px; font-weight: 800; letter-spacing: -0.025em; line-height: 1; }
+.pkg--f .pkg__name { color: var(--dark-text); }
+.pkg__for {
+  font-size: 15px; color: var(--ink-2); margin-top: 12px; line-height: 1.5; max-width: 34ch;
+}
+.pkg--f .pkg__for { color: var(--dark-text-2); }
+.pkg__rule { border: none; border-top: 1px solid var(--rule); margin: 24px 0; }
+.pkg--f .pkg__rule { border-top-color: rgba(255,255,255,0.16); }
+.pkg ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.pkg li { position: relative; padding-left: 22px; font-size: 15.5px; line-height: 1.5; color: var(--ink-2); }
+.pkg--f li { color: var(--dark-text-2); }
+.pkg li::before { content: "+"; position: absolute; left: 0; top: 0; color: var(--orange); font-weight: 800; }
+.pkg li strong { color: var(--ink); font-weight: 700; }
+.pkg--f li strong { color: var(--dark-text); }
+.pkg__price {
+  margin-top: 28px; padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.pkg--f .pkg__price { border-top-color: rgba(255,255,255,0.16); }
+.pkg__amt { font-size: 38px; font-weight: 800; color: var(--ink); letter-spacing: -0.03em; line-height: 1; }
+.pkg--f .pkg__amt { color: var(--dark-text); }
+.pkg__cur { font-size: 13px; font-weight: 700; color: var(--ink-3); letter-spacing: 0.04em; }
+.pkg--f .pkg__cur { color: var(--dark-text-2); }
+.pkg__unit { font-size: 14px; color: var(--ink-3); margin-top: 10px; }
+.pkg--f .pkg__unit { color: var(--dark-text-2); }
+
+/* ---------- Add-ons: narrow column, deliberately not full width ---------- */
+.addons-layout {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 80px;
+  align-items: start;
+}
+.addons-intro { position: sticky; top: 104px; }
+.addons { border-top: 1px solid var(--rule); }
+.addon {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: baseline;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.addon__name { font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; }
+.addon__what { font-size: 14.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+.addon__price { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; }
+.addon__price.is-tbd { color: var(--ink-3); font-weight: 600; font-size: 14px; font-style: italic; }
+
+/* ---------- Process: connected timeline, no boxes ---------- */
+.proc {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 36px;
+  margin-top: 52px;
+  position: relative;
+}
+.proc::before {
+  content: ""; position: absolute; top: 15px; left: 0; right: 0;
+  height: 1.5px; background: var(--rule); z-index: 0;
+}
+.proc-step { position: relative; z-index: 1; padding-right: 14px; }
+.proc-step .n {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--orange); color: #fff;
+  border: 1.5px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--italic); font-style: italic; font-size: 18px;
+  line-height: 1; margin-bottom: 18px;
+}
+.proc-step h4 { margin: 0 0 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+.proc-step p { margin: 0; font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+
+/* ---------- Brands: light band, static grid ---------- */
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-top: 44px;
+}
+.wall-tile {
+  height: 92px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 20px;
+}
+/* Most logo files ship as white-on-transparent for the dark home page wall.
+   invert(1) flips the white artwork to black and leaves transparency alone. */
+.wall-tile img {
+  height: 30px; width: auto; max-width: 100%;
+  object-fit: contain;
+  filter: invert(1);
+  opacity: 0.82;
+}
+/* Already dark artwork, so it only needs toning down to match. */
+.wall-tile img.is-dark { filter: grayscale(1) brightness(0.25) contrast(1.1); opacity: 0.82; }
+/* Symbol-only marks get the name set alongside them. */
+.wall-tile--lockup { gap: 10px; }
+.wall-tile--lockup img { height: 24px; }
+.wall-tile--lockup span {
+  font-size: 19px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); opacity: 0.82;
+}
+.wall-note { margin-top: 26px; font-size: 15px; color: var(--ink-3); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .addons-layout { grid-template-columns: 1fr; gap: 36px; }
+  .addons-intro { position: static; }
+  .wall-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 860px) {
+  .pkgs { grid-template-columns: 1fr; gap: 28px; }
+  .proc { grid-template-columns: repeat(2, 1fr); gap: 32px 28px; }
+  .proc::before { display: none; }
+}
+@media (max-width: 760px) {
+  .r-head { padding-top: 44px; }
+  .pkg { padding: 28px 26px 26px; }
+  .pkg__name { font-size: 27px; }
+  .pkg__amt { font-size: 33px; }
+  .wall-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .wall-tile { height: 72px; border-radius: 10px; padding: 12px; }
+  .wall-tile img { height: 24px; }
+}
+@media (max-width: 560px) {
+  .proc { grid-template-columns: 1fr; gap: 28px; }
+  .addon { grid-template-columns: 1fr; gap: 6px; }
+  .wall-grid { grid-template-columns: repeat(2, 1fr); }
+  .wall-tile--lockup span { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo" aria-label="Kunwar Deep"><span class="logomark">Kunwar<em>Deep</em></span><span class="nav__handle">· @the_ecomjet</span></a>
+    <div class="nav__links">
+      <a href="/">Home</a>
+      <a href="/#work">Work</a>
+      <a href="case-studies">Case Studies</a>
+      <a href="insights">Insights</a>
+      <a href="/#about">About</a>
+    </div>
+    <button class="nav__hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav__cta-group">
+      <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener" class="ig-link" aria-label="Instagram @the_ecomjet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      </a>
+      <a href="media-kit.pdf" class="btn btn--ghost nav__cta mediakit-dl" download>Get the media kit</a>
+    </div>
+  </div>
+  <div class="nav__mobile">
+    <a href="/">Home</a>
+    <a href="/#work">Work</a>
+    <a href="case-studies">Case Studies</a>
+    <a href="insights">Insights</a>
+    <a href="/#about">About</a>
+    <a href="media-kit.pdf" class="btn btn--primary" style="margin-top:8px;text-align:center;" download>Get the media kit</a>
+  </div>
+</nav>
+
+<!-- ============ HEADER ============ -->
+<header class="wrap r-head">
+  <div class="reveal">
+    <span class="kicker">Working together</span>
+    <h1 class="display h2">Two ways to put your product in <em>front</em> of my audience.</h1>
+    <p class="lede">They are founders and marketers actively investing in tools for their business, the ones who try, buy and then recommend what they find.</p>
+  </div>
+</header>
+
+<!-- ============ THE TWO OPTIONS ============ -->
+<section class="wrap" style="padding-top: 56px;">
+  <div class="pkgs reveal">
+
+    <div class="pkg pkg--f">
+      <span class="pkg__flag">Recommended</span>
+      <div class="pkg__name">The Series</div>
+      <p class="pkg__for">Repetition builds memory, and memory is what drives action. Three videos over three months keeps you in front of people while they are still deciding.</p>
+      <hr class="pkg__rule">
+      <ul>
+        <li><strong>3 videos</strong>, one a month</li>
+        <li><strong>3 story sets</strong>, one per video</li>
+        <li><strong>Bio link</strong> for the full three months</li>
+        <li><strong>AutoDM</strong> on each video, so interested viewers get your link in their inbox</li>
+        <li><strong>Organic usage rights</strong>, so you can repost each video on your own channels</li>
+        <li>Concepts sent for your sign-off before anything gets filmed</li>
+        <li><strong>Detailed performance report</strong> after each one, so we can adjust as we go</li>
+      </ul>
+      <div class="pkg__price">
+        <span class="pkg__amt">$10,500</span>
+        <span class="pkg__cur">USD</span>
+      </div>
+      <div class="pkg__unit">$3,500 a video</div>
+    </div>
+
+    <div class="pkg pkg--q">
+      <div class="pkg__name">Starter</div>
+      <p class="pkg__for">Built around one launch, one feature or one campaign, and live quickly, with the numbers to show how my audience took to it.</p>
+      <hr class="pkg__rule">
+      <ul>
+        <li><strong>1 video</strong> on @the_ecomjet</li>
+        <li><strong>1 story set</strong> on the day it goes live</li>
+        <li><strong>Bio link</strong> for the week</li>
+        <li><strong>AutoDM</strong>, so interested viewers get your link in their inbox</li>
+        <li>Concept sent for your sign-off before filming</li>
+        <li><strong>Detailed performance report</strong> once it has run</li>
+      </ul>
+      <div class="pkg__price">
+        <span class="pkg__amt">$4,000</span>
+        <span class="pkg__cur">USD</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ ADD-ONS ============ -->
+<section class="wrap" style="padding-top: 96px;">
+  <div class="addons-layout">
+    <div class="addons-intro reveal">
+      <span class="kicker">Add-ons</span>
+      <h2 class="display h3" style="margin-top: 20px;">Extras, if you <em>need</em> them.</h2>
+      <p class="lede" style="margin-top: 18px; font-size: 17px;">None of these are required. They are the requests that come up most often, so it is easier to list them than to work them out later.</p>
+    </div>
+
+    <div class="addons reveal">
+      <div class="addon">
+        <div>
+          <div class="addon__name">Paid ad usage rights</div>
+          <p class="addon__what">Run the video as a paid ad on your own channels.</p>
+        </div>
+        <div class="addon__price is-tbd">On request</div>
+      </div>
+      <div class="addon">
+        <div>
+          <div class="addon__name">Category exclusivity</div>
+          <p class="addon__what">I turn down directly competing tools for a window we agree on.</p>
+        </div>
+        <div class="addon__price is-tbd">On request</div>
+      </div>
+      <div class="addon">
+        <div>
+          <div class="addon__name">Rush delivery</div>
+          <p class="addon__what">Live in under 7 days when you have a date to hit.</p>
+        </div>
+        <div class="addon__price is-tbd">On request</div>
+      </div>
+      <div class="addon">
+        <div>
+          <div class="addon__name">Cuts for other platforms</div>
+          <p class="addon__what">The same video recut for YouTube Shorts or TikTok.</p>
+        </div>
+        <div class="addon__price is-tbd">On request</div>
+      </div>
+      <div class="addon">
+        <div>
+          <div class="addon__name">Whitelisting</div>
+          <p class="addon__what">Run your own ads from my handle instead of the brand account.</p>
+        </div>
+        <div class="addon__price is-tbd">On request</div>
+      </div>
+      <div class="addon">
+        <div>
+          <div class="addon__name">Video for your channels only</div>
+          <p class="addon__what">Made for your feed and ads with full rights. Not posted to my page.</p>
+        </div>
+        <div class="addon__price is-tbd">On request</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="wrap" style="padding-top: 104px;">
+  <span class="kicker">How it runs</span>
+  <h2 class="display h3" style="margin-top: 20px;">From yes to live in <em>four</em> steps.</h2>
+  <p class="lede" style="margin-top: 18px;">You approve every concept before it gets made, and get a detailed performance report once it has run.</p>
+
+  <div class="proc reveal">
+    <div class="proc-step">
+      <span class="n">1</span>
+      <h4>Pick a scope</h4>
+      <p>Reply with the option that fits. For the series we lock the dates up front, so your quarter is planned.</p>
+    </div>
+    <div class="proc-step">
+      <span class="n">2</span>
+      <h4>Approve the concept</h4>
+      <p>I send the exact concept and a detailed script for your review. Nothing gets filmed until you are happy with it.</p>
+    </div>
+    <div class="proc-step">
+      <span class="n">3</span>
+      <h4>I build it</h4>
+      <p>Scripting, filming and editing are on me. You review the finished draft, then we go live.</p>
+    </div>
+    <div class="proc-step">
+      <span class="n">4</span>
+      <h4>You get the numbers</h4>
+      <p>A full performance report: what worked, what to change next time, and how the audience responded in the comments and DMs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRANDS ============ -->
+<section class="wrap" style="padding-top: 104px; padding-bottom: 104px;">
+  <div class="reveal" style="max-width: 60ch;">
+    <span class="kicker">Recent partners</span>
+    <h2 class="display h3" style="margin-top: 20px;">Teams I have <em>worked</em> with.</h2>
+  </div>
+  <div class="wall-grid reveal">
+    <div class="wall-tile"><img src="logos/replit.png" alt="Replit" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/chatgpt.png" alt="OpenAI" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/heygen.svg" alt="HeyGen" class="is-dark" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/intercom.png" alt="Intercom" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/wispr-flow.png" alt="Wispr Flow" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/gohighlevel.png" alt="GoHighLevel" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/LTXstudio.png" alt="LTX Studio" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/Higgsfield.png" alt="Higgsfield" loading="lazy"></div>
+    <div class="wall-tile wall-tile--lockup">
+      <img src="logos/alibabadotcom.svg" alt="" class="is-dark" loading="lazy">
+      <span>Alibaba</span>
+    </div>
+    <div class="wall-tile"><img src="logos/fiverr.png" alt="Fiverr" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/kittl.svg" alt="Kittl" class="is-dark" loading="lazy"></div>
+    <div class="wall-tile"><img src="logos/lindy-ai.svg" alt="Lindy AI" class="is-dark" loading="lazy"></div>
+  </div>
+  <p class="wall-note reveal">Plus 60 or so others, including Gamma, Luma AI, Emergent, InVideo and Supernormal.</p>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <div class="nav__logo" style="color: var(--dark-text); margin-bottom: 8px;"><span class="logomark">Kunwar<em style="color: var(--orange);">Deep</em></span></div>
+        <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener" style="color: var(--dark-text-2); font-size: 13px; letter-spacing: 0.02em; display: inline-block; margin-bottom: 20px; text-decoration: none;">· @the_ecomjet</a>
+        <p style="color: var(--dark-text-2); font-size: 15px; max-width: 32ch; margin: 0;">
+          Content built to be watched, then saved, then sent to the boss. For brands that need their audience to actually care.
+        </p>
+      </div>
+      <div>
+        <h5>Pages</h5>
+        <div class="footer__list">
+          <a href="/">Home</a>
+          <a href="case-studies">Case Studies</a>
+          <a href="insights">Insights</a>
+          <a href="/#about">About</a>
+        </div>
+      </div>
+      <div>
+        <h5>Reach me</h5>
+        <div class="footer__list">
+          <a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a>
+          <a href="https://instagram.com/the_ecomjet" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.linkedin.com/in/kunwar-deep-583626234/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div>
+        <h5>The kit</h5>
+        <div class="footer__list">
+          <a href="media-kit.pdf" class="mediakit-dl" download>Media kit (PDF)</a>
+          <a href="insights">Audience data</a>
+          <a href="case-studies">Recent work</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__watermark">Kunwar<em>Deep</em></div>
+    <div class="footer__bottom">
+      <span>Made by hand. &copy; 2026 Kunwar.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Edit-mode defaults persisted by host -->
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#E55525",
+  "italic": "Instrument Serif",
+  "stickers": "on",
+  "bg": "warm"
+}/*EDITMODE-END*/;
+</script>
+
+<script src="app.js"></script>
+</body>
+</html>

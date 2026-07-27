@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://theecomjet.com/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/case-studies</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/case-study-lindy</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/case-study-heygen</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/case-study-particl</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/case-study-emergent</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/case-study-ltx</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theecomjet.com/insights</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>

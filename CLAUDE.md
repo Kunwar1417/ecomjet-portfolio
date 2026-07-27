@@ -17,8 +17,10 @@
 | `index.html` | Home / portfolio |
 | `case-studies.html` | Index page listing all case studies |
 | `case-study-{lindy,heygen,particl,emergent,ltx}.html` | 5 per-brand case studies, all fully populated with real data |
-| `insights.html` | Audience & analytics (349K followers, real audience data) |
+| `insights.html` | Audience & analytics (346K followers, real audience data) |
 | `invoice.html` | Private invoice generator, live at `/invoice.html` |
+| `rates.html` | Private rate card at `/rates`. Sent on request for cold/early pricing inquiries. Carries the site nav + footer, but `noindex` and not linked from anywhere. Warm inquiries get a full proposal instead. See docs/proposals.md. |
+| `proposal-{brand}-print.html` | Private per-brand pitch pages (landscape PDF), not linked in nav/footer. Built by copying `proposal-template-print.html` and filling placeholders. Reference example: Cursor (`proposal-cursor-print.html`). See docs/proposals.md. |
 
 **Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice tool live.
 
@@ -59,3 +61,4 @@ Full procedure + URL notes (site serves `.html` paths, no clean URLs) are in **d
 | Shared nav / footer / closing CTA markup, what `app.js` does | `docs/components.md` |
 | **Deploying** (safe runbook, URL rules, auto-deploy status) | `docs/deployment.md` |
 | The invoice generator (`invoice.html`) | `docs/invoice-tool.md` |
+| **Brand proposals** (per-brand pitch pages, pricing ladder, PDF export, design tokens) | `docs/proposals.md` |

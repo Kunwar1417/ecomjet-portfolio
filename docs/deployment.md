@@ -8,8 +8,8 @@ Hosted on Vercel as a static site. No build command, output is the repo root.
 - Preview deploy: `npx vercel --yes` (no flag)
 - Direct `.vercel.app` URLs are protected by Vercel Deployment Protection (401 without login). The custom domain bypasses this and serves publicly.
 
-## URLs are `.html` — this project does NOT strip extensions
-This Vercel project serves files at their literal path **with `.html`**. There is no clean-URL rewrite: `/insights` and `/case-studies` 404; only `/insights.html`, `/case-studies.html`, and **`/invoice.html`** work. If clean URLs are ever wanted, add a `vercel.json` with `"cleanUrls": true` (currently absent).
+## URLs are clean (no `.html`)
+`vercel.json` sets `"cleanUrls": true`, so pages serve at `/insights`, `/case-studies`, `/invoice`, `/rates`. Requesting the `.html` form returns a **308 redirect** to the extensionless path. Internal links across the site use the extensionless form; keep it that way.
 
 ## CRITICAL: the GitHub→Vercel auto-deploy is currently INACTIVE
 A `git push` to `main` does **not** reliably trigger a Vercel deploy right now (the integration went stale; a push updated GitHub but produced no new deployment). **Do not assume push = deploy.** Deploy manually (see runbook below), then verify the live URL. (If the GitHub integration is later reconnected in the Vercel dashboard, pushes will auto-deploy again — and safely, because they build from committed GitHub code, not the local working tree.)

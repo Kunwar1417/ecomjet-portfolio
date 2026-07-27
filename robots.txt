@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Private pages, sent directly and not for search results.
+# Each of these also carries a noindex meta tag.
+Disallow: /invoice
+Disallow: /invoice.html
+Disallow: /rates
+Disallow: /rates.html
+Disallow: /proposal-
+Disallow: /proposals-pdf/
+
+Sitemap: https://theecomjet.com/sitemap.xml
