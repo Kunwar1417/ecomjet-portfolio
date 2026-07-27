@@ -12,17 +12,29 @@
 
 ## Pages
 
+**Public** (in nav/footer, indexed, listed in `sitemap.xml`):
+
 | File | Purpose |
 |---|---|
 | `index.html` | Home / portfolio |
 | `case-studies.html` | Index page listing all case studies |
 | `case-study-{lindy,heygen,particl,emergent,ltx}.html` | 5 per-brand case studies, all fully populated with real data |
 | `insights.html` | Audience & analytics (346K followers, real audience data) |
-| `invoice.html` | Private invoice generator, live at `/invoice.html` |
-| `rates.html` | Private rate card at `/rates`. Sent on request for cold/early pricing inquiries. Carries the site nav + footer, but `noindex` and not linked from anywhere. Warm inquiries get a full proposal instead. See docs/proposals.md. |
-| `proposal-{brand}-print.html` | Private per-brand pitch pages (landscape PDF), not linked in nav/footer. Built by copying `proposal-template-print.html` and filling placeholders. Reference example: Cursor (`proposal-cursor-print.html`). See docs/proposals.md. |
 
-**Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice tool live.
+**Private** (`noindex`, linked from nowhere, in `robots.txt`, NOT in `sitemap.xml`):
+
+| File | Purpose |
+|---|---|
+| `private.html` | **The index of every private page.** Live at `/private`. Start here when you need to know what is unlisted. Add a row to it whenever you make a new private page. |
+| `invoice.html` | Invoice generator. See docs/invoice-tool.md. |
+| `rates.html` | Rate card at `/rates`, sent for cold/early pricing questions. Carries the site nav + footer (outbound links only, which does not make it discoverable). Warm inquiries get a full proposal instead. See docs/proposals.md. |
+| `proposal-{brand}-print.html` | Per-brand pitch pages (landscape PDF). Built from `proposal-template-print.html`. Usually exported to PDF and emailed, **not deployed**. See docs/proposals.md. |
+
+⚠️ `media-kit.html` is live and has **no** `noindex`, and nothing links to it. Decide whether it is public or private, then fix it either way. Tracked on `/private`.
+
+**Making a page private:** noindex meta + `robots.txt` line + keep out of `sitemap.xml` + add a row to `private.html`. All four.
+
+**Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice and rates tools live.
 
 ## Assets
 
@@ -62,3 +74,4 @@ Full procedure + URL notes (site serves `.html` paths, no clean URLs) are in **d
 | **Deploying** (safe runbook, URL rules, auto-deploy status) | `docs/deployment.md` |
 | The invoice generator (`invoice.html`) | `docs/invoice-tool.md` |
 | **Brand proposals** (per-brand pitch pages, pricing ladder, PDF export, design tokens) | `docs/proposals.md` |
+| **The rate card** (`rates.html`) and when to send it instead of a proposal | `docs/proposals.md` |

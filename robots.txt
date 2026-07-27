@@ -7,6 +7,8 @@ Disallow: /invoice
 Disallow: /invoice.html
 Disallow: /rates
 Disallow: /rates.html
+Disallow: /private
+Disallow: /private.html
 Disallow: /proposal-
 Disallow: /proposals-pdf/
 
