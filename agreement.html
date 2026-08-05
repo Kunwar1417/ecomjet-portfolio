@@ -1,0 +1,1347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
+<title>Agreement studio · Kunwar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Agreement studio — private tool at /agreement.html
+   Same design system as invoice.html (warm cream, navy ink,
+   brand blue accent, 3mm blue spine). Self-contained.
+   Screen: form panel + scaled A4 preview. Print: A4 doc only.
+   Multi-page: clauses flow, .cl blocks avoid breaking inside.
+   ============================================================ */
+
+:root {
+  --ink:    #14213A;
+  --blue:   #2B49C4;
+  --blue-d: #223BA6;
+  --paper:  #FBFAF6;
+  --panel:  #F1EFE7;
+  --muted:  #6B7385;
+  --line:   #DAD8CE;
+  --line-2: #C9C6BB;
+
+  --sans: "Bricolage Grotesque", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+
+  --app-bg: #E9E7DF;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--app-bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01","ss02";
+}
+img { max-width: 100%; display: block; }
+button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+
+.inv-app {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 24px 28px 80px;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 36px;
+  align-items: start;
+}
+@media (max-width: 1120px) { .inv-app { grid-template-columns: 1fr; } }
+
+.inv-top {
+  grid-column: 1 / -1;
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 2px;
+}
+.inv-top h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+.inv-top h1 em { font-family: var(--serif); font-style: italic; color: var(--blue); font-weight: 400; }
+.inv-top .inv-hint { color: var(--muted); font-size: 13px; }
+
+/* ============================================================
+   FORM PANEL (screen only)
+   ============================================================ */
+.inv-form {
+  position: sticky; top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -28px rgba(20,20,40,.35);
+  padding: 20px 20px 24px;
+}
+.inv-form h2 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); margin: 22px 0 11px; font-weight: 700;
+  padding-top: 14px; border-top: 1px solid var(--line);
+}
+.inv-form h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+
+.field { margin-bottom: 11px; }
+.field label { display: block; font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+.field input[type=text], .field input[type=date], .field input[type=number],
+.field textarea, .field select {
+  width: 100%; font: inherit; font-size: 14px; padding: 9px 11px;
+  border: 1px solid var(--line-2); border-radius: 9px;
+  background: #fff; color: var(--ink);
+}
+.field textarea { resize: vertical; min-height: 46px; line-height: 1.4; }
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,73,196,.12);
+}
+.field-row { display: flex; gap: 10px; }
+.field-row > .field { flex: 1; margin-bottom: 11px; }
+.hint-sm { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+
+.seg { display: flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; padding: 3px; gap: 3px; background: var(--panel); }
+.seg button { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 700; border-radius: 999px; color: var(--ink); transition: background .12s, color .12s; }
+.seg button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+
+.chk { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; line-height: 1.35; }
+.chk input { width: 16px; height: 16px; accent-color: var(--blue); flex-shrink: 0; margin-top: 1px; }
+
+/* deliverable rows */
+.dl-head, .dl-row { display: grid; grid-template-columns: 1fr 44px 24px; gap: 6px; }
+.dl-head { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: 5px; }
+.dl-row { align-items: start; margin-bottom: 7px; }
+.dl-row textarea { min-height: 38px; font-size: 13px; padding: 7px 8px; }
+.dl-row input { font-size: 13px; padding: 7px 6px; }
+.dl-del { align-self: center; width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--line-2); background: #fff; color: var(--muted); font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.dl-del:hover { border-color: #B0345A; color: #B0345A; }
+.btn-line { font-size: 13px; font-weight: 600; color: var(--blue); padding: 5px 0; }
+.btn-line:hover { text-decoration: underline; }
+
+.inv-actions { display: flex; gap: 10px; margin-top: 20px; position: sticky; bottom: 0; background: var(--paper); padding: 12px 0 4px; border-top: 1px solid var(--line); }
+.inv-btn { flex: 1; padding: 11px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; border: 1px solid var(--ink); text-align: center; }
+.inv-btn--primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.inv-btn--primary:hover { background: var(--blue-d); }
+.inv-btn--ghost { background: var(--paper); color: var(--ink); }
+.inv-btn--ghost:hover { background: var(--panel); }
+
+.inv-history { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+.inv-history h2 { margin-top: 0; padding-top: 0; border-top: none; }
+.inv-history ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; color: var(--ink); }
+.inv-history li { display: flex; align-items: stretch; gap: 4px; margin-bottom: 4px; }
+.inv-history .empty { color: var(--muted); font-style: italic; padding: 4px 0; }
+.arch-open {
+  flex: 1; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline;
+  text-align: left; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px;
+  background: #fff; transition: border-color .12s, background .12s;
+}
+.arch-open:hover { border-color: var(--blue); background: #fff; }
+.arch-num { font-weight: 700; font-variant-numeric: tabular-nums; }
+.arch-brand { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arch-total { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.arch-del {
+  width: 30px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  color: var(--muted); font-size: 15px; line-height: 1; flex-shrink: 0;
+}
+.arch-del:hover { border-color: #B0345A; color: #B0345A; }
+
+.zoom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.zoom-row label { font-size: 12px; color: var(--muted); font-weight: 600; }
+.zoom-row input[type=range] { flex: 1; accent-color: var(--blue); }
+
+/* ============================================================
+   AGREEMENT DOCUMENT (preview + print target) A4 = 210 x 297mm
+   ============================================================ */
+.inv-doc-wrap { display: flex; justify-content: center; overflow: visible; }
+
+.inv-doc {
+  width: 210mm; min-height: 297mm;
+  background: var(--paper);
+  color: var(--ink);
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 30px 60px -30px rgba(20,20,40,.4);
+  font-family: var(--sans);
+  transform-origin: top center;
+  display: flex; flex-direction: column;
+  border-left: 3mm solid var(--blue);
+  overflow: hidden;
+}
+
+/* --- Title page masthead ---------------------------------------------
+   Not the invoice header. A contract opens on its own title, so the
+   document name is the largest thing on the page and the creator
+   identity sits under it as a byline. Kunwar Deep leads (the person the
+   brand is signing with), @the_ecomjet is the recognisable identifier,
+   NEVER SETTLE is demoted to what it actually is: the legal entity.
+   -------------------------------------------------------------------- */
+.d-head {
+  padding: 20mm 16mm 0;
+  background: transparent;
+  border-bottom: none;
+}
+.d-eyebrow {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .18em;
+  font-weight: 700; color: var(--muted);
+  display: flex; align-items: center; gap: 3mm;
+}
+.d-eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.d-title {
+  margin-top: 6mm;
+  font-size: 43px; line-height: .96; letter-spacing: -0.035em; font-weight: 800;
+  color: var(--ink);
+}
+.d-title em {
+  display: block;
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  letter-spacing: -0.01em; color: var(--blue);
+  font-size: 46px; line-height: 1;
+}
+
+/* byline: who this is with */
+.d-byline {
+  margin-top: 9mm; padding-top: 5mm;
+  border-top: 1.5px solid var(--ink);
+  display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8mm;
+}
+.d-me-name { font-size: 17px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; }
+.d-me-handle { font-size: 12.5px; font-weight: 600; color: var(--blue); margin-top: 1.2mm; letter-spacing: -0.01em; }
+.d-me-entity { font-size: 9.5px; color: var(--muted); margin-top: 1.8mm; letter-spacing: .02em; }
+
+.d-meta { text-align: right; font-size: 11px; line-height: 1.45; }
+.d-meta .lab { color: var(--muted); font-size: 8.5px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+.d-meta b { font-weight: 700; font-variant-numeric: tabular-nums; display: block; margin-bottom: 2mm; }
+.d-meta b:last-child { margin-bottom: 0; }
+
+/* --- Body --- */
+.d-body { flex: 1; padding: 9mm 16mm 12mm; display: flex; flex-direction: column; }
+
+/* Preamble sentence */
+.d-preamble { font-size: 11.5px; line-height: 1.65; color: var(--ink); }
+.d-preamble b { font-weight: 700; }
+
+/* Parties block — quiet reference matter, not a headline. Small type,
+   muted labels, no blue. It states who the parties are; the masthead
+   already did the introducing. */
+.d-parties {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12mm;
+  padding: 6mm 0 7mm;
+  border-bottom: 1px solid var(--line);
+}
+.p-lab { font-size: 8.5px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--muted); margin-bottom: 2.5mm; }
+.p-name { font-size: 12px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 1mm; }
+.p-body { font-size: 10px; line-height: 1.55; color: var(--muted); }
+.p-body .dim { color: var(--muted); }
+.p-body .kv { margin-top: 1.5mm; }
+.p-body .kv .k { color: var(--muted); }
+.p-trading { font-size: 9.5px; font-weight: 500; color: var(--muted); margin-top: 0.5mm; }
+
+/* --- Clauses --- */
+.d-clauses { margin-top: 8mm; }
+.cl {
+  margin-bottom: 6.5mm;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.cl-h {
+  display: grid; grid-template-columns: 8mm 1fr; gap: 1mm;
+  align-items: baseline;
+  font-size: 11.5px; font-weight: 800; letter-spacing: .01em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding-bottom: 2mm; margin-bottom: 2.5mm;
+  border-bottom: 1px solid var(--line);
+}
+.cl-h .n { color: var(--blue); font-variant-numeric: tabular-nums; }
+.cl-b { font-size: 11px; line-height: 1.62; color: var(--ink); padding-left: 8mm; }
+.cl-b p { margin: 0 0 2mm; }
+.cl-b p:last-child { margin-bottom: 0; }
+.cl-b b { font-weight: 700; }
+.cl-b ul { margin: 0 0 2mm; padding-left: 4.5mm; }
+.cl-b li { margin-bottom: 1mm; }
+
+/* deliverables table inside clause 2 */
+.dtab { margin: 1mm 0 2.5mm; }
+.dtab-head {
+  display: grid; grid-template-columns: 1fr 16mm; gap: 4mm;
+  font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--muted);
+  padding-bottom: 2mm; border-bottom: 1.2px solid var(--ink);
+}
+.dtab-row {
+  display: grid; grid-template-columns: 1fr 16mm; gap: 4mm;
+  font-size: 11px; padding: 2.6mm 0; border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+.dtab-row .t-title { font-weight: 600; font-size: 11.5px; }
+.dtab-row .t-sub { font-size: 9.5px; color: var(--muted); margin-top: 1mm; line-height: 1.4; }
+.dtab .t-c { text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Fee callout — a contract states its number, it does not advertise it.
+   No filled slab: hairline rules top and bottom, the amount set large in
+   ink. Weight comes from type size, not from a block of colour. */
+.fee-bar {
+  margin: 1mm 0 3mm;
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 3mm 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.fee-bar .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--muted); }
+.fee-bar .val { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--ink); }
+
+/* key-value strip used by timeline / rights */
+.kv-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.4mm 5mm; font-size: 11px; line-height: 1.5; margin: 1mm 0 2mm; }
+.kv-grid .k { color: var(--muted); white-space: nowrap; }
+.kv-grid .v { font-weight: 600; }
+
+/* --- Signature page --- */
+.d-signblock {
+  margin-top: 9mm; padding-top: 7mm; border-top: 1.5px solid var(--ink);
+  break-inside: avoid; page-break-inside: avoid;
+}
+.sign-intro { font-size: 11px; line-height: 1.6; color: var(--ink); margin-bottom: 7mm; }
+.sign-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; }
+.sign-col .p-lab { margin-bottom: 4mm; }
+.sign-row { margin-bottom: 5.5mm; }
+.sign-row .k { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--muted); display: block; margin-bottom: 1mm; }
+.sign-rule { border-bottom: 1.1px solid var(--ink); height: 7mm; }
+.sign-rule.filled { display: flex; align-items: flex-end; padding-bottom: 1mm; font-size: 12px; font-weight: 600; }
+.sign-name { font-size: 12px; font-weight: 700; }
+.sign-sub { font-size: 10px; color: var(--muted); margin-top: 0.8mm; }
+
+/* footer band */
+.d-foot {
+  margin-top: auto;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  padding: 6mm 16mm;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 9.5px; color: var(--muted);
+}
+.d-foot b { color: var(--ink); font-weight: 700; }
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print {
+  @page { size: A4; margin: 0; }
+  /* Paper ground must cover every page, including the short final one.
+     Setting it on html (not just the doc) fills the trailing whitespace. */
+  html, body { background: var(--paper); }
+  .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
+  .inv-top, .inv-form, .no-print { display: none !important; }
+  .inv-doc-wrap { display: block; height: auto !important; }
+  .inv-doc {
+    transform: none !important;
+    box-shadow: none; margin: 0;
+    width: 210mm; min-height: 297mm;
+    overflow: visible;
+    display: block;
+    /* The spine must run the full height of EVERY printed page. A border-left
+       only paints beside actual content, so it stops short on the last page.
+       A repeating background gradient tied to the page box paints edge to edge. */
+    border-left: none;
+    padding-left: 3mm;
+    background: none;
+  }
+  /* Spine + paper ground are painted by a fixed-position layer instead of the
+     doc box, so they cover the FULL height of every page including a short
+     final one (a background on .inv-doc stops where its content stops). */
+  body::before {
+    content: "";
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 3mm; background: var(--blue);
+    z-index: 1;
+  }
+  .d-body { display: block; }
+  .d-foot { display: none; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<div class="inv-app" id="app">
+
+  <div class="inv-top no-print">
+    <h1>Agreement <em>studio</em></h1>
+    <div class="inv-hint">Private. Fill the form, then Download PDF (Save as PDF, A4).</div>
+  </div>
+
+  <!-- ============ FORM ============ -->
+  <form class="inv-form no-print" id="form" autocomplete="off">
+
+    <div class="zoom-row">
+      <label for="zoom">Preview</label>
+      <input type="range" id="zoom" min="40" max="120" value="100" />
+      <span id="zoom-val" style="font-size:12px;color:var(--muted);width:34px;text-align:right;">100%</span>
+    </div>
+
+    <h2>Agreement</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-num">Agreement number</label>
+        <input type="text" id="f-num" />
+      </div>
+      <div class="field">
+        <label for="f-date">Date</label>
+        <input type="date" id="f-date" />
+      </div>
+    </div>
+
+    <h2>Brand</h2>
+    <div class="field">
+      <label for="f-brand">Legal entity name</label>
+      <input type="text" id="f-brand" placeholder="Wispr AI, Inc." />
+    </div>
+    <div class="field">
+      <label for="f-brand-addr">Registered address</label>
+      <textarea id="f-brand-addr" placeholder="455 Townsend St, San Francisco, CA 94107, USA"></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-brand-sign">Signatory name</label>
+        <input type="text" id="f-brand-sign" placeholder="Jane Doe" />
+      </div>
+      <div class="field">
+        <label for="f-brand-title">Signatory title</label>
+        <input type="text" id="f-brand-title" placeholder="Head of Growth" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="f-brand-email">Contact email</label>
+      <input type="text" id="f-brand-email" placeholder="jane@wispr.ai" />
+    </div>
+
+    <h2>Campaign</h2>
+    <div class="field">
+      <label for="f-campaign">Campaign name (optional)</label>
+      <input type="text" id="f-campaign" placeholder="Wispr Flow launch" />
+    </div>
+
+    <h2>Deliverables</h2>
+    <div class="dl-head">
+      <span>Deliverable</span>
+      <span>Qty</span>
+      <span></span>
+    </div>
+    <div id="dl-list"></div>
+    <button type="button" class="btn-line" id="dl-add">+ Add deliverable</button>
+
+    <h2>Timeline</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-draft-date">Draft delivered by</label>
+        <input type="date" id="f-draft-date" />
+      </div>
+      <div class="field">
+        <label for="f-live-date">Goes live on</label>
+        <input type="date" id="f-live-date" />
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-approval-days">Approval window (business days)</label>
+        <input type="number" id="f-approval-days" min="1" step="1" value="3" />
+      </div>
+      <div class="field">
+        <label for="f-min-live">Stays live for</label>
+        <select id="f-min-live">
+          <option value="">Not specified</option>
+          <option value="3 months">3 months</option>
+          <option value="6 months">6 months</option>
+          <option value="12 months" selected>12 months</option>
+          <option value="Permanently">Permanently</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>Fee</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-currency">Currency</label>
+        <select id="f-currency">
+          <option value="USD" selected>USD ($)</option>
+          <option value="INR">INR (₹)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-fee">Total fee</label>
+        <input type="number" id="f-fee" min="0" step="1" placeholder="3500" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="f-payterms">Payment terms</label>
+      <select id="f-payterms">
+        <option value="__split__" selected>50% advance / 50% on posting</option>
+        <option value="100% in advance, before work begins.">100% in advance</option>
+        <option value="Due within 7 days of the invoice date.">Net 7 after delivery</option>
+        <option value="Due within 30 days of the invoice date.">Net 30 after delivery</option>
+        <option value="__custom__">Custom…</option>
+      </select>
+    </div>
+    <div class="field" id="f-payterms-custom-wrap" hidden>
+      <input type="text" id="f-payterms-custom" placeholder="Type custom payment terms" />
+    </div>
+    <div class="field">
+      <label for="f-late">Late payment</label>
+      <select id="f-late">
+        <option value="" selected>No late-payment clause</option>
+        <option value="15">1.5% per month after 15 days overdue</option>
+        <option value="30">1.5% per month after 30 days overdue</option>
+      </select>
+      <div class="hint-sm">Off by default. Interest is hard to enforce on an overseas client and often triggers a procurement redline. The 50% advance is the real protection.</div>
+    </div>
+
+    <h2>Revisions</h2>
+    <div class="field">
+      <label for="f-revisions">Included revision rounds</label>
+      <select id="f-revisions">
+        <option value="1">1 round</option>
+        <option value="2" selected>2 rounds</option>
+        <option value="3">3 rounds</option>
+      </select>
+      <div class="hint-sm">Beyond this, further rounds are billed. A full re-shoot is never a revision.</div>
+    </div>
+    <div class="field">
+      <label for="f-revision-fee">Fee per extra round (optional)</label>
+      <input type="number" id="f-revision-fee" min="0" step="1" placeholder="500" />
+    </div>
+
+    <h2>Usage rights</h2>
+    <div class="field">
+      <label for="f-rights-scope">Scope</label>
+      <select id="f-rights-scope">
+        <option value="" selected>No usage rights granted</option>
+        <option value="organic">Organic usage rights</option>
+        <option value="paid">Organic + paid usage rights</option>
+        <option value="whitelist">Whitelisting (ads run from my handle)</option>
+        <option value="full">Full paid media</option>
+      </select>
+      <div class="hint-sm" id="scope-explain"></div>
+    </div>
+    <div class="field" id="f-rights-term-wrap">
+      <label for="f-rights-term">Licence term</label>
+      <select id="f-rights-term">
+        <option value="" selected>Select term…</option>
+        <option value="1 month">1 month</option>
+        <option value="3 months">3 months</option>
+        <option value="6 months">6 months</option>
+        <option value="12 months">12 months</option>
+        <option value="In perpetuity">In perpetuity</option>
+      </select>
+      <div class="hint-sm">Drives every rights clause. All permissions above end when this term does.</div>
+    </div>
+    <div class="field" id="f-rights-terr-wrap">
+      <label for="f-rights-territory">Territory</label>
+      <select id="f-rights-territory">
+        <option value="" selected>Select territory…</option>
+        <option value="Worldwide">Worldwide</option>
+        <option value="United States">United States</option>
+        <option value="India">India</option>
+      </select>
+    </div>
+    <div class="field" id="f-rights-edit-wrap" hidden>
+      <label class="chk"><input type="checkbox" id="f-rights-edit" /> Brand may re-edit or re-cut the content</label>
+      <div class="hint-sm">Off by default. Ad formats always allow trimming to fit a placement.</div>
+    </div>
+
+    <h2>Optional clauses</h2>
+    <div class="field">
+      <label class="chk"><input type="checkbox" id="f-excl-on" /> Category exclusivity</label>
+    </div>
+    <div id="f-excl-wrap" hidden>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-excl-cat">Category</label>
+          <input type="text" id="f-excl-cat" placeholder="AI note-taking apps" />
+        </div>
+        <div class="field">
+          <label for="f-excl-days">Days</label>
+          <input type="number" id="f-excl-days" min="1" step="1" value="30" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-excl-named">Named competitors (optional)</label>
+        <input type="text" id="f-excl-named" placeholder="Otter, Granola" />
+      </div>
+    </div>
+    <div class="field">
+      <label class="chk"><input type="checkbox" id="f-nda-on" /> Confidentiality clause</label>
+    </div>
+    <div class="field">
+      <label class="chk"><input type="checkbox" id="f-del-on" /> Content deletion on licence expiry</label>
+    </div>
+
+    <h2>Cancellation</h2>
+    <div class="field">
+      <label for="f-kill">Kill fee if the brand cancels after work begins</label>
+      <select id="f-kill">
+        <option value="50" selected>50% of the total fee</option>
+        <option value="100">100% of the total fee</option>
+        <option value="">No kill fee</option>
+      </select>
+    </div>
+
+    <h2>Disputes</h2>
+    <div class="field">
+      <label for="f-seat">Arbitration seat (optional)</label>
+      <input type="text" id="f-seat" placeholder="Leave blank to keep it neutral" />
+      <div class="hint-sm">Left blank, the clause reads "as mutually agreed in writing". No country is named.</div>
+    </div>
+    <div class="field">
+      <label for="f-law">Governing law (optional)</label>
+      <input type="text" id="f-law" placeholder="Leave blank to omit the clause" />
+    </div>
+
+    <h2>Notes</h2>
+    <div class="field">
+      <label for="f-notes">Extra terms (optional)</label>
+      <textarea id="f-notes" placeholder="Anything specific to this deal. Appears as a final clause."></textarea>
+    </div>
+
+    <div class="inv-actions">
+      <button type="button" class="inv-btn inv-btn--ghost" id="btn-new">New agreement</button>
+      <button type="button" class="inv-btn inv-btn--primary" id="btn-pdf">Download PDF</button>
+    </div>
+
+    <div class="inv-history">
+      <h2>Saved agreements</h2>
+      <div class="hint-sm" style="margin:-4px 0 10px">Click any agreement to reopen and re-download it. Saved when you Download PDF.</div>
+      <ul id="hist-list"><li class="empty">No saved agreements yet.</li></ul>
+    </div>
+  </form>
+
+  <!-- ============ LIVE PREVIEW / PRINT TARGET ============ -->
+  <div class="inv-doc-wrap">
+    <div class="inv-doc" id="doc">
+
+      <!-- Title masthead -->
+      <div class="d-head">
+        <div class="d-eyebrow">Brand partnership</div>
+        <h1 class="d-title">Collaboration<em>agreement</em></h1>
+        <div class="d-byline">
+          <div>
+            <div class="d-me-name">Kunwar Deep</div>
+            <div class="d-me-handle">Creator of @the_ecomjet</div>
+            <div class="d-me-entity">Trading as NEVER SETTLE · kunwar@thecomjet.com</div>
+          </div>
+          <div class="d-meta">
+            <span class="lab">Agreement No.</span>
+            <b id="d-num">KD-A-2026-0016</b>
+            <span class="lab">Date</span>
+            <b id="d-date"></b>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="d-body">
+
+        <div class="d-preamble" id="d-preamble"></div>
+
+        <div class="d-parties">
+          <div>
+            <div class="p-lab">The Creator</div>
+            <div class="p-name">Kunwar Deep<div class="p-trading">Creator of @the_ecomjet on Instagram</div></div>
+            <div class="p-body">
+              <div class="dim" id="d-me-addr"></div>
+              <div class="kv"><span class="k">Email</span> kunwar@thecomjet.com</div>
+            </div>
+          </div>
+          <div>
+            <div class="p-lab">The Brand</div>
+            <div class="p-name" id="d-brand-name">Brand name</div>
+            <div class="p-body">
+              <div class="dim" id="d-brand-addr"></div>
+              <div class="kv" id="d-brand-contact" hidden></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-clauses" id="d-clauses"></div>
+
+        <div class="d-signblock">
+          <div class="sign-intro">Both parties have read this agreement and accept its terms. Signed in counterparts, each of which is an original, and an electronic or scanned signature has the same effect as an ink one.</div>
+          <div class="sign-cols">
+            <div class="sign-col">
+              <div class="p-lab">For the Creator</div>
+              <div class="sign-row"><span class="k">Signature</span><div class="sign-rule"></div></div>
+              <div class="sign-row"><span class="k">Name</span><div class="sign-rule filled">Kunwar Deep</div></div>
+              <div class="sign-row"><span class="k">Title</span><div class="sign-rule filled">Creator, @the_ecomjet</div></div>
+              <div class="sign-row"><span class="k">Date</span><div class="sign-rule"></div></div>
+            </div>
+            <div class="sign-col">
+              <div class="p-lab">For the Brand</div>
+              <div class="sign-row"><span class="k">Signature</span><div class="sign-rule"></div></div>
+              <div class="sign-row"><span class="k">Name</span><div class="sign-rule filled" id="d-sign-name"></div></div>
+              <div class="sign-row"><span class="k">Title</span><div class="sign-rule filled" id="d-sign-title"></div></div>
+              <div class="sign-row"><span class="k">Date</span><div class="sign-rule"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="d-foot">
+        <span><b>Kunwar Deep</b> · @the_ecomjet · Collaboration agreement</span>
+        <span id="d-foot-num"></span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   Agreement studio logic — vanilla, no dependencies.
+   Mirrors invoice.html: derived numbering, localStorage archive,
+   click-to-reopen, print-to-PDF with a meaningful filename.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  const ME = {
+    name: "Kunwar Deep",
+    handle: "@the_ecomjet",
+    entity: "NEVER SETTLE",   // the invoicing entity; named only in the masthead line and at signature
+    address: "U/G/F-1/80, Shastri Park, New Delhi, India (110053)",
+    email: "kunwar@thecomjet.com"
+  };
+
+  const SEED_YEAR = 2026;
+  const SEED_SEQUENCE = 15;          // first suggested number is 0016
+  const LS_KEY = "kd_agreements";
+
+  const pad4 = n => String(n).padStart(4, "0");
+  const esc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const nl2br = s => esc(s).replace(/\n/g, "<br>");
+
+  function getAll() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch (e) { return []; } }
+  function saveAll(list) { localStorage.setItem(LS_KEY, JSON.stringify(list)); }
+
+  // ---- DOM refs ----
+  const app = document.getElementById("app");
+  const elNum = document.getElementById("f-num");
+  const elDate = document.getElementById("f-date");
+  const dlList = document.getElementById("dl-list");
+  const payTerms = document.getElementById("f-payterms");
+  const payCustomWrap = document.getElementById("f-payterms-custom-wrap");
+  const payCustom = document.getElementById("f-payterms-custom");
+  const exclOn = document.getElementById("f-excl-on");
+  const exclWrap = document.getElementById("f-excl-wrap");
+
+  const $ = id => document.getElementById(id);
+  const val = id => ($(id) ? $(id).value.trim() : "");
+
+  function currentYear() {
+    const d = elDate.value ? new Date(elDate.value + "T00:00:00") : null;
+    return d && !isNaN(d) ? d.getFullYear() : SEED_YEAR;
+  }
+
+  // Next number is DERIVED from the archive, so exploring never burns a number.
+  function nextNumber() {
+    const yr = currentYear();
+    let max = 0;
+    getAll().forEach(a => {
+      const m = String(a.num || "").match(/KD-A-(\d{4})-(\d+)/);
+      if (m && parseInt(m[1], 10) === yr) max = Math.max(max, parseInt(m[2], 10));
+    });
+    // Respect the seed for the seed year until saved agreements pass it.
+    if (yr === SEED_YEAR) max = Math.max(max, SEED_SEQUENCE);
+    return "KD-A-" + yr + "-" + pad4(max + 1);
+  }
+
+  function fmtMoney(amount, cur) {
+    const opts = { style: "currency", maximumFractionDigits: 0, minimumFractionDigits: 0 };
+    if (cur === "INR") return new Intl.NumberFormat("en-IN", Object.assign({ currency: "INR" }, opts)).format(amount || 0);
+    return new Intl.NumberFormat("en-US", Object.assign({ currency: "USD" }, opts)).format(amount || 0);
+  }
+  function fmtDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso + "T00:00:00");
+    if (isNaN(d)) return iso;
+    const m = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    return d.getDate() + " " + m[d.getMonth()] + ", " + d.getFullYear();
+  }
+
+  const DL_PRESETS = [
+    "Instagram Reel (dedicated, 30 to 60 seconds)",
+    "Instagram Reel with DM automation and bio link",
+    "Instagram Story frames",
+    "YouTube Short",
+    "Integrated mention in a wider Reel",
+    "Raw footage handover"
+  ];
+
+  function makeDeliverableRow(data) {
+    data = data || {};
+    const row = document.createElement("div");
+    row.className = "dl-row";
+    row.innerHTML =
+      '<textarea class="dl-desc" placeholder="Deliverable" list="dl-presets">' + esc(data.desc || "") + '</textarea>' +
+      '<input type="number" class="dl-qty" min="1" step="1" value="' + (data.qty || "1") + '" />' +
+      '<button type="button" class="dl-del" title="Remove">×</button>';
+    row.querySelector(".dl-del").addEventListener("click", () => { if (dlList.children.length > 1) { row.remove(); render(); } });
+    row.addEventListener("input", render);
+    dlList.appendChild(row);
+  }
+
+  (function () {
+    const dl = document.createElement("datalist");
+    dl.id = "dl-presets";
+    DL_PRESETS.forEach(p => { const o = document.createElement("option"); o.value = p; dl.appendChild(o); });
+    document.body.appendChild(dl);
+  })();
+
+  function readDeliverables() {
+    return Array.from(dlList.querySelectorAll(".dl-row")).map(r => ({
+      desc: r.querySelector(".dl-desc").value,
+      qty: parseFloat(r.querySelector(".dl-qty").value) || 1
+    }));
+  }
+
+  function payTermsText() {
+    const v = payTerms.value;
+    if (v === "__custom__") return payCustom.value.trim();
+    if (v === "__split__") return "50% of the total fee is payable in advance before work begins. The remaining 50% is payable within 7 days of the content going live.";
+    return v;
+  }
+
+  // ---- Clause builders. Each returns {h, b} or null to omit. ----
+  function buildClauses() {
+    const cur = val("f-currency") || "USD";
+    const fee = parseFloat(val("f-fee")) || 0;
+    const brand = val("f-brand") || "the Brand";
+    const out = [];
+
+    // 1. Scope
+    const campaign = val("f-campaign");
+    out.push({
+      h: "Scope of work",
+      b: "<p>" + esc(brand) + " engages the Creator to produce and publish sponsored content" +
+         (campaign ? " for <b>" + esc(campaign) + "</b>" : "") +
+         " on the Creator's Instagram channel " + esc(ME.handle) + ", on the terms set out below. " +
+         "This agreement covers the deliverables listed in clause 2. Additional work can be added by agreeing it in writing.</p>"
+    });
+
+    // 2. Deliverables
+    const items = readDeliverables().filter(d => d.desc.trim());
+    let dtab = "";
+    if (items.length) {
+      dtab = '<div class="dtab"><div class="dtab-head"><span>Deliverable</span><span class="t-c">Qty</span></div>' +
+        items.map(it => {
+          const parts = it.desc.split("\n");
+          const sub = parts.slice(1).join(" · ");
+          return '<div class="dtab-row"><div><div class="t-title">' + esc(parts[0]) + '</div>' +
+            (sub ? '<div class="t-sub">' + esc(sub) + '</div>' : "") + '</div>' +
+            '<div class="t-c">' + it.qty + '</div></div>';
+        }).join("") + '</div>';
+    }
+    out.push({
+      h: "Deliverables",
+      b: dtab + "<p>The Creator writes, films, edits and publishes the above. Concept and script are the Creator's, shaped by the brief the Brand provides.</p>"
+    });
+
+    // 3. Timeline & approval
+    const draft = fmtDate(val("f-draft-date"));
+    const live = fmtDate(val("f-live-date"));
+    const appDays = parseInt(val("f-approval-days"), 10) || 3;
+    const minLive = val("f-min-live");
+    let tl = "";
+    if (draft || live || minLive) {
+      tl = '<div class="kv-grid">' +
+        (draft ? '<span class="k">Draft delivered by</span><span class="v">' + esc(draft) + '</span>' : "") +
+        (live ? '<span class="k">Goes live on</span><span class="v">' + esc(live) + '</span>' : "") +
+        (minLive ? '<span class="k">Stays live for</span><span class="v">' + esc(minLive) + '</span>' : "") +
+        '</div>';
+    }
+    out.push({
+      h: "Timeline and approval",
+      b: tl +
+        "<p>The Brand has <b>" + appDays + " business days</b> from receiving a draft to approve it or request changes. " +
+        "If no feedback arrives within that window, the draft is treated as approved and can go live as planned. " +
+        "If feedback, product access or the brief arrive later than planned, the live date moves by the same number of days.</p>" +
+        (minLive && minLive !== "Permanently"
+          ? "<p>The content stays on the Creator's channel for at least " + esc(minLive) + " from the live date. After that the Creator may archive it.</p>"
+          : "")
+    });
+
+    // 4. Fee & payment
+    const late = val("f-late");
+    out.push({
+      h: "Fee and payment",
+      b: '<div class="fee-bar"><span class="lbl">Total <em>fee</em></span><span class="val">' + fmtMoney(fee, cur) + '</span></div>' +
+        "<p>" + esc(payTermsText()) + "</p>" +
+        "<p>The fee is quoted in " + esc(cur) + ", exclusive of taxes, and is paid by bank transfer. " +
+        "Transfer and currency conversion charges sit with the Brand, so the amount received matches the amount agreed. " +
+        "If tax has to be withheld at source, the Brand will share the withholding certificate so the Creator can claim the credit.</p>" +
+        (late ? "<p>If payment goes beyond " + esc(late) + " days past the due date, interest of 1.5% per month applies to the outstanding balance.</p>" : "")
+    });
+
+    // 5. Revisions
+    const revs = parseInt(val("f-revisions"), 10) || 2;
+    const revFee = parseFloat(val("f-revision-fee")) || 0;
+    out.push({
+      h: "Revisions",
+      b: "<p>The fee includes <b>" + revs + " round" + (revs === 1 ? "" : "s") + " of revisions</b>. " +
+        "A revision means changes to an existing edit: copy, captions, pacing, on-screen text, the order of shots. " +
+        "A change of concept, a new script, or anything needing fresh filming counts as a re-shoot, which is quoted separately.</p>" +
+        (revFee ? "<p>Further rounds beyond those included are billed at " + fmtMoney(revFee, cur) + " each.</p>" : "")
+    });
+
+    // 6. Creative control & disclosure
+    out.push({
+      h: "Creative control and disclosure",
+      b: "<p>The Creator keeps final say over creative execution, so the content reads as genuine to the audience it was built for. " +
+        "The Brand sets the message, claims and any legal must-haves, and the Creator will only publish claims the Brand has approved.</p>" +
+        "<p>The content will be disclosed as a paid partnership using the platform's own tools and clear wording, in line with FTC and ASCI guidance. Both parties will keep the partnership clearly disclosed.</p>"
+    });
+
+    // 7. Usage rights.
+    // Each scope carries its own grant sentence AND its own editing rule.
+    // A blanket "may not re-edit" is contradictory for ad formats, which
+    // require cutting the content into variants to run at all.
+    const scope = val("f-rights-scope");
+    const term = val("f-rights-term");
+    const terr = val("f-rights-territory");
+    const canEdit = $("f-rights-edit").checked;
+    const termPhrase = term
+      ? (term === "In perpetuity" ? "for as long as they wish" : "for <b>" + esc(term) + "</b> from the live date")
+      : "for the period the parties agree in writing";
+
+    const SCOPE_LABEL = {
+      organic: "Organic usage rights",
+      paid: "Organic + paid usage rights",
+      whitelist: "Whitelisting",
+      full: "Full paid media"
+    };
+
+    // grant sentence per scope
+    const SCOPE_GRANT = {
+      organic:
+        "The Brand may repost the content organically on its own social channels and website, " + termPhrase +
+        ". Organic means unpaid placement, so the content is not used in paid promotion.",
+      paid:
+        "The Brand may repost the content organically on its own channels, and may also run it as paid social advertising " +
+        "published from the Brand's own accounts, " + termPhrase + ". The ads run under the Brand's name, not the Creator's.",
+      whitelist:
+        "The Brand may run paid advertising from the Creator's own Instagram handle <b>@the_ecomjet</b> " + termPhrase +
+        ", using Meta's partnership ad tools. The Creator will grant the advertising permissions needed to do this and keep them " +
+        "active for the term. Ads appear to audiences as coming from the Creator's handle, which is why this right is limited to " +
+        "the term and territory stated above, and can be extended by a new written agreement.",
+      full:
+        "The Brand may use the content across all paid media channels, including paid social, display, connected TV, " +
+        "its owned properties and third-party placements, " + termPhrase + "."
+    };
+
+    // editing rule per scope
+    const SCOPE_EDIT = {
+      organic: canEdit
+        ? "The Brand may re-edit the content, provided the edit does not change the meaning of what the Creator said or imply a claim the Creator did not make."
+        : "The content runs as delivered, without re-editing or re-cutting. Trimming to fit a placement's aspect ratio or duration is allowed.",
+      paid: canEdit
+        ? "The Brand may re-edit or re-cut the content into advertising variants, provided the edit does not change the meaning of what the Creator said or imply a claim the Creator did not make."
+        : "The content runs as delivered, without re-editing or re-cutting. Trimming to fit a placement's aspect ratio or duration is allowed.",
+      whitelist:
+        "The Brand may trim and reformat the content to fit ad placements. Because these ads run from the Creator's handle, " +
+        "the edit otherwise stays as delivered, without added claims or changes to the meaning of what the Creator said. " +
+        "If an ad running from the Creator's handle does not reflect what they said, the Creator can ask for it to be paused, " +
+        "and the Brand will action that promptly.",
+      full:
+        "The Brand may cut the content into advertising variants and reformat it for different placements, provided no edit " +
+        "changes the meaning of what the Creator said or implies a claim the Creator did not make."
+    };
+
+    let rights = "";
+    if (scope || term || terr) {
+      rights = '<div class="kv-grid">' +
+        (scope ? '<span class="k">Scope</span><span class="v">' + SCOPE_LABEL[scope] + '</span>' : "") +
+        (term ? '<span class="k">Term</span><span class="v">' + esc(term) + '</span>' : "") +
+        (terr ? '<span class="k">Territory</span><span class="v">' + esc(terr) + '</span>' : "") +
+        '</div>';
+    }
+
+    const grant = SCOPE_GRANT[scope];
+    out.push({
+      h: "Usage rights",
+      b: rights +
+        (grant
+          ? "<p>The Creator grants the Brand a non-exclusive, non-transferable licence on the terms below" +
+            (terr ? (terr === "Worldwide" ? ", worldwide" : ", in " + esc(terr)) : "") + ".</p><p>" + grant + "</p>"
+          : "<p>No usage rights are granted. The content stays on the Creator's channel and the Brand may not repost, " +
+            "reproduce or advertise with it. If the Brand wants usage rights, they are agreed and priced separately in writing.</p>") +
+        (SCOPE_EDIT[scope] ? "<p>" + SCOPE_EDIT[scope] + "</p>" : "") +
+        (grant
+          ? "<p>Use beyond the scope, term or territory above can be arranged in writing and is priced separately. " +
+            "This licence covers the Brand's own use, and does not extend to sub-licensing or reselling the content to a third party.</p>"
+          : "")
+    });
+
+    // 8. Ownership
+    out.push({
+      h: "Ownership",
+      b: "<p>The Creator owns the copyright in the content, including all raw footage and project files. The Brand receives the licence described in clause 7, not ownership. " +
+        "Raw footage is included only when listed as a deliverable.</p>" +
+        "<p>The Brand keeps ownership of its trademarks, logos, product footage and any material it supplies, and grants the Creator the right to use them for this campaign.</p>"
+    });
+
+    // 9. Exclusivity (optional)
+    if (exclOn.checked) {
+      const cat = val("f-excl-cat");
+      const days = parseInt(val("f-excl-days"), 10) || 30;
+      const named = val("f-excl-named");
+      out.push({
+        h: "Exclusivity",
+        b: "<p>For <b>" + days + " days</b> from the live date, the Creator will not publish sponsored content for a directly competing " +
+          (cat ? "product in the " + esc(cat) + " category" : "product in the same category") + "." +
+          (named ? " This includes " + esc(named) + "." : "") + "</p>" +
+          "<p>This applies to paid placements only. It does not restrict the Creator's unpaid editorial coverage, and it does not extend to content already published or already contracted before the date of this agreement.</p>"
+      });
+    }
+
+    // 10. Confidentiality (optional)
+    if ($("f-nda-on").checked) {
+      out.push({
+        h: "Confidentiality",
+        b: "<p>Each party will keep the other's non-public information private, including unreleased products, roadmaps, pricing and the commercial terms of this agreement. " +
+          "This does not cover information that is already public, was already known, or must be disclosed by law.</p>" +
+          "<p>The Creator may name the Brand as a client and show the published content in a portfolio, case study or media kit.</p>"
+      });
+    }
+
+    // 11. Content deletion (optional)
+    if ($("f-del-on").checked) {
+      out.push({
+        h: "Use after the licence ends",
+        b: "<p>When the licence term in clause 7 ends, the Brand will stop running the content in paid placements and take it down from its owned channels within 14 days, unless the parties agree a renewal in writing.</p>" +
+          "<p>Archived copies held for internal record keeping are fine. Continued public use after the term is a new licence and is charged at the Creator's then-current rate.</p>"
+      });
+    }
+
+    // 12. Cancellation
+    const kill = val("f-kill");
+    out.push({
+      h: "Cancellation",
+      b: (kill
+          ? "<p>If the Brand cancels after this agreement is signed and work has begun, <b>" + esc(kill) + "% of the total fee</b> is payable. Any advance already paid counts toward that amount. If the content has already been delivered, the full fee remains payable, since the work has been completed.</p>"
+          : "<p>Either party may cancel in writing before work begins, at no cost. Once the content has been delivered, the full fee remains payable, since the work has been completed.</p>") +
+        "<p>If the Creator cannot deliver, any advance paid is refunded in full. Neither party is liable for delays caused by events outside their reasonable control, provided they say so promptly.</p>"
+    });
+
+    // 13. Warranties & liability
+    out.push({
+      h: "Warranties and liability",
+      b: "<p>The Creator warrants that the content is original work, that it does not knowingly infringe anyone's rights, and that any music or stock used is properly licensed. " +
+        "The Brand warrants that the claims and materials it supplies are accurate and that it has the right to supply them.</p>" +
+        "<p>Each party indemnifies the other against claims arising from its own breach of the above. Neither party is liable for indirect or consequential loss, and each party's total liability under this agreement is capped at the total fee.</p>"
+    });
+
+    // 14. Disputes
+    const seat = val("f-seat");
+    out.push({
+      h: "Disputes",
+      b: "<p>If a disagreement comes up, the parties will first try to resolve it directly and in good faith, in writing, within 15 days of one party raising it.</p>" +
+        "<p>Anything unresolved after that goes to arbitration before a single arbitrator. The arbitration is conducted remotely, in English, and the seat and venue are " +
+        (seat ? "<b>" + esc(seat) + "</b>" : "as the parties agree in writing at the time") +
+        ". The arbitrator's decision is final and binding, and each party bears its own costs unless the arbitrator decides otherwise.</p>"
+    });
+
+    // 15. General (+ optional governing law)
+    const law = val("f-law");
+    out.push({
+      h: "General",
+      b: (law ? "<p>This agreement is governed by the laws of " + esc(law) + ".</p>" : "") +
+        "<p>This is the whole agreement between the parties on this campaign and replaces anything discussed before it. Changes must be in writing and signed by both parties. " +
+        "The Creator works as an independent contractor. " +
+        "If any clause is found unenforceable, the rest stays in force. Notices go to the email addresses on page one.</p>"
+    });
+
+    // 16. Additional terms (optional)
+    const notes = val("f-notes");
+    if (notes) out.push({ h: "Additional terms", b: "<p>" + nl2br(notes) + "</p>" });
+
+    return out;
+  }
+
+  // Plain-language explanation shown under the scope dropdown, so the choice
+  // is obvious without reading the generated clause.
+  const SCOPE_HINT = {
+    "": "Nothing granted. The video lives on your channel only. Pick this when rights are being priced separately.",
+    organic: "They can repost it on their own channels, unpaid. No ad spend behind it.",
+    paid: "Organic reposting plus paid ads, but the ads run from THEIR account, under their name.",
+    whitelist: "They run ads from your handle @the_ecomjet. Highest value, so keep the term tight.",
+    full: "Everything: paid social, display, CTV, third-party placements. Price accordingly."
+  };
+
+  function syncRightsFields() {
+    const s = $("f-rights-scope").value;
+    $("scope-explain").textContent = SCOPE_HINT[s] || "";
+    // Term and territory only mean something once a right is actually granted.
+    $("f-rights-term-wrap").hidden = !s;
+    $("f-rights-terr-wrap").hidden = !s;
+    // The re-edit toggle is only a real choice for organic and organic+paid.
+    // Whitelisting and full paid media inherently permit ad-variant cutting,
+    // so offering a checkbox there would promise something the clause overrides.
+    $("f-rights-edit-wrap").hidden = !(s === "organic" || s === "paid");
+  }
+
+  function render() {
+    syncRightsFields();
+    $("d-num").textContent = elNum.value || "";
+    $("d-foot-num").textContent = elNum.value || "";
+    $("d-date").textContent = fmtDate(elDate.value);
+
+    const brand = val("f-brand") || "Brand name";
+    $("d-brand-name").textContent = brand;
+    $("d-brand-addr").innerHTML = nl2br($("f-brand-addr").value);
+    $("d-me-addr").textContent = ME.address;
+
+    const email = val("f-brand-email");
+    const contact = $("d-brand-contact");
+    if (email) { contact.hidden = false; contact.innerHTML = '<span class="k">Email</span> ' + esc(email); }
+    else contact.hidden = true;
+
+    $("d-sign-name").textContent = val("f-brand-sign");
+    $("d-sign-title").textContent = val("f-brand-title");
+
+    // Lead with the name and handle the brand recognises. The entity is not
+    // named here: it appears in the masthead line and at signature, which is
+    // enough to tie the agreement to the account that invoices and gets paid.
+    $("d-preamble").innerHTML =
+      "This collaboration agreement is made on <b>" + (esc(fmtDate(elDate.value)) || "the date signed below") +
+      "</b> between <b>" + esc(ME.name) + "</b>, creator of <b>" + esc(ME.handle) +
+      "</b> on Instagram (the Creator), and <b>" + esc(brand) + "</b> (the Brand).";
+
+    // clauses
+    const clauses = buildClauses();
+    $("d-clauses").innerHTML = clauses.map((c, i) =>
+      '<div class="cl"><div class="cl-h"><span class="n">' + (i + 1) + '.</span><span>' + esc(c.h) + '</span></div>' +
+      '<div class="cl-b">' + c.b + '</div></div>'
+    ).join("");
+
+    fitDoc();
+  }
+
+  // ---- Scale doc to fit column (or user zoom) ----
+  let userZoom = 1;
+  function fitDoc() {
+    const doc = $("doc");
+    const wrap = doc.parentElement;
+    doc.style.transform = "none";
+    const available = wrap.clientWidth;
+    const natural = doc.offsetWidth;
+    let scale = natural > available ? available / natural : 1;
+    scale = scale * userZoom;
+    doc.style.transform = "scale(" + scale + ")";
+    wrap.style.height = (doc.offsetHeight * scale) + "px";
+  }
+
+  // ---- Read / load ----
+  function readForm() {
+    return {
+      num: elNum.value.trim(),
+      date: elDate.value,
+      brand: val("f-brand"),
+      brandAddr: $("f-brand-addr").value,
+      brandSign: val("f-brand-sign"),
+      brandTitle: val("f-brand-title"),
+      brandEmail: val("f-brand-email"),
+      campaign: val("f-campaign"),
+      deliverables: readDeliverables(),
+      draftDate: val("f-draft-date"),
+      liveDate: val("f-live-date"),
+      approvalDays: val("f-approval-days"),
+      minLive: val("f-min-live"),
+      currency: val("f-currency"),
+      fee: val("f-fee"),
+      payTerms: payTerms.value,
+      payCustom: payCustom.value,
+      late: val("f-late"),
+      revisions: val("f-revisions"),
+      revisionFee: val("f-revision-fee"),
+      rightsScope: val("f-rights-scope"),
+      rightsTerm: val("f-rights-term"),
+      rightsTerritory: val("f-rights-territory"),
+      rightsEdit: $("f-rights-edit").checked,
+      exclOn: exclOn.checked,
+      exclCat: val("f-excl-cat"),
+      exclDays: val("f-excl-days"),
+      exclNamed: val("f-excl-named"),
+      ndaOn: $("f-nda-on").checked,
+      delOn: $("f-del-on").checked,
+      kill: val("f-kill"),
+      seat: val("f-seat"),
+      law: val("f-law"),
+      notes: $("f-notes").value
+    };
+  }
+
+  function loadForm(a) {
+    elNum.value = a.num || "";
+    elDate.value = a.date || "";
+    $("f-brand").value = a.brand || "";
+    $("f-brand-addr").value = a.brandAddr || "";
+    $("f-brand-sign").value = a.brandSign || "";
+    $("f-brand-title").value = a.brandTitle || "";
+    $("f-brand-email").value = a.brandEmail || "";
+    $("f-campaign").value = a.campaign || "";
+
+    dlList.innerHTML = "";
+    (a.deliverables && a.deliverables.length ? a.deliverables : [{}]).forEach(d => makeDeliverableRow(d));
+
+    $("f-draft-date").value = a.draftDate || "";
+    $("f-live-date").value = a.liveDate || "";
+    $("f-approval-days").value = a.approvalDays || "3";
+    $("f-min-live").value = a.minLive || "";
+    $("f-currency").value = a.currency || "USD";
+    $("f-fee").value = a.fee || "";
+    payTerms.value = a.payTerms || "__split__";
+    payCustom.value = a.payCustom || "";
+    payCustomWrap.hidden = payTerms.value !== "__custom__";
+    $("f-late").value = a.late || "";
+    $("f-revisions").value = a.revisions || "2";
+    $("f-revision-fee").value = a.revisionFee || "";
+    $("f-rights-scope").value = a.rightsScope || "";
+    $("f-rights-term").value = a.rightsTerm || "";
+    $("f-rights-territory").value = a.rightsTerritory || "";
+    $("f-rights-edit").checked = !!a.rightsEdit;
+    exclOn.checked = !!a.exclOn;
+    exclWrap.hidden = !exclOn.checked;
+    $("f-excl-cat").value = a.exclCat || "";
+    $("f-excl-days").value = a.exclDays || "30";
+    $("f-excl-named").value = a.exclNamed || "";
+    $("f-nda-on").checked = !!a.ndaOn;
+    $("f-del-on").checked = !!a.delOn;
+    $("f-kill").value = a.kill || "50";
+    $("f-seat").value = a.seat || "";
+    $("f-law").value = a.law || "";
+    $("f-notes").value = a.notes || "";
+    render();
+  }
+
+  function saveCurrent() {
+    const a = readForm();
+    if (!a.num) return;
+    const list = getAll();
+    const idx = list.findIndex(x => x.num === a.num);
+    if (idx >= 0) list[idx] = a; else list.push(a);
+    saveAll(list);
+    renderArchive();
+  }
+
+  function deleteAgreement(num) {
+    saveAll(getAll().filter(x => x.num !== num));
+    renderArchive();
+    if (elNum.value.trim() === num) elNum.value = nextNumber();
+    render();
+  }
+
+  function renderArchive() {
+    const list = getAll().slice().sort((a, b) => (a.num < b.num ? 1 : -1));
+    const ul = $("hist-list");
+    if (!list.length) { ul.innerHTML = '<li class="empty">No saved agreements yet. Download one to save it here.</li>'; return; }
+    ul.innerHTML = list.slice(0, 12).map(a =>
+      '<li data-num="' + esc(a.num) + '">' +
+        '<button type="button" class="arch-open" title="Open this agreement">' +
+          '<span class="arch-num">' + esc(a.num) + '</span>' +
+          '<span class="arch-brand">' + (esc(a.brand) || "—") + '</span>' +
+          '<span class="arch-total">' + (a.fee ? fmtMoney(parseFloat(a.fee), a.currency) : "—") + '</span>' +
+        '</button>' +
+        '<button type="button" class="arch-del" title="Delete">×</button>' +
+      '</li>'
+    ).join("");
+    ul.querySelectorAll(".arch-open").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const num = btn.parentElement.dataset.num;
+        const a = getAll().find(x => x.num === num);
+        if (a) loadForm(a);
+      });
+    });
+    ul.querySelectorAll(".arch-del").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const num = btn.parentElement.dataset.num;
+        if (confirm("Delete agreement " + num + " from your saved list? This does not delete the PDF you already downloaded.")) deleteAgreement(num);
+      });
+    });
+  }
+
+  function isCurrentSaved() {
+    return !!getAll().find(x => x.num === elNum.value.trim());
+  }
+
+  function startBlank() {
+    $("f-brand").value = "";
+    $("f-brand-addr").value = "";
+    $("f-brand-sign").value = "";
+    $("f-brand-title").value = "";
+    $("f-brand-email").value = "";
+    $("f-campaign").value = "";
+    $("f-draft-date").value = "";
+    $("f-live-date").value = "";
+    $("f-fee").value = "";
+    $("f-notes").value = "";
+    $("f-excl-cat").value = "";
+    $("f-excl-named").value = "";
+    dlList.innerHTML = ""; makeDeliverableRow();
+    elNum.value = nextNumber();
+    render();
+  }
+
+  // ---- Wire up ----
+  payTerms.addEventListener("change", () => {
+    payCustomWrap.hidden = payTerms.value !== "__custom__";
+    render();
+  });
+  exclOn.addEventListener("change", () => { exclWrap.hidden = !exclOn.checked; render(); });
+
+  $("form").addEventListener("input", render);
+  $("form").addEventListener("change", render);
+  $("dl-add").addEventListener("click", () => { makeDeliverableRow(); render(); });
+
+  $("btn-pdf").addEventListener("click", () => {
+    const prevTitle = document.title;
+    const num = elNum.value.trim();
+    const brand = val("f-brand");
+    const parts = ["Agreement"];
+    if (num) parts.push(num);
+    if (brand) parts.push(brand);
+    document.title = parts.join(" ").replace(/[\/\\:*?"<>|]/g, "").trim() || "Agreement";
+    const restore = () => { document.title = prevTitle; window.removeEventListener("afterprint", restore); };
+    window.addEventListener("afterprint", restore);
+
+    saveCurrent();
+    window.print();
+    setTimeout(restore, 1500);
+  });
+
+  $("btn-new").addEventListener("click", () => {
+    const a = readForm();
+    const hasContent = a.brand || parseFloat(a.fee) > 0;
+    if (hasContent && !isCurrentSaved()) {
+      if (!confirm("Start a new agreement? The current one hasn't been downloaded yet, so it won't be saved.")) return;
+    }
+    startBlank();
+  });
+
+  const zoom = $("zoom"), zoomVal = $("zoom-val");
+  zoom.addEventListener("input", () => { userZoom = zoom.value / 100; zoomVal.textContent = zoom.value + "%"; fitDoc(); });
+  window.addEventListener("resize", fitDoc);
+
+  // ---- Init ----
+  function todayIso() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  elDate.value = todayIso();
+  makeDeliverableRow();
+  elNum.value = nextNumber();
+  renderArchive();
+  render();
+
+})();
+</script>
+</body>
+</html>

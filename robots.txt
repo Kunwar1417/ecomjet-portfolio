@@ -3,6 +3,8 @@ Allow: /
 
 # Private pages, sent directly and not for search results.
 # Each of these also carries a noindex meta tag.
+Disallow: /agreement
+Disallow: /agreement.html
 Disallow: /invoice
 Disallow: /invoice.html
 Disallow: /media-kit

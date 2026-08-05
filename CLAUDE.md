@@ -27,6 +27,7 @@
 |---|---|
 | `private.html` | **The index of every private page.** Live at `/private`. Start here when you need to know what is unlisted. Add a row to it whenever you make a new private page. |
 | `invoice.html` | Invoice generator. See docs/invoice-tool.md. |
+| `agreement.html` | Brand collaboration agreement generator at `/agreement`. Multi-page A4 contract PDF. See docs/agreement-tool.md. |
 | `rates.html` | Rate card at `/rates`, sent for cold/early pricing questions. Carries the site nav + footer (outbound links only, which does not make it discoverable). Warm inquiries get a full proposal instead. See docs/proposals.md. |
 | `proposal-{brand}-print.html` | Per-brand pitch pages (landscape PDF). Built from `proposal-template-print.html`. Usually exported to PDF and emailed, **not deployed**. See docs/proposals.md. |
 | `media-kit.html` | Source for the downloadable `media-kit.pdf`. 6-page Letter layout. The "Get the media kit" buttons link to the **PDF**, never to this page. To update the kit: edit here, then re-print (see below). |
@@ -88,5 +89,6 @@ Full procedure + URL notes (site serves `.html` paths, no clean URLs) are in **d
 | Shared nav / footer / closing CTA markup, what `app.js` does | `docs/components.md` |
 | **Deploying** (safe runbook, URL rules, auto-deploy status) | `docs/deployment.md` |
 | The invoice generator (`invoice.html`) | `docs/invoice-tool.md` |
+| **The agreement generator** (`agreement.html`), clause set, dispute-clause reasoning | `docs/agreement-tool.md` |
 | **Brand proposals** (per-brand pitch pages, pricing ladder, PDF export, design tokens) | `docs/proposals.md` |
 | **The rate card** (`rates.html`) and when to send it instead of a proposal | `docs/proposals.md` |
