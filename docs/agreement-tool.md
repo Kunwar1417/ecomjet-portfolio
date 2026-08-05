@@ -109,10 +109,33 @@ Instead of emailing a PDF, the creator sends a link. The brand opens the agreeme
 The flow:
 
 1. Fill the form → **Create share link** → URL copied to the clipboard.
-2. The brand opens it, reads, types or draws a signature, ticks consent, signs.
+2. The brand opens it and **fills the document itself**: clicking a highlighted field activates it in place. They complete their registered address, name and title, then click the signature rule on the certificate to type or draw a signature.
 3. The studio's "Shared links" list shows **Sent → Opened → Signed**.
 4. **Countersign** applies `photos/signature.png`; status becomes **Executed**.
 5. Both parties download the same executed PDF from the same link.
+
+### Who fills what, and why
+
+| Field | Filled by | Why |
+|---|---|---|
+| Brand legal name | Creator | Referenced throughout the clauses ("X engages the Creator…"), and it defines who the contract is with. |
+| Brand registered address | **Brand, at signing** | Only they know the correct contracting entity address. A guessed head-office address weakens the document. |
+| Signatory name and title | **Brand, at signing** | The person who actually signs, not who the draft guessed. The title is the field evidencing authority to bind the company. |
+| Brand contact email | Nobody, removed | The address identifies the entity and correspondence goes to whoever signs. One less thing to get wrong. |
+
+### Fill in place, not a separate panel
+
+An earlier build put the inputs in a panel below the document. It was rejected because the natural instinct is to click the blank field itself. Fields are now activated **in the document**, which is also how the printed contract stays truthful: what the client typed *is* the contract text, not a copy of it.
+
+- `.kd-fill` marks a field awaiting input (dashed blue, small tag naming it). `.kd-input` is transparent and inherits the document's own typography, so filled text reads as contract text rather than a form control.
+- The signature is the one exception, because it needs a choice of typed or drawn. Its popover is **anchored to the signature rule on the certificate**, never a distant box.
+- The **guide bar is pinned to the top** with a live count and a "Go to field" button. A small corner button was missed in testing; this one cannot be.
+- Do **not** use `scrollIntoView` to reach a field. The document sits in a CSS-scaled container under a fixed bar, so the browser's centring lands in the wrong place. `focusField()` computes the offset from the page top instead.
+
+### ⚠️ Two print traps specific to the fill layer
+
+1. **The fill highlights sit ON the document**, so unlike the guide bar and popovers they cannot simply be `.no-print`. The print block strips `.kd-fill` back to plain text and hides the tags and the sign button.
+2. **Placeholders leak into the PDF text layer.** `color: transparent` hides them visually but the words remain extractable, so a downloaded blank contract literally contained "Full name" where a name belongs. The `placeholder` attribute is removed on `beforeprint` and restored on `afterprint`. Verify with text extraction, never by eye.
 
 ### Files
 
