@@ -438,13 +438,14 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
    PRINT
    ============================================================ */
 @media print {
-  /* ZERO page margin on every side. Chrome refuses to paint into an @page
-     margin, so any non-zero value prints a bare white bar at the top and
-     bottom of every sheet. With margin:0 the cream ground covers the full
-     page. Vertical breathing room comes from padding on .inv-doc, which
-     (verified) does NOT repeat after a page break: text flows continuously
-     across the fold, so nothing is clipped and no blank band appears. */
-  @page { size: A4; margin: 0; }
+  /* Per-page vertical margin that is actually PAINTED.
+     The trick is declaring `background` on @page itself, not just on <html>.
+     Chrome honours it and fills the margin strips, so the margin reserves
+     real space on EVERY page (nothing clipped, nothing overlaid) while the
+     cream still bleeds to all four edges. Setting the background only on
+     <html> does not work; that is why earlier attempts concluded a white
+     bar was unavoidable. Left/right stay 0 so the spine reaches the edge. */
+  @page { size: A4; margin: 14mm 0; background: #FBFAF6; }
   html, body { background: var(--paper) !important; }
   .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
   .inv-top, .inv-form, .no-print { display: none !important; }
@@ -452,11 +453,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .inv-doc {
     transform: none !important;
     box-shadow: none; margin: 0;
-    /* Vertical padding gives page one its opening space and the last page its
-       closing space; it does not repeat mid-document, so continuation pages
-       start at the fold with no blank band (verified against a 3-page probe).
-       Left inset = 16mm text + 3mm spine. */
-    padding: 13mm 16mm 13mm 19mm;
+    /* Horizontal inset only; the @page margin now owns vertical space on every
+       page. Left = 16mm text + 3mm spine. Never add TOP padding here: it would
+       stack on top of the @page margin on page one only, unbalancing it. */
+    padding: 0 16mm 0 19mm;
     width: auto; min-height: 0;
     overflow: visible;
     display: block;
@@ -476,8 +476,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
      a top margin on the block itself collapses through the break and has no
      effect, and padding would move its contents rather than its frame. */
   .sign-break {
-    display: block; height: 13mm;    /* matches .inv-doc top padding, which
-                                        does not apply after a forced break */
+    display: block; height: 0;       /* @page margin already spaces the page */
     break-before: page; page-break-before: always;
   }
 
@@ -492,6 +491,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     top: 0; bottom: 0; left: 0; right: 0;
   }
   .pg-band--top { background: var(--paper); z-index: 0; }
+  /* Spine. A fixed layer is clipped to the page content area, so it stops at
+     the @page margin rather than running the full sheet. `border-left` on
+     @page would cover the margins but Chrome ignores it, so this is as far
+     as the spine can reach. */
   .pg-band--bot { width: 3mm; right: auto; background: var(--blue); z-index: 1; }
   .inv-doc { position: relative; z-index: 2; }   /* content rides above both */
 
