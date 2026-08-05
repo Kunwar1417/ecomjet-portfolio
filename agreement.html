@@ -438,16 +438,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
    PRINT
    ============================================================ */
 @media print {
-  /* Vertical page margins MUST come from @page: it is the only mechanism that
-     reserves space on every page, so text can never be clipped or overlaid.
-     (Fixed masking bands were tried and painted over real sentences.)
-     Left/right stay 0 so the cream ground and blue spine bleed to the edges;
-     the horizontal text inset lives on .inv-doc instead. */
-  /* Vertical margin MUST be a real @page margin. It is the only thing that
-     reserves space on every page, and reserving (not masking) is what keeps
-     text from being clipped. Chrome leaves these strips unpainted, so the
-     sheet shows a thin white band top and bottom; that is the accepted
-     trade for never losing a line of the contract. */
+  /* Vertical margin MUST be a real @page margin: it is the only thing that
+     RESERVES space on every page, and reserving (not masking) is what keeps
+     text from being clipped. Left/right stay 0 so the cream ground and blue
+     spine bleed to the edges; the horizontal text inset lives on .inv-doc. */
   @page { size: A4; margin: 12mm 0; }
   html, body { background: var(--paper) !important; }
   .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
@@ -467,7 +461,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     border-left: none;
     background: none;
   }
-  .d-head { padding: 0; }
+  /* Masthead keeps real top padding. This is SAFE where a top padding on
+     .d-body is not: .d-head renders once, on page one only, so it cannot be
+     re-applied after a page break. It restores the opening breathing room
+     the document is designed around. */
+  .d-head { padding: 10mm 0 0; }
   .d-body { display: block; padding: 0; }
   .d-foot { display: none; }
 
@@ -509,7 +507,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
   <div class="inv-top no-print">
     <h1>Agreement <em>studio</em></h1>
-    <div class="inv-hint">Private. Fill the form, then Download PDF (Save as PDF, A4).</div>
+    <div class="inv-hint">Private. Fill the form, then Download PDF. In the print dialog: <b>A4</b>, and turn <b>Headers and footers OFF</b> (otherwise the browser prints the date and URL on every page).</div>
   </div>
 
   <!-- ============ FORM ============ -->
@@ -748,6 +746,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       <button type="button" class="inv-btn inv-btn--ghost" id="btn-new">New agreement</button>
       <button type="button" class="inv-btn inv-btn--primary" id="btn-pdf">Download PDF</button>
     </div>
+    <div class="hint-sm" style="text-align:center;margin-top:8px">In the print dialog set paper to <b>A4</b> and switch <b>Headers and footers</b> off.</div>
 
     <div class="inv-history">
       <h2>Saved agreements</h2>
