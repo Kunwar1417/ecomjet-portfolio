@@ -438,13 +438,17 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
    PRINT
    ============================================================ */
 @media print {
-  /* Chrome does NOT paint any background into the @page margin area in
-     print-to-PDF (verified: a page with margins renders those strips
-     transparent/white). So the margin must be ZERO and the page frame comes
-     from fixed-position layers instead, which do cover the full sheet.
-     Horizontal insets sit on the content; vertical breathing room comes
-     from the fixed header/footer spacers below. */
-  @page { size: A4; margin: 0; }
+  /* Vertical page margins MUST come from @page: it is the only mechanism that
+     reserves space on every page, so text can never be clipped or overlaid.
+     (Fixed masking bands were tried and painted over real sentences.)
+     Left/right stay 0 so the cream ground and blue spine bleed to the edges;
+     the horizontal text inset lives on .inv-doc instead. */
+  /* Vertical margin MUST be a real @page margin. It is the only thing that
+     reserves space on every page, and reserving (not masking) is what keeps
+     text from being clipped. Chrome leaves these strips unpainted, so the
+     sheet shows a thin white band top and bottom; that is the accepted
+     trade for never losing a line of the contract. */
+  @page { size: A4; margin: 12mm 0; }
   html, body { background: var(--paper) !important; }
   .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
   .inv-top, .inv-form, .no-print { display: none !important; }
@@ -452,9 +456,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .inv-doc {
     transform: none !important;
     box-shadow: none; margin: 0;
-    /* Horizontal insets are safe here: side padding applies to every page,
-       unlike TOP padding which would be re-applied after each break and
-       reopen the blank band. Vertical space comes from the spacers below. */
+    /* Horizontal inset only. Side padding applies identically to every page;
+       TOP padding must never go here, as it is re-applied after each break
+       and opens a blank band at the top of pages 2+. Vertical space is the
+       @page margin's job. */
     padding: 0 16mm 0 19mm;
     width: auto; min-height: 0;
     overflow: visible;
@@ -466,54 +471,33 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .d-body { display: block; padding: 0; }
   .d-foot { display: none; }
 
-  /* Per-page vertical margins. A fixed element repeats on every printed
-     page, so these two cream bands mask the content strip that would
-     otherwise run into the paper edge, giving every page a top and bottom
-     margin without any repeating-padding problem. */
-  /* Bands mask content that would otherwise run to the paper edge. They must
-     sit ABOVE the flowing text (which has no stacking context) but the
-     certificate frame is deliberately placed clear of them, so nothing real
-     is hidden. Height must match .inv-doc-wrap's vertical padding exactly. */
-  .pg-band {
-    display: block;
-    position: fixed; left: 0; right: 0; height: 13mm;
-    background: var(--paper); z-index: 2;
-  }
-  .pg-band--top { top: 0; }
-  .pg-band--bot { bottom: 0; }
-
-  /* Content must reserve the same vertical space the bands occupy, or the
-     bands would mask real text instead of empty margin. */
-  .inv-doc-wrap { padding: 13mm 0; }
-
-  /* Keep visually-bounded blocks off the fold, so a band never clips a rule
-     or splits a boxed element mid-way. */
+  /* Keep visually-bounded blocks off the fold, so nothing splits awkwardly. */
   .fee-bar, .kv-grid, .dtab, .sign-cols, .sign-col { break-inside: avoid; page-break-inside: avoid; }
   .cl-h { break-after: avoid; page-break-after: avoid; }
 
-  /* The certificate opens a fresh page, so its frame starts flush against the
-     top margin band, which clips the two outer rules (the outline sits 1.6mm
-     outside the border). A top margin on the block itself collapses through
-     the forced break, and padding only moves its contents, not the frame.
-     So the page break is carried by a zero-height spacer that owns the gap. */
+  /* The forced break is carried by this spacer rather than by .d-signblock:
+     a top margin on the block itself collapses through the break and has no
+     effect, and padding would move its contents rather than its frame. */
   .sign-break {
-    display: block; height: 10mm;
+    display: block; height: 0;
     break-before: page; page-break-before: always;
   }
 
-  /* Cream ground comes from the html background above, which Chrome paints
-     across the full sheet on every page (margins included). The spine is a
-     fixed layer, which in paged media repeats on each page; anchored to the
-     viewport it reaches the physical left edge past the @page margin.
-     Do NOT give this a negative z-index: that drops it behind the page
-     background and takes the blue clause numbers with it. */
-  body::after {
-    content: "";
+  /* Cream ground + blue spine, drawn per page by fixed layers (a fixed element
+     repeats on every page in paged media). They sit BEHIND the text, which is
+     the crucial difference from the earlier overlay bands that painted over
+     real sentences. They cover the printable area only: nothing can paint
+     into a Chrome @page margin, verified with a probe, not even a fixed
+     element with negative offsets. The resulting hairline white strip top and
+     bottom is the accepted cost of never clipping a line of the contract. */
+  .pg-band {
+    display: block !important;
     position: fixed;
-    top: 0; bottom: 0; left: 0;
-    width: 3mm; background: var(--blue);
-    z-index: 3;                      /* above the cream margin bands */
+    top: 0; bottom: 0; left: 0; right: 0;
   }
+  .pg-band--top { background: var(--paper); z-index: 0; }
+  .pg-band--bot { width: 3mm; right: auto; background: var(--blue); z-index: 1; }
+  .inv-doc { position: relative; z-index: 2; }   /* content rides above both */
 
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
