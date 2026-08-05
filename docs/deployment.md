@@ -28,4 +28,20 @@ Safe deploy procedure (deletes nothing, ignores working-tree mess):
 
 Recovering accidentally-deleted files (they are safe in git forever): `git checkout HEAD -- <path>` restores any committed file to disk. `git status | grep "^ D"` lists pending deletions to watch for.
 
-The repo `.gitignore` ignores `.vercel` and `**/.DS_Store` (macOS junk). Do not commit `.DS_Store` files.
+The repo `.gitignore` ignores `.vercel`, `node_modules` and `**/.DS_Store` (macOS junk). Do not commit `.DS_Store` files.
+
+## The site is no longer purely static
+
+`/api` holds serverless functions backing the shareable agreement links (see `docs/agreement-tool.md`). Everything else is still plain HTML that opens from disk.
+
+**What this changes:**
+
+- **`package.json` exists**, with one dependency (`@neondatabase/serverless`). Vercel installs it during deploy; the safe runbook above is unchanged, since the clone includes `package.json` and Vercel runs the install itself.
+- **`node_modules` is gitignored** and must never be committed.
+- **Two environment variables must exist in the Vercel project** (Project → Settings → Environment Variables, all environments):
+  - `DATABASE_URL` — the Neon Postgres connection string. Created via Vercel → Storage → Neon; Vercel usually injects this automatically once the database is linked.
+  - `SHARE_SECRET` — any long random string. Required to create share links. **The API fails closed:** if it is missing, every write is refused, which is the intended behaviour, not a bug.
+- **The share features do not work over `python3 -m http.server`** or from `file://`, because there is no `/api` there. Use `npx vercel dev` to exercise them locally. Static pages, including `/agreement`'s form, preview and PDF, still work fine on the plain server.
+- **The database schema is created on first use** (`CREATE TABLE IF NOT EXISTS`). There is no migration step. If the schema ever grows complicated enough that this feels risky, that is the signal to add real migrations.
+
+**After deploying, verify the API too:** `curl -s -o /dev/null -w "%{http_code}" https://theecomjet.com/api/agreements/nonexistenttoken000000` should return **404** (reaching the function), not 500 (misconfigured database) and not 404-from-static.

@@ -138,7 +138,13 @@ a.p-card--warn:hover { box-shadow: 7px 7px 0 0 var(--orange); }
         <div class="p-card__top">
           <span class="p-card__link">/agreement</span>
         </div>
-        <p class="p-card__what">Collaboration agreement generator. Fill in the brand and deal terms, download the contract as a PDF. For your use, sent to a brand only once signed.</p>
+        <p class="p-card__what">Collaboration agreement generator. Fill in the brand and deal terms, then either download the contract as a PDF or create a share link the brand can read online.</p>
+      </a>
+      <a class="p-card" href="/agreement">
+        <div class="p-card__top">
+          <span class="p-card__link">/s/&lt;token&gt;</span>
+        </div>
+        <p class="p-card__what">The brand's read-only view of a shared agreement, one unguessable link per agreement. Created from <code>/agreement</code>, not by hand. Links expire after 30 days.</p>
       </a>
       <a class="p-card" href="/rates">
         <div class="p-card__top">

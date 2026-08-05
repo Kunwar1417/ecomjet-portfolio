@@ -3,425 +3,191 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Unlisted, like the rest of the tools. Note there is deliberately NO
+     robots.txt Disallow for /s/: a Disallow line would publish the existence
+     of the path to anyone who reads robots.txt, and the tokens are what keep
+     these private. The meta tag plus the X-Robots-Tag header in vercel.json
+     do the actual work. See docs/agreement-tool.md. -->
 <meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="no-referrer" />
 <link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
-<title>Agreement studio · Kunwar</title>
+<title>Collaboration agreement</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   Agreement studio — private tool at /agreement.html
-   Same design system as invoice.html (warm cream, navy ink,
-   brand blue accent, 3mm blue spine). Self-contained.
-   Screen: form panel + scaled A4 preview. Print: A4 doc only.
-   Multi-page: clauses flow, .cl blocks avoid breaking inside.
+   Sign view — what a brand sees when they open a share link.
+
+   The document itself comes from agreement-doc.css, linked BELOW this
+   block. That ordering is load-bearing: agreement-doc.css ends with
+   @media print, and if it loads first these screen rules would win over
+   the print reset and the PDF would come out rescaled. The same trap is
+   documented in agreement.html.
+
+   Everything here is the surrounding chrome, all .no-print.
    ============================================================ */
 
-/* Design tokens and the base element rules (:root, *, body, img, button)
-   are defined once in agreement-doc.css, which is linked above. Do not
-   redeclare them here: a second `body` rule re-applies font-feature-settings
-   and shifts glyph metrics in print, which silently rewraps every clause. */
-
-.inv-app {
-  max-width: 1560px;
+.sv-app {
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 24px 28px 80px;
+  padding: 20px 24px 72px;
   display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 36px;
+  grid-template-columns: 300px 1fr;
+  gap: 32px;
   align-items: start;
 }
-@media (max-width: 1120px) { .inv-app { grid-template-columns: 1fr; } }
+@media (max-width: 1040px) { .sv-app { grid-template-columns: 1fr; gap: 20px; } }
 
-.inv-top {
-  grid-column: 1 / -1;
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: 16px; flex-wrap: wrap; margin-bottom: 2px;
-}
-.inv-top h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
-.inv-top h1 em { font-family: var(--serif); font-style: italic; color: var(--blue); font-weight: 400; }
-.inv-top .inv-hint { color: var(--muted); font-size: 13px; }
-
-/* ============================================================
-   FORM PANEL (screen only)
-   ============================================================ */
-.inv-form {
+/* ---- The rail ---------------------------------------------------- */
+.sv-rail {
   position: sticky; top: 20px;
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 14px;
   box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -28px rgba(20,20,40,.35);
-  padding: 20px 20px 24px;
+  padding: 22px 22px 20px;
 }
-.inv-form h2 {
-  font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
-  color: var(--muted); margin: 22px 0 11px; font-weight: 700;
-  padding-top: 14px; border-top: 1px solid var(--line);
+@media (max-width: 1040px) { .sv-rail { position: static; } }
+
+.sv-eyebrow {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .16em;
+  font-weight: 700; color: var(--muted);
 }
-.inv-form h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
-
-.field { margin-bottom: 11px; }
-.field label { display: block; font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
-.field input[type=text], .field input[type=date], .field input[type=number],
-.field textarea, .field select {
-  width: 100%; font: inherit; font-size: 14px; padding: 9px 11px;
-  border: 1px solid var(--line-2); border-radius: 9px;
-  background: #fff; color: var(--ink);
+.sv-brand {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.025em;
+  margin: 8px 0 0; line-height: 1.2;
 }
-.field textarea { resize: vertical; min-height: 46px; line-height: 1.4; }
-.field input:focus, .field textarea:focus, .field select:focus {
-  outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,73,196,.12);
+.sv-from { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.sv-from b { color: var(--ink); font-weight: 700; }
+.sv-handle { color: var(--blue); font-weight: 600; }
+
+.sv-meta {
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 14px;
+  font-size: 12.5px;
 }
-.field-row { display: flex; gap: 10px; }
-.field-row > .field { flex: 1; margin-bottom: 11px; }
-.hint-sm { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+.sv-meta .k { color: var(--muted); }
+.sv-meta .v { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
 
-.seg { display: flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; padding: 3px; gap: 3px; background: var(--panel); }
-.seg button { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 700; border-radius: 999px; color: var(--ink); transition: background .12s, color .12s; }
-.seg button[aria-pressed="true"] { background: var(--blue); color: #fff; }
-
-.chk { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; line-height: 1.35; }
-.chk input { width: 16px; height: 16px; accent-color: var(--blue); flex-shrink: 0; margin-top: 1px; }
-
-/* deliverable rows */
-.dl-head, .dl-row { display: grid; grid-template-columns: 1fr 44px 24px; gap: 6px; }
-.dl-head { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: 5px; }
-.dl-row { align-items: start; margin-bottom: 7px; }
-.dl-row textarea { min-height: 38px; font-size: 13px; padding: 7px 8px; }
-.dl-row input { font-size: 13px; padding: 7px 6px; }
-.dl-del { align-self: center; width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--line-2); background: #fff; color: var(--muted); font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center; }
-.dl-del:hover { border-color: #B0345A; color: #B0345A; }
-.btn-line { font-size: 13px; font-weight: 600; color: var(--blue); padding: 5px 0; }
-.btn-line:hover { text-decoration: underline; }
-
-.inv-actions { display: flex; gap: 10px; margin-top: 20px; position: sticky; bottom: 0; background: var(--paper); padding: 12px 0 4px; border-top: 1px solid var(--line); }
-.inv-btn { flex: 1; padding: 11px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; border: 1px solid var(--ink); text-align: center; }
-.inv-btn--primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-.inv-btn--primary:hover { background: var(--blue-d); }
-.inv-btn--ghost { background: var(--paper); color: var(--ink); }
-.inv-btn--ghost:hover { background: var(--panel); }
-
-.inv-history { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
-.inv-history h2 { margin-top: 0; padding-top: 0; border-top: none; }
-.inv-history ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; color: var(--ink); }
-.inv-history li { display: flex; align-items: stretch; gap: 4px; margin-bottom: 4px; }
-.inv-history .empty { color: var(--muted); font-style: italic; padding: 4px 0; }
-.arch-open {
-  flex: 1; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline;
-  text-align: left; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px;
-  background: #fff; transition: border-color .12s, background .12s;
+.sv-note {
+  margin-top: 18px; font-size: 12.5px; line-height: 1.6; color: var(--muted);
 }
-.arch-open:hover { border-color: var(--blue); background: #fff; }
-.arch-num { font-weight: 700; font-variant-numeric: tabular-nums; }
-.arch-brand { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.arch-total { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-.arch-del {
-  width: 30px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
-  color: var(--muted); font-size: 15px; line-height: 1; flex-shrink: 0;
-}
-.arch-del:hover { border-color: #B0345A; color: #B0345A; }
 
-/* Shared-link list. Same shape as the archive rows, plus a status pill. */
-.sent-row {
-  flex: 1; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline;
-  text-align: left; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px;
-  background: #fff; transition: border-color .12s;
+.sv-actions { margin-top: 18px; display: grid; gap: 9px; }
+.sv-btn {
+  display: block; width: 100%; text-align: center;
+  padding: 12px 16px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  border: 1px solid var(--ink); background: var(--ink); color: #fff;
+  text-decoration: none;
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
 }
-.sent-row:hover { border-color: var(--blue); }
-.sent-num { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12px; }
-.sent-brand { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sent-pill {
-  font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  padding: 3px 7px; border-radius: 999px; background: var(--panel); color: var(--muted);
-  white-space: nowrap;
+.sv-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -10px rgba(20,33,58,.8); }
+.sv-btn--ghost { background: transparent; color: var(--ink); border-color: var(--line-2); }
+.sv-btn--ghost:hover { border-color: var(--ink); box-shadow: none; }
+
+/* Status pill, only shown once the server confirms the read. */
+.sv-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--panel); color: var(--muted);
+  margin-top: 14px;
 }
-.sent-pill--viewed { background: #E6EAFB; color: var(--blue); }
-.sent-pill--expired { background: #F3E3E7; color: #9A3B57; }
+.sv-pill::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blue);
+}
 
-.zoom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.zoom-row label { font-size: 12px; color: var(--muted); font-weight: 600; }
-.zoom-row input[type=range] { flex: 1; accent-color: var(--blue); }
+/* ---- Document column --------------------------------------------- */
+.sv-docwrap { min-width: 0; }
 
-/* Document CSS + the whole @media print block now live in
-   agreement-doc.css, shared with sign.html so the brand's view and
-   the creator's preview cannot drift apart. Bump ?v=N there. */
+/* ---- Loading / error states -------------------------------------- */
+.sv-state {
+  max-width: 560px; margin: 12vh auto; padding: 0 24px;
+  text-align: center;
+}
+.sv-state h1 {
+  font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 12px;
+}
+.sv-state h1 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--blue);
+}
+.sv-state p { font-size: 15px; line-height: 1.65; color: var(--muted); margin: 0 0 8px; }
+.sv-state a { color: var(--blue); }
+.sv-spin {
+  width: 26px; height: 26px; margin: 0 auto 18px;
+  border: 2.5px solid var(--line); border-top-color: var(--blue);
+  border-radius: 50%; animation: sv-rot .8s linear infinite;
+}
+@keyframes sv-rot { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .sv-spin { animation-duration: 3s; } }
+
+[hidden] { display: none !important; }
+
+/* On screen the document is scaled to fit its column, exactly as in the
+   editor. fitDoc() sets the transform; this just centres the result. */
+.inv-doc-wrap { display: flex; justify-content: center; overflow: visible; }
+
+@media print {
+  /* The rail is chrome, never part of the contract. */
+  .sv-rail, .sv-state, .no-print { display: none !important; }
+  .sv-app { display: block; padding: 0; margin: 0; max-width: none; }
+}
 </style>
-<!-- MUST stay AFTER the inline <style> above. Same rules in a different order
-     are not the same stylesheet: this file ends with @media print, and if it
-     loads first, the app-chrome rules above win over the print reset and the
-     whole document renders at a smaller scale with every clause rewrapped.
-     Verified by rendering PDFs, not by reading the diff. -->
+<!-- MUST stay AFTER the inline <style> above: this file ends with @media
+     print, and loading it first lets the screen rules above beat the print
+     reset. Verified by rendering PDFs. Same note as in agreement.html. -->
 <link rel="stylesheet" href="agreement-doc.css?v=1" />
 </head>
 <body>
 
-<div class="inv-app" id="app">
+<!-- Loading -->
+<div class="sv-state" id="sv-loading">
+  <div class="sv-spin"></div>
+  <p>Loading the agreement…</p>
+</div>
 
-  <div class="inv-top no-print">
-    <h1>Agreement <em>studio</em></h1>
-    <div class="inv-hint">Private. Fill the form, then Download PDF. In the print dialog: <b>A4</b>, and turn <b>Headers and footers OFF</b> (otherwise the browser prints the date and URL on every page).</div>
-  </div>
+<!-- Error -->
+<div class="sv-state" id="sv-error" hidden>
+  <h1>This link is not <em>available</em></h1>
+  <p id="sv-error-msg">The link may have expired, or it may have been mistyped.</p>
+  <p>Please ask Kunwar for a fresh link, or reply to the email this came from.</p>
+  <p><a href="mailto:kunwar@thecomjet.com">kunwar@thecomjet.com</a></p>
+</div>
 
-  <!-- ============ FORM ============ -->
-  <form class="inv-form no-print" id="form" autocomplete="off">
+<!-- The agreement -->
+<div class="sv-app" id="sv-app" hidden>
 
-    <div class="zoom-row">
-      <label for="zoom">Preview</label>
-      <input type="range" id="zoom" min="40" max="120" value="100" />
-      <span id="zoom-val" style="font-size:12px;color:var(--muted);width:34px;text-align:right;">100%</span>
-    </div>
+  <aside class="sv-rail no-print">
+    <div class="sv-eyebrow">Collaboration agreement</div>
+    <h1 class="sv-brand" id="sv-brand">&nbsp;</h1>
+    <p class="sv-from">
+      From <b>Kunwar Deep</b>, creator of <span class="sv-handle">@the_ecomjet</span>.
+    </p>
 
-    <h2>Agreement</h2>
-    <div class="field-row">
-      <div class="field">
-        <label for="f-num">Agreement number</label>
-        <input type="text" id="f-num" />
-      </div>
-      <div class="field">
-        <label for="f-date">Date</label>
-        <input type="date" id="f-date" />
-      </div>
-    </div>
-
-    <h2>Brand</h2>
-    <div class="field">
-      <label for="f-brand">Legal entity name</label>
-      <input type="text" id="f-brand" placeholder="Wispr AI, Inc." />
-    </div>
-    <div class="field">
-      <label for="f-brand-addr">Registered address</label>
-      <textarea id="f-brand-addr" placeholder="455 Townsend St, San Francisco, CA 94107, USA"></textarea>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label for="f-brand-sign">Signatory name</label>
-        <input type="text" id="f-brand-sign" placeholder="Jane Doe" />
-      </div>
-      <div class="field">
-        <label for="f-brand-title">Signatory title</label>
-        <input type="text" id="f-brand-title" placeholder="Head of Growth" />
-      </div>
-    </div>
-    <div class="field">
-      <label for="f-brand-email">Contact email</label>
-      <input type="text" id="f-brand-email" placeholder="jane@wispr.ai" />
+    <div class="sv-meta">
+      <span class="k">Agreement</span><span class="v" id="sv-num"></span>
+      <span class="k">Dated</span><span class="v" id="sv-date"></span>
+      <span class="k">Fee</span><span class="v" id="sv-fee"></span>
     </div>
 
-    <h2>Campaign</h2>
-    <div class="field">
-      <label for="f-campaign">Campaign name (optional)</label>
-      <input type="text" id="f-campaign" placeholder="Wispr Flow launch" />
-    </div>
+    <div class="sv-pill" id="sv-status">Opened</div>
 
-    <h2>Deliverables</h2>
-    <div class="dl-head">
-      <span>Deliverable</span>
-      <span>Qty</span>
-      <span></span>
-    </div>
-    <div id="dl-list"></div>
-    <button type="button" class="btn-line" id="dl-add">+ Add deliverable</button>
+    <p class="sv-note">
+      Please read the agreement, then download a copy. To accept, sign the last
+      page and send it back. Any question about the terms can go straight to
+      Kunwar before you sign.
+    </p>
 
-    <h2>Timeline</h2>
-    <div class="field-row">
-      <div class="field">
-        <label for="f-draft-date">Draft delivered by</label>
-        <input type="date" id="f-draft-date" />
-      </div>
-      <div class="field">
-        <label for="f-live-date">Goes live on</label>
-        <input type="date" id="f-live-date" />
-      </div>
+    <div class="sv-actions">
+      <button type="button" class="sv-btn" id="sv-pdf">Download PDF</button>
+      <a class="sv-btn sv-btn--ghost" id="sv-mail" href="mailto:kunwar@thecomjet.com">Ask a question</a>
     </div>
-    <div class="field-row">
-      <div class="field">
-        <label for="f-approval-days">Approval window (business days)</label>
-        <input type="number" id="f-approval-days" min="1" step="1" value="3" />
-      </div>
-      <div class="field">
-        <label for="f-min-live">Stays live for</label>
-        <select id="f-min-live">
-          <option value="">Not specified</option>
-          <option value="3 months">3 months</option>
-          <option value="6 months">6 months</option>
-          <option value="12 months" selected>12 months</option>
-          <option value="Permanently">Permanently</option>
-        </select>
-      </div>
-    </div>
+  </aside>
 
-    <h2>Fee</h2>
-    <div class="field-row">
-      <div class="field">
-        <label for="f-currency">Currency</label>
-        <select id="f-currency">
-          <option value="USD" selected>USD ($)</option>
-          <option value="INR">INR (₹)</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="f-fee">Total fee</label>
-        <input type="number" id="f-fee" min="0" step="1" placeholder="3500" />
-      </div>
-    </div>
-    <div class="field">
-      <label for="f-payterms">Payment terms</label>
-      <select id="f-payterms">
-        <option value="__split__" selected>50% advance / 50% on posting</option>
-        <option value="100% in advance, before work begins.">100% in advance</option>
-        <option value="Due within 7 days of the invoice date.">Net 7 after delivery</option>
-        <option value="Due within 30 days of the invoice date.">Net 30 after delivery</option>
-        <option value="__custom__">Custom…</option>
-      </select>
-    </div>
-    <div class="field" id="f-payterms-custom-wrap" hidden>
-      <input type="text" id="f-payterms-custom" placeholder="Type custom payment terms" />
-    </div>
-    <div class="field">
-      <label for="f-late">Late payment</label>
-      <select id="f-late">
-        <option value="" selected>No late-payment clause</option>
-        <option value="15">1.5% per month after 15 days overdue</option>
-        <option value="30">1.5% per month after 30 days overdue</option>
-      </select>
-      <div class="hint-sm">Off by default. Interest is hard to enforce on an overseas client and often triggers a procurement redline. The 50% advance is the real protection.</div>
-    </div>
-
-    <h2>Revisions</h2>
-    <div class="field">
-      <label for="f-revisions">Included revision rounds</label>
-      <select id="f-revisions">
-        <option value="1">1 round</option>
-        <option value="2" selected>2 rounds</option>
-        <option value="3">3 rounds</option>
-      </select>
-      <div class="hint-sm">Beyond this, further rounds are billed. A full re-shoot is never a revision.</div>
-    </div>
-    <div class="field">
-      <label for="f-revision-fee">Fee per extra round (optional)</label>
-      <input type="number" id="f-revision-fee" min="0" step="1" placeholder="500" />
-    </div>
-
-    <h2>Usage rights</h2>
-    <div class="field">
-      <label for="f-rights-scope">Scope</label>
-      <select id="f-rights-scope">
-        <option value="" selected>No usage rights granted</option>
-        <option value="organic">Organic usage rights</option>
-        <option value="paid">Organic + paid usage rights</option>
-        <option value="whitelist">Whitelisting (ads run from my handle)</option>
-        <option value="full">Full paid media</option>
-      </select>
-      <div class="hint-sm" id="scope-explain"></div>
-    </div>
-    <div class="field" id="f-rights-term-wrap">
-      <label for="f-rights-term">Licence term</label>
-      <select id="f-rights-term">
-        <option value="" selected>Select term…</option>
-        <option value="1 month">1 month</option>
-        <option value="3 months">3 months</option>
-        <option value="6 months">6 months</option>
-        <option value="12 months">12 months</option>
-        <option value="In perpetuity">In perpetuity</option>
-      </select>
-      <div class="hint-sm">Drives every rights clause. All permissions above end when this term does.</div>
-    </div>
-    <div class="field" id="f-rights-terr-wrap">
-      <label for="f-rights-territory">Territory</label>
-      <select id="f-rights-territory">
-        <option value="" selected>Select territory…</option>
-        <option value="Worldwide">Worldwide</option>
-        <option value="United States">United States</option>
-        <option value="India">India</option>
-      </select>
-    </div>
-    <div class="field" id="f-rights-edit-wrap" hidden>
-      <label class="chk"><input type="checkbox" id="f-rights-edit" /> Brand may re-edit or re-cut the content</label>
-      <div class="hint-sm">Off by default. Ad formats always allow trimming to fit a placement.</div>
-    </div>
-
-    <h2>Optional clauses</h2>
-    <div class="field">
-      <label class="chk"><input type="checkbox" id="f-excl-on" /> Category exclusivity</label>
-    </div>
-    <div id="f-excl-wrap" hidden>
-      <div class="field-row">
-        <div class="field">
-          <label for="f-excl-cat">Category</label>
-          <input type="text" id="f-excl-cat" placeholder="AI note-taking apps" />
-        </div>
-        <div class="field">
-          <label for="f-excl-days">Days</label>
-          <input type="number" id="f-excl-days" min="1" step="1" value="30" />
-        </div>
-      </div>
-      <div class="field">
-        <label for="f-excl-named">Named competitors (optional)</label>
-        <input type="text" id="f-excl-named" placeholder="Otter, Granola" />
-      </div>
-    </div>
-    <div class="field">
-      <label class="chk"><input type="checkbox" id="f-nda-on" /> Confidentiality clause</label>
-    </div>
-    <div class="field">
-      <label class="chk"><input type="checkbox" id="f-del-on" /> Content deletion on licence expiry</label>
-    </div>
-
-    <h2>Cancellation</h2>
-    <div class="field">
-      <label for="f-kill">Kill fee if the brand cancels after work begins</label>
-      <select id="f-kill">
-        <option value="50" selected>50% of the total fee</option>
-        <option value="100">100% of the total fee</option>
-        <option value="">No kill fee</option>
-      </select>
-    </div>
-
-    <h2>Disputes</h2>
-    <div class="field">
-      <label for="f-seat">Arbitration seat (optional)</label>
-      <input type="text" id="f-seat" placeholder="Leave blank to keep it neutral" />
-      <div class="hint-sm">Left blank, the clause reads "as mutually agreed in writing". No country is named.</div>
-    </div>
-    <div class="field">
-      <label for="f-law">Governing law (optional)</label>
-      <input type="text" id="f-law" placeholder="Leave blank to omit the clause" />
-    </div>
-
-    <h2>Notes</h2>
-    <div class="field">
-      <label for="f-notes">Extra terms (optional)</label>
-      <textarea id="f-notes" placeholder="Anything specific to this deal. Appears as a final clause."></textarea>
-    </div>
-
-    <div class="inv-actions">
-      <button type="button" class="inv-btn inv-btn--ghost" id="btn-new">New agreement</button>
-      <button type="button" class="inv-btn inv-btn--primary" id="btn-pdf">Download PDF</button>
-    </div>
-    <div class="inv-actions" style="border-top:none;padding-top:0;margin-top:8px">
-      <button type="button" class="inv-btn inv-btn--ghost" id="btn-share">Create share link</button>
-    </div>
-    <div class="hint-sm" id="share-hint" style="text-align:center;margin-top:8px">In the print dialog set paper to <b>A4</b> and switch <b>Headers and footers</b> off.</div>
-
-    <div class="inv-history">
-      <h2>Saved agreements</h2>
-      <div class="hint-sm" style="margin:-4px 0 10px">Click any agreement to reopen and re-download it. Saved when you Download PDF.</div>
-      <ul id="hist-list"><li class="empty">No saved agreements yet.</li></ul>
-    </div>
-
-    <!-- Sent links live on the server, not in this browser, so this list is
-         the one place that survives clearing local storage. -->
-    <div class="inv-history" id="sent-block">
-      <h2>Shared links</h2>
-      <div class="hint-sm" style="margin:-4px 0 10px">Links you have sent to a brand. Status updates when they open it.</div>
-      <ul id="sent-list"><li class="empty">Nothing shared yet.</li></ul>
-    </div>
-  </form>
-
-  <!-- ============ LIVE PREVIEW / PRINT TARGET ============ -->
+  <div class="sv-docwrap">
   <div class="inv-doc-wrap">
     <!-- Print-only: fixed cream bands that give every page a top/bottom margin.
          See the @media print block for why @page margins cannot be used. -->
@@ -534,468 +300,92 @@
 
     </div>
   </div>
-
+  </div>
 </div>
 
 <script src="agreement-doc.js?v=1"></script>
 <script>
 /* ============================================================
-   Agreement studio logic — vanilla, no dependencies.
-   Mirrors invoice.html: derived numbering, localStorage archive,
-   click-to-reopen, print-to-PDF with a meaningful filename.
+   Sign view logic.
+
+   The terms are fetched from the server by token and rendered with the
+   shared renderer, so this page cannot show a different document from the
+   one the creator previewed. Nothing here writes to the agreement: in this
+   phase the brand reads and downloads. Signing is a later phase, and it
+   will post only signer fields, never terms.
    ============================================================ */
 (function () {
   "use strict";
 
-  // Identity, formatters and the clause engine live in agreement-doc.js,
-  // shared with sign.html. Aliased here so the rest of this file is unchanged.
-  const KD = window.KDAgreement;
-  const ME = KD.ME;
-  const esc = KD.esc;
-  const nl2br = KD.nl2br;
-  const fmtMoney = KD.fmtMoney;
-  const fmtDate = KD.fmtDate;
+  var $ = function (id) { return document.getElementById(id); };
+  var KD = window.KDAgreement;
 
-  const SEED_YEAR = 2026;
-  const SEED_SEQUENCE = 15;          // first suggested number is 0016
-  const LS_KEY = "kd_agreements";
-
-  const pad4 = n => String(n).padStart(4, "0");
-
-  function getAll() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch (e) { return []; } }
-  function saveAll(list) { localStorage.setItem(LS_KEY, JSON.stringify(list)); }
-
-  // ---- DOM refs ----
-  const app = document.getElementById("app");
-  const elNum = document.getElementById("f-num");
-  const elDate = document.getElementById("f-date");
-  const dlList = document.getElementById("dl-list");
-  const payTerms = document.getElementById("f-payterms");
-  const payCustomWrap = document.getElementById("f-payterms-custom-wrap");
-  const payCustom = document.getElementById("f-payterms-custom");
-  const exclOn = document.getElementById("f-excl-on");
-  const exclWrap = document.getElementById("f-excl-wrap");
-
-  const $ = id => document.getElementById(id);
-  const val = id => ($(id) ? $(id).value.trim() : "");
-
-  function currentYear() {
-    const d = elDate.value ? new Date(elDate.value + "T00:00:00") : null;
-    return d && !isNaN(d) ? d.getFullYear() : SEED_YEAR;
+  // /s/<token> is a rewrite to this file, so the token comes from the path.
+  // ?t= is supported as a fallback for local testing without the rewrite.
+  function readToken() {
+    var m = location.pathname.match(/\/s\/([A-Za-z0-9_-]+)/);
+    if (m) return m[1];
+    return new URLSearchParams(location.search).get("t") || "";
   }
 
-  // Next number is DERIVED from the archive, so exploring never burns a number.
-  function nextNumber() {
-    const yr = currentYear();
-    let max = 0;
-    getAll().forEach(a => {
-      const m = String(a.num || "").match(/KD-A-(\d{4})-(\d+)/);
-      if (m && parseInt(m[1], 10) === yr) max = Math.max(max, parseInt(m[2], 10));
-    });
-    // Respect the seed for the seed year until saved agreements pass it.
-    if (yr === SEED_YEAR) max = Math.max(max, SEED_SEQUENCE);
-    return "KD-A-" + yr + "-" + pad4(max + 1);
+  function fail(msg) {
+    $("sv-loading").hidden = true;
+    $("sv-app").hidden = true;
+    if (msg) $("sv-error-msg").textContent = msg;
+    $("sv-error").hidden = false;
   }
 
-  const DL_PRESETS = [
-    "Instagram Reel (dedicated, 30 to 60 seconds)",
-    "Instagram Reel with DM automation and bio link",
-    "Instagram Story frames",
-    "YouTube Short",
-    "Integrated mention in a wider Reel",
-    "Raw footage handover"
-  ];
-
-  function makeDeliverableRow(data) {
-    data = data || {};
-    const row = document.createElement("div");
-    row.className = "dl-row";
-    row.innerHTML =
-      '<textarea class="dl-desc" placeholder="Deliverable" list="dl-presets">' + esc(data.desc || "") + '</textarea>' +
-      '<input type="number" class="dl-qty" min="1" step="1" value="' + (data.qty || "1") + '" />' +
-      '<button type="button" class="dl-del" title="Remove">×</button>';
-    row.querySelector(".dl-del").addEventListener("click", () => { if (dlList.children.length > 1) { row.remove(); render(); } });
-    row.addEventListener("input", render);
-    dlList.appendChild(row);
-  }
-
-  (function () {
-    const dl = document.createElement("datalist");
-    dl.id = "dl-presets";
-    DL_PRESETS.forEach(p => { const o = document.createElement("option"); o.value = p; dl.appendChild(o); });
-    document.body.appendChild(dl);
-  })();
-
-  function readDeliverables() {
-    return Array.from(dlList.querySelectorAll(".dl-row")).map(r => ({
-      desc: r.querySelector(".dl-desc").value,
-      qty: parseFloat(r.querySelector(".dl-qty").value) || 1
-    }));
-  }
-
-  function payTermsText() { return KD.payTermsText(readForm()); }
-
-  function buildClauses() { return KD.buildClauses(readForm()); }
-
-  // Plain-language explanation shown under the scope dropdown, so the choice
-  // is obvious without reading the generated clause.
-  const SCOPE_HINT = {
-    "": "Nothing granted. The video lives on your channel only. Pick this when rights are being priced separately.",
-    organic: "They can repost it on their own channels, unpaid. No ad spend behind it.",
-    paid: "Organic reposting plus paid ads, but the ads run from THEIR account, under their name.",
-    whitelist: "They run ads from your handle @the_ecomjet. Highest value, so keep the term tight.",
-    full: "Everything: paid social, display, CTV, third-party placements. Price accordingly."
-  };
-
-  function syncRightsFields() {
-    const s = $("f-rights-scope").value;
-    $("scope-explain").textContent = SCOPE_HINT[s] || "";
-    // Term and territory only mean something once a right is actually granted.
-    $("f-rights-term-wrap").hidden = !s;
-    $("f-rights-terr-wrap").hidden = !s;
-    // The re-edit toggle is only a real choice for organic and organic+paid.
-    // Whitelisting and full paid media inherently permit ad-variant cutting,
-    // so offering a checkbox there would promise something the clause overrides.
-    $("f-rights-edit-wrap").hidden = !(s === "organic" || s === "paid");
-  }
-
-  // The document itself is drawn by the shared renderer from a plain object,
-  // which is the same object sign.html receives from the server. Anything
-  // that changes the printed contract belongs in agreement-doc.js, not here.
-  function render() {
-    syncRightsFields();
-    KD.renderDoc($("doc"), readForm());
-    fitDoc();
-  }
-
-  // ---- Scale doc to fit column (or user zoom) ----
-  let userZoom = 1;
+  // Scale the A4 document to fit its column, same approach as the editor.
   function fitDoc() {
-    const doc = $("doc");
-    const wrap = doc.parentElement;
+    var doc = $("doc");
+    if (!doc) return;
+    var wrap = doc.parentElement;
     doc.style.transform = "none";
-    const available = wrap.clientWidth;
-    const natural = doc.offsetWidth;
-    let scale = natural > available ? available / natural : 1;
-    scale = scale * userZoom;
+    var available = wrap.clientWidth;
+    var natural = doc.offsetWidth;
+    var scale = natural > available ? available / natural : 1;
     doc.style.transform = "scale(" + scale + ")";
     wrap.style.height = (doc.offsetHeight * scale) + "px";
   }
 
-  // ---- Read / load ----
-  function readForm() {
-    return {
-      num: elNum.value.trim(),
-      date: elDate.value,
-      brand: val("f-brand"),
-      brandAddr: $("f-brand-addr").value,
-      brandSign: val("f-brand-sign"),
-      brandTitle: val("f-brand-title"),
-      brandEmail: val("f-brand-email"),
-      campaign: val("f-campaign"),
-      deliverables: readDeliverables(),
-      draftDate: val("f-draft-date"),
-      liveDate: val("f-live-date"),
-      approvalDays: val("f-approval-days"),
-      minLive: val("f-min-live"),
-      currency: val("f-currency"),
-      fee: val("f-fee"),
-      payTerms: payTerms.value,
-      payCustom: payCustom.value,
-      late: val("f-late"),
-      revisions: val("f-revisions"),
-      revisionFee: val("f-revision-fee"),
-      rightsScope: val("f-rights-scope"),
-      rightsTerm: val("f-rights-term"),
-      rightsTerritory: val("f-rights-territory"),
-      rightsEdit: $("f-rights-edit").checked,
-      exclOn: exclOn.checked,
-      exclCat: val("f-excl-cat"),
-      exclDays: val("f-excl-days"),
-      exclNamed: val("f-excl-named"),
-      ndaOn: $("f-nda-on").checked,
-      delOn: $("f-del-on").checked,
-      kill: val("f-kill"),
-      seat: val("f-seat"),
-      law: val("f-law"),
-      notes: $("f-notes").value
-    };
+  function show(data) {
+    var t = data.terms || {};
+
+    KD.renderDoc($("doc"), t);
+
+    $("sv-brand").textContent = t.brand || "Your agreement";
+    $("sv-num").textContent = data.num || "";
+    $("sv-date").textContent = KD.fmtDate(t.date) || "Not dated";
+    $("sv-fee").textContent = t.fee ? KD.fmtMoney(parseFloat(t.fee), t.currency || "USD") : "See clause 4";
+
+    document.title = "Collaboration agreement" + (data.num ? " " + data.num : "") +
+      (t.brand ? " · " + t.brand : "");
+
+    $("sv-loading").hidden = true;
+    $("sv-app").hidden = false;
+    fitDoc();
   }
 
-  function loadForm(a) {
-    elNum.value = a.num || "";
-    elDate.value = a.date || "";
-    $("f-brand").value = a.brand || "";
-    $("f-brand-addr").value = a.brandAddr || "";
-    $("f-brand-sign").value = a.brandSign || "";
-    $("f-brand-title").value = a.brandTitle || "";
-    $("f-brand-email").value = a.brandEmail || "";
-    $("f-campaign").value = a.campaign || "";
-
-    dlList.innerHTML = "";
-    (a.deliverables && a.deliverables.length ? a.deliverables : [{}]).forEach(d => makeDeliverableRow(d));
-
-    $("f-draft-date").value = a.draftDate || "";
-    $("f-live-date").value = a.liveDate || "";
-    $("f-approval-days").value = a.approvalDays || "3";
-    $("f-min-live").value = a.minLive || "";
-    $("f-currency").value = a.currency || "USD";
-    $("f-fee").value = a.fee || "";
-    payTerms.value = a.payTerms || "__split__";
-    payCustom.value = a.payCustom || "";
-    payCustomWrap.hidden = payTerms.value !== "__custom__";
-    $("f-late").value = a.late || "";
-    $("f-revisions").value = a.revisions || "2";
-    $("f-revision-fee").value = a.revisionFee || "";
-    $("f-rights-scope").value = a.rightsScope || "";
-    $("f-rights-term").value = a.rightsTerm || "";
-    $("f-rights-territory").value = a.rightsTerritory || "";
-    $("f-rights-edit").checked = !!a.rightsEdit;
-    exclOn.checked = !!a.exclOn;
-    exclWrap.hidden = !exclOn.checked;
-    $("f-excl-cat").value = a.exclCat || "";
-    $("f-excl-days").value = a.exclDays || "30";
-    $("f-excl-named").value = a.exclNamed || "";
-    $("f-nda-on").checked = !!a.ndaOn;
-    $("f-del-on").checked = !!a.delOn;
-    $("f-kill").value = a.kill || "50";
-    $("f-seat").value = a.seat || "";
-    $("f-law").value = a.law || "";
-    $("f-notes").value = a.notes || "";
-    render();
-  }
-
-  function saveCurrent() {
-    const a = readForm();
-    if (!a.num) return;
-    const list = getAll();
-    const idx = list.findIndex(x => x.num === a.num);
-    if (idx >= 0) list[idx] = a; else list.push(a);
-    saveAll(list);
-    renderArchive();
-  }
-
-  function deleteAgreement(num) {
-    saveAll(getAll().filter(x => x.num !== num));
-    renderArchive();
-    if (elNum.value.trim() === num) elNum.value = nextNumber();
-    render();
-  }
-
-  function renderArchive() {
-    const list = getAll().slice().sort((a, b) => (a.num < b.num ? 1 : -1));
-    const ul = $("hist-list");
-    if (!list.length) { ul.innerHTML = '<li class="empty">No saved agreements yet. Download one to save it here.</li>'; return; }
-    ul.innerHTML = list.slice(0, 12).map(a =>
-      '<li data-num="' + esc(a.num) + '">' +
-        '<button type="button" class="arch-open" title="Open this agreement">' +
-          '<span class="arch-num">' + esc(a.num) + '</span>' +
-          '<span class="arch-brand">' + (esc(a.brand) || "—") + '</span>' +
-          '<span class="arch-total">' + (a.fee ? fmtMoney(parseFloat(a.fee), a.currency) : "—") + '</span>' +
-        '</button>' +
-        '<button type="button" class="arch-del" title="Delete">×</button>' +
-      '</li>'
-    ).join("");
-    ul.querySelectorAll(".arch-open").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const num = btn.parentElement.dataset.num;
-        const a = getAll().find(x => x.num === num);
-        if (a) loadForm(a);
-      });
-    });
-    ul.querySelectorAll(".arch-del").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const num = btn.parentElement.dataset.num;
-        if (confirm("Delete agreement " + num + " from your saved list? This does not delete the PDF you already downloaded.")) deleteAgreement(num);
-      });
-    });
-  }
-
-  function isCurrentSaved() {
-    return !!getAll().find(x => x.num === elNum.value.trim());
-  }
-
-  /* ============================================================
-     SHARED LINKS
-     Sending a link freezes the terms server-side. From then on the brand
-     reads that copy, so the document they see cannot be altered by anyone,
-     including by editing this form afterwards. To change terms after
-     sharing, create a new agreement rather than expecting the link to move.
-     ============================================================ */
-  const KEY_LS = "kd_share_key";
-
-  // The write endpoints need a shared secret. Asked for once, then kept in
-  // this browser. It is not a password protecting the brand's copy: it only
-  // stops strangers creating agreements in Kunwar's name.
-  function shareKey(force) {
-    let k = localStorage.getItem(KEY_LS) || "";
-    if (!k || force) {
-      k = (window.prompt("Share key (set as SHARE_SECRET in Vercel):", k) || "").trim();
-      if (!k) return "";
-      localStorage.setItem(KEY_LS, k);
-    }
-    return k;
-  }
-
-  function setHint(msg, isError) {
-    const el = $("share-hint");
-    el.innerHTML = msg;
-    el.style.color = isError ? "#9A3B57" : "";
-  }
-
-  async function createShareLink() {
-    const key = shareKey(false);
-    if (!key) return;
-
-    const a = readForm();
-    if (!a.num) { setHint("Give the agreement a number first.", true); return; }
-    if (!a.brand) { setHint("Add the brand name before sharing.", true); return; }
-
-    const btn = $("btn-share");
-    btn.disabled = true;
-    setHint("Creating link…");
-
-    try {
-      const r = await fetch("/api/agreements/create", {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-kd-key": key },
-        body: JSON.stringify({ terms: a })
-      });
-      const body = await r.json().catch(() => ({}));
-
-      if (r.status === 401) {
-        localStorage.removeItem(KEY_LS);
-        setHint("That share key was rejected. Click again to re-enter it.", true);
-        return;
-      }
-      if (!r.ok) { setHint(esc(body.error || "Could not create the link."), true); return; }
-
-      // Saving locally too, so the draft is in the archive like any other.
-      saveCurrent();
-      renderArchive();
-
-      const url = location.origin + "/s/" + body.token;
-      try {
-        await navigator.clipboard.writeText(url);
-        setHint('Link copied. <a href="' + url + '" target="_blank" rel="noopener">Open it</a>');
-      } catch (e) {
-        // Clipboard needs a secure context and can be blocked; show the URL.
-        setHint('Link ready: <a href="' + url + '" target="_blank" rel="noopener">' + esc(url) + "</a>");
-      }
-      loadSent();
-    } catch (e) {
-      setHint("Network error. The link was not created.", true);
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  function sentPill(row) {
-    if (new Date(row.expires_at).getTime() < Date.now()) return ["Expired", "sent-pill--expired"];
-    if (row.status === "signed") return ["Signed", "sent-pill--viewed"];
-    if (row.first_viewed_at) return ["Opened", "sent-pill--viewed"];
-    return ["Sent", ""];
-  }
-
-  async function loadSent() {
-    const key = localStorage.getItem(KEY_LS);
-    const ul = $("sent-list");
-    if (!key) { ul.innerHTML = '<li class="empty">Create a share link to see it here.</li>'; return; }
-
-    try {
-      const r = await fetch("/api/agreements", { headers: { "x-kd-key": key } });
-      if (!r.ok) { ul.innerHTML = '<li class="empty">Could not load shared links.</li>'; return; }
-      const { agreements } = await r.json();
-
-      if (!agreements || !agreements.length) {
-        ul.innerHTML = '<li class="empty">Nothing shared yet.</li>';
-        return;
-      }
-      ul.innerHTML = agreements.map(row => {
-        const [label, cls] = sentPill(row);
-        return '<li><a class="sent-row" href="/s/' + esc(row.token) + '" target="_blank" rel="noopener">' +
-          '<span class="sent-num">' + esc(row.num) + "</span>" +
-          '<span class="sent-brand">' + (esc(row.brand) || "&mdash;") + "</span>" +
-          '<span class="sent-pill ' + cls + '">' + label + "</span>" +
-          "</a></li>";
-      }).join("");
-    } catch (e) {
-      ul.innerHTML = '<li class="empty">Could not load shared links.</li>';
-    }
-  }
-
-  function startBlank() {
-    $("f-brand").value = "";
-    $("f-brand-addr").value = "";
-    $("f-brand-sign").value = "";
-    $("f-brand-title").value = "";
-    $("f-brand-email").value = "";
-    $("f-campaign").value = "";
-    $("f-draft-date").value = "";
-    $("f-live-date").value = "";
-    $("f-fee").value = "";
-    $("f-notes").value = "";
-    $("f-excl-cat").value = "";
-    $("f-excl-named").value = "";
-    dlList.innerHTML = ""; makeDeliverableRow();
-    elNum.value = nextNumber();
-    render();
-  }
-
-  // ---- Wire up ----
-  payTerms.addEventListener("change", () => {
-    payCustomWrap.hidden = payTerms.value !== "__custom__";
-    render();
-  });
-  exclOn.addEventListener("change", () => { exclWrap.hidden = !exclOn.checked; render(); });
-
-  $("form").addEventListener("input", render);
-  $("form").addEventListener("change", render);
-  $("dl-add").addEventListener("click", () => { makeDeliverableRow(); render(); });
-
-  $("btn-pdf").addEventListener("click", () => {
-    const prevTitle = document.title;
-    const num = elNum.value.trim();
-    const brand = val("f-brand");
-    const parts = ["Agreement"];
-    if (num) parts.push(num);
-    if (brand) parts.push(brand);
-    document.title = parts.join(" ").replace(/[\/\\:*?"<>|]/g, "").trim() || "Agreement";
-    const restore = () => { document.title = prevTitle; window.removeEventListener("afterprint", restore); };
-    window.addEventListener("afterprint", restore);
-
-    saveCurrent();
-    window.print();
-    setTimeout(restore, 1500);
-  });
-
-  $("btn-share").addEventListener("click", createShareLink);
-
-  $("btn-new").addEventListener("click", () => {
-    const a = readForm();
-    const hasContent = a.brand || parseFloat(a.fee) > 0;
-    if (hasContent && !isCurrentSaved()) {
-      if (!confirm("Start a new agreement? The current one hasn't been downloaded yet, so it won't be saved.")) return;
-    }
-    startBlank();
-  });
-
-  const zoom = $("zoom"), zoomVal = $("zoom-val");
-  zoom.addEventListener("input", () => { userZoom = zoom.value / 100; zoomVal.textContent = zoom.value + "%"; fitDoc(); });
+  $("sv-pdf").addEventListener("click", function () { window.print(); });
   window.addEventListener("resize", fitDoc);
 
-  // ---- Init ----
-  function todayIso() {
-    const d = new Date();
-    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  var token = readToken();
+  if (!token) {
+    fail("This link is missing its reference.");
+    return;
   }
-  elDate.value = todayIso();
-  makeDeliverableRow();
-  elNum.value = nextNumber();
-  renderArchive();
-  render();
-  loadSent();
 
+  fetch("/api/agreements/" + encodeURIComponent(token), { headers: { accept: "application/json" } })
+    .then(function (r) {
+      return r.json().then(function (body) { return { ok: r.ok, status: r.status, body: body }; });
+    })
+    .then(function (res) {
+      if (!res.ok) return fail(res.body && res.body.error);
+      show(res.body);
+    })
+    .catch(function () {
+      fail("The agreement could not be loaded. Please check your connection and refresh.");
+    });
 })();
 </script>
 </body>

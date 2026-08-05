@@ -1,0 +1,8 @@
+{
+  "name": "ecomjet-portfolio",
+  "private": true,
+  "description": "Static portfolio site. The only server-side code is /api, which backs the shareable agreement links.",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0"
+  }
+}

@@ -102,6 +102,50 @@ Optional (off by default): **Exclusivity** (category, days, named competitors) �
 - Kill fee defaults to 50%; delivered content is always payable in full.
 - Liability is capped at the total fee on both sides.
 
+## Shareable links (`/s/<token>`)
+
+Instead of emailing a PDF, the creator can send a link. The brand opens the agreement in a browser, reads it, and downloads their own PDF. **Phase 1 is read-only: the brand still signs the PDF and sends it back.** In-browser signing is the next phase.
+
+### Files
+
+| File | Role |
+|---|---|
+| `agreement-doc.css` | The document + the whole `@media print` block. Shared. |
+| `agreement-doc.js` | `KDAgreement.renderDoc(root, data)` + `buildClauses(data)`. Pure: reads the data object, never the DOM. |
+| `sign.html` | The brand's view. Fetches terms by token, renders with the shared renderer. |
+| `api/_lib/db.js` | Neon connection, schema, token/hash helpers. |
+| `api/agreements/create.js` | POST, creator-only. Freezes terms, returns a token. |
+| `api/agreements/[token].js` | GET, public. The only endpoint the brand calls. |
+| `api/agreements/index.js` | GET, creator-only. Backs the "Shared links" list. |
+
+### ⚠️ The `<link>` must come AFTER the inline `<style>`
+
+In both `agreement.html` and `sign.html`. `agreement-doc.css` ends with `@media print`; if it loads first, the app-chrome rules in the inline block win over the print reset and **the document prints at a smaller scale with every clause rewrapped**. The rules are identical either way, only the order differs. This cost a long debugging session. Verify by rendering a PDF, never by reading the diff.
+
+### Why there is a backend at all
+
+A link that carries the agreement in its URL needs no server, but the brand could then decode it, change the fee, re-encode and sign terms that were never offered, undetectably. Here the terms live server-side and `sign.html` renders **that** copy; the sign endpoint will accept only signer fields, never terms. Tampering is structurally impossible rather than merely unnoticed. It also means the creator sees "Opened" without asking.
+
+### Data model
+
+One table, `agreements`. `terms` is a verbatim `readForm()` dump, so `loadForm()` still round-trips it and new form fields need no migration. Terms and signing data stay **separate**: the terms come from the creator, a signature comes from the brand, and merging them would make "these are the terms that were sent" unprovable. `terms_sha256` is a canonical-JSON hash (keys sorted, so it is stable across re-serialisation).
+
+**Once shared, terms are frozen.** Editing the form afterwards does not change a live link. To change terms, share a new agreement.
+
+### Auth
+
+`SHARE_SECRET` (Vercel env var) in the `x-kd-key` header, compared with `timingSafeEqual`. It **fails closed**: no secret configured means every write is refused. The browser prompts for it once and keeps it in `localStorage` under `kd_share_key`. This protects *creation*, not the brand's copy: the token is what protects that.
+
+The read endpoint is public by design, since the brand has no account. Tokens are 24 CSPRNG bytes (base64url), expire after 30 days, and unknown tokens return the same 404 as malformed ones so the endpoint cannot confirm a guess.
+
+### ⚠️ `/s/` is deliberately NOT in `robots.txt`
+
+This diverges from the four-step private-page recipe in `CLAUDE.md`, on purpose. A `Disallow: /s/` line **advertises the path** to anyone who reads `robots.txt`, and the token is the only thing protecting the document. Privacy is enforced by the `noindex` meta tag in `sign.html` plus the `X-Robots-Tag` header in `vercel.json`. Do not "fix" this by adding a `robots.txt` line.
+
+### Verifying a change here
+
+The brand's PDF must stay byte-identical to the creator's. Render both and diff the text layer, per `docs/agreement-design-language.md` §3. A fixture must use **real option values** (`minLive: "12 months"`, not `"12"`): the editor silently drops an invalid select value while `sign.html` renders it faithfully, which shows up as a false diff.
+
 ## Tone: neutral, not adversarial
 
 The clause copy was deliberately softened in a pass that changed **wording only, no obligations**. The register to keep when editing:

@@ -6,16 +6,25 @@ Companion to `docs/agreement-tool.md` (which covers mechanics: clauses, numberin
 
 ## 1. Where this is going (product direction)
 
-Today `agreement.html` is a **private single-user generator**: Kunwar fills a form, prints a PDF, emails it.
+The direction is a **PandaDoc-like experience**: send the brand a link, they open the agreement in the browser and fill their own fields, and it is executed online.
 
-The intended direction is a **PandaDoc-like experience**: send the brand a link, they open the agreement in the browser and fill their own fields, and it is executed online. Design decisions should not paint that into a corner.
+**Phase 1 shipped (August 2026): the shareable read-only link.** The brand opens `/s/<token>`, reads the agreement, downloads the PDF. The creator sees Sent / Opened without asking. Terms are frozen server-side, so the document the brand sees cannot be altered by anyone. Mechanics in `agreement-tool.md`.
+
+**Phase 2, not built: in-browser signing.** Until then the brand still signs the downloaded PDF and emails it back.
 
 What that implies for anyone working on this:
 
-- **Keep the document a real DOM document**, not a canvas or an image. Fields must be able to become inputs.
-- **Keep every brand-supplied value in one place.** `readForm()` / `loadForm()` already round-trip the whole agreement as a plain object; that object is the natural payload for a shareable link or a backend.
-- **The signature panel fields (signature, name, title, date) are the future counterparty inputs.** Do not merge them into prose.
-- **Anything that would need a server** (real signing metadata, audit trail, IP, timestamps) is out of scope until there *is* a server. See §5 on integrity.
+- **Keep the document a real DOM document**, not a canvas or an image. Fields must be able to become inputs. This is now enforced structurally: `agreement-doc.js` renders the same DOM for both pages.
+- **Keep every brand-supplied value in one place.** `readForm()` / `loadForm()` round-trip the whole agreement as a plain object; that object is the `terms` column verbatim.
+- **The signature panel fields (signature, name, title, date) are the counterparty inputs.** Do not merge them into prose.
+- **Only capture what you will honestly print.** There is a server now, so signing metadata is *possible*; §5 still governs what may appear on the page.
+
+### When Phase 2 is built
+
+- A signature normalises to an image rendered into the existing `.sign-rule` via an **additive** `.sign-rule.signed` class capped at `max-height: 8mm`. The 9mm box must never grow, or `break-inside: avoid` on the certificate reflows the page.
+- The sign endpoint accepts **only signer fields**. It must never accept terms, and must be idempotent on the token so a retry after a dropped connection cannot double-sign.
+- Re-verify `terms_sha256` at signing time and store both digests.
+- Only then may the certificate print `signed_at`, `first_viewed_at`, the method, and a short hash. Never before: Phase 1 captures no signature, so its certificate keeps four blank rules.
 
 ---
 
