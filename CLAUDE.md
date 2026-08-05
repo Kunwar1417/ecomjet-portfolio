@@ -89,6 +89,7 @@ Full procedure + URL notes (site serves `.html` paths, no clean URLs) are in **d
 | Shared nav / footer / closing CTA markup, what `app.js` does | `docs/components.md` |
 | **Deploying** (safe runbook, URL rules, auto-deploy status) | `docs/deployment.md` |
 | The invoice generator (`invoice.html`) | `docs/invoice-tool.md` |
-| **The agreement generator** (`agreement.html`), clause set, dispute-clause reasoning | `docs/agreement-tool.md` |
+| **The agreement generator** (`agreement.html`), clause set, dispute-clause reasoning, print CSS | `docs/agreement-tool.md` |
+| **Agreement design language + product direction** (visual system, identity hierarchy, the planned shareable/e-sign version, integrity boundary) | `docs/agreement-design-language.md` |
 | **Brand proposals** (per-brand pitch pages, pricing ladder, PDF export, design tokens) | `docs/proposals.md` |
 | **The rate card** (`rates.html`) and when to send it instead of a proposal | `docs/proposals.md` |

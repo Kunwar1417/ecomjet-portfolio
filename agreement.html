@@ -480,23 +480,30 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     break-before: page; page-break-before: always;
   }
 
-  /* Cream ground + blue spine, drawn per page by fixed layers (a fixed element
-     repeats on every page in paged media). They sit BEHIND the text, which is
-     the crucial difference from the earlier overlay bands that painted over
-     real sentences. With @page margin now 0 they span the whole sheet, so the
-     spine runs edge to edge and no bare white bar can appear. */
+  /* Cream ground, drawn per page by a fixed layer (a fixed element repeats on
+     every page in paged media). It sits BEHIND the text, which is the crucial
+     difference from the earlier overlay bands that painted over real
+     sentences. */
   .pg-band {
     display: block !important;
     position: fixed;
     top: 0; bottom: 0; left: 0; right: 0;
   }
   .pg-band--top { background: var(--paper); z-index: 0; }
-  /* Spine. A fixed layer is clipped to the page content area, so it stops at
-     the @page margin rather than running the full sheet. `border-left` on
-     @page would cover the margins but Chrome ignores it, so this is as far
-     as the spine can reach. */
-  .pg-band--bot { width: 3mm; right: auto; background: var(--blue); z-index: 1; }
-  .inv-doc { position: relative; z-index: 2; }   /* content rides above both */
+
+  /* THE BLUE SPINE IS DELIBERATELY NOT PRINTED. Screen keeps it.
+     Chrome clips fixed elements to the page content area, so in print the
+     spine stopped 14mm short at the top and bottom of every sheet and read
+     as a rendering fault. `border-left` on @page would carry it through the
+     margins but Chrome ignores that property, so there is no way to make it
+     bleed while the page also has the vertical margin that gives each page
+     its breathing room. A clean cream page beats a broken-looking bar; the
+     brand still carries via the masthead, blue clause numbers, the handle,
+     and the certificate page. Do not "restore" this without solving the
+     bleed first. */
+  .pg-band--bot { display: none !important; }
+
+  .inv-doc { position: relative; z-index: 2; }   /* content rides above the ground */
 
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
