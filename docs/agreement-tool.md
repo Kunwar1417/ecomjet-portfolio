@@ -19,6 +19,17 @@ Brands know Kunwar by the Instagram channel, not the entity, and the entity name
 
 It is **not** in the preamble, the parties block, or the screen footer. Keeping those two mentions matters: invoices are raised as NEVER SETTLE and payment lands in an account in that name, so removing it entirely would break the paper trail from agreement → invoice → bank. Do not add more mentions, and do not remove these two.
 
+### Both signature blocks stay blank. Do not pre-print the signature.
+
+`photos/signature.png` exists and the invoice uses it, so this comes up. It was considered and **deliberately rejected** for the agreement:
+
+- An invoice is a statement you issue; an agreement is executed by both parties. Sending a pre-signed contract says "these terms are final", and if the Brand redlines anything the signature is attached to a document that no longer reflects what was agreed.
+- It risks being bound to an edited document: a party could alter a clause, sign, and hold up a fully-executed contract carrying the Creator's signature.
+- It puts a liftable signature image in every prospect's inbox, including deals that never close.
+- Convention is that the party proposing terms signs **last**, after the other side accepts.
+
+**Intended flow:** send unsigned → Brand signs → Creator countersigns the returned PDF outside this tool (Preview Markup, or whatever e-sign service the Brand uses).
+
 **Signature titles are kept on both sides.** The Brand's title is the field showing their signatory had authority to bind the company, which is what you point at if a deal is later disputed. The Creator's side reads "Creator, @the_ecomjet · NEVER SETTLE" rather than a corporate title.
 
 **Address:** the Creator's short-form address (`ME.address`) stays in the parties block. A contract identifies its parties by address, and dropping it while still asking the Brand for theirs would be asymmetric.
