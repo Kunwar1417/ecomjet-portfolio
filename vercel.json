@@ -1,7 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/s/:token", "destination": "/sign.html" }
+    { "source": "/s/:token", "destination": "/sign" }
   ],
   "headers": [
     {
