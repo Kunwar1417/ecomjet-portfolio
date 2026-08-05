@@ -53,6 +53,8 @@ python3 -m http.server 8899          # serve root, so fonts + images load
 
 **Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice and rates tools live.
 
+**⚠️ One setup step outstanding:** shareable agreement links are deployed but return `503 "Sharing is not set up yet."` until a Neon database is linked in the Vercel dashboard (2 minutes, cannot be scripted, needs the account owner to accept marketplace terms). Steps in `docs/deployment.md`. Everything else, including the agreement PDF, works today.
+
 ## Assets
 
 ```
