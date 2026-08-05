@@ -18,33 +18,10 @@
    Multi-page: clauses flow, .cl blocks avoid breaking inside.
    ============================================================ */
 
-:root {
-  --ink:    #14213A;
-  --blue:   #2B49C4;
-  --blue-d: #223BA6;
-  --paper:  #FBFAF6;
-  --panel:  #F1EFE7;
-  --muted:  #6B7385;
-  --line:   #DAD8CE;
-  --line-2: #C9C6BB;
-
-  --sans: "Bricolage Grotesque", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-
-  --app-bg: #E9E7DF;
-}
-
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
-body {
-  background: var(--app-bg);
-  color: var(--ink);
-  font-family: var(--sans);
-  -webkit-font-smoothing: antialiased;
-  font-feature-settings: "ss01","ss02";
-}
-img { max-width: 100%; display: block; }
-button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+/* Design tokens and the base element rules (:root, *, body, img, button)
+   are defined once in agreement-doc.css, which is linked above. Do not
+   redeclare them here: a second `body` rule re-applies font-feature-settings
+   and shifts glyph metrics in print, which silently rewraps every clause. */
 
 .inv-app {
   max-width: 1560px;
@@ -151,363 +128,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .zoom-row label { font-size: 12px; color: var(--muted); font-weight: 600; }
 .zoom-row input[type=range] { flex: 1; accent-color: var(--blue); }
 
-/* ============================================================
-   AGREEMENT DOCUMENT (preview + print target) A4 = 210 x 297mm
-   ============================================================ */
-.inv-doc-wrap { display: flex; justify-content: center; overflow: visible; }
-
-/* Print-only page-margin bands (see @media print). Hidden on screen. */
-.pg-band { display: none; }
-
-.inv-doc {
-  width: 210mm; min-height: 297mm;
-  background: var(--paper);
-  color: var(--ink);
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 30px 60px -30px rgba(20,20,40,.4);
-  font-family: var(--sans);
-  transform-origin: top center;
-  display: flex; flex-direction: column;
-  border-left: 3mm solid var(--blue);
-  overflow: hidden;
-}
-
-/* --- Title page masthead ---------------------------------------------
-   Not the invoice header. A contract opens on its own title, so the
-   document name is the largest thing on the page and the creator
-   identity sits under it as a byline. Kunwar Deep leads (the person the
-   brand is signing with), @the_ecomjet is the recognisable identifier,
-   NEVER SETTLE is demoted to what it actually is: the legal entity.
-   -------------------------------------------------------------------- */
-.d-head {
-  padding: 20mm 16mm 0;
-  background: transparent;
-  border-bottom: none;
-}
-.d-eyebrow {
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: .18em;
-  font-weight: 700; color: var(--muted);
-  display: flex; align-items: center; gap: 3mm;
-}
-.d-eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-
-.d-title {
-  margin-top: 6mm;
-  font-size: 43px; line-height: .96; letter-spacing: -0.035em; font-weight: 800;
-  color: var(--ink);
-}
-.d-title em {
-  display: block;
-  font-family: var(--serif); font-style: italic; font-weight: 400;
-  letter-spacing: -0.01em; color: var(--blue);
-  font-size: 46px; line-height: 1;
-}
-
-/* byline: who this is with */
-.d-byline {
-  margin-top: 9mm; padding-top: 5mm;
-  border-top: 1.5px solid var(--ink);
-  display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8mm;
-}
-.d-me-name { font-size: 17px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; }
-.d-me-handle { font-size: 12.5px; font-weight: 600; color: var(--blue); margin-top: 1.2mm; letter-spacing: -0.01em; }
-.d-me-entity { font-size: 9.5px; color: var(--muted); margin-top: 1.8mm; letter-spacing: .02em; }
-
-.d-meta { text-align: right; font-size: 11px; line-height: 1.45; }
-.d-meta .lab { color: var(--muted); font-size: 8.5px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
-.d-meta b { font-weight: 700; font-variant-numeric: tabular-nums; display: block; margin-bottom: 2mm; }
-.d-meta b:last-child { margin-bottom: 0; }
-
-/* --- Body --- */
-.d-body { flex: 1; padding: 9mm 16mm 12mm; display: flex; flex-direction: column; }
-
-/* Preamble sentence */
-.d-preamble { font-size: 11.5px; line-height: 1.65; color: var(--ink); margin-top: 9mm; }
-.d-preamble b { font-weight: 700; }
-
-/* Parties block — quiet reference matter, not a headline. Small type,
-   muted labels, no blue. It states who the parties are; the masthead
-   already did the introducing. */
-.d-parties {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12mm;
-  padding: 6mm 0 7mm;
-  border-bottom: 1px solid var(--line);
-}
-.p-lab { font-size: 8.5px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--muted); margin-bottom: 2.5mm; }
-.p-name { font-size: 12px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 1mm; }
-.p-body { font-size: 10px; line-height: 1.55; color: var(--muted); }
-.p-body .dim { color: var(--muted); }
-.p-body .kv { margin-top: 1.5mm; }
-.p-body .kv .k { color: var(--muted); }
-.p-trading { font-size: 9.5px; font-weight: 500; color: var(--muted); margin-top: 0.5mm; }
-
-/* --- Clauses --- */
-.d-clauses { margin-top: 8mm; }
-.cl {
-  margin-bottom: 6.5mm;
-  break-inside: avoid; page-break-inside: avoid;
-}
-.cl-h {
-  display: grid; grid-template-columns: 8mm 1fr; gap: 1mm;
-  align-items: baseline;
-  font-size: 11.5px; font-weight: 800; letter-spacing: .01em;
-  text-transform: uppercase;
-  color: var(--ink);
-  padding-bottom: 2mm; margin-bottom: 2.5mm;
-  border-bottom: 1px solid var(--line);
-}
-.cl-h .n { color: var(--blue); font-variant-numeric: tabular-nums; }
-.cl-b { font-size: 11px; line-height: 1.62; color: var(--ink); padding-left: 8mm; }
-.cl-b p { margin: 0 0 2mm; }
-.cl-b p:last-child { margin-bottom: 0; }
-.cl-b b { font-weight: 700; }
-.cl-b ul { margin: 0 0 2mm; padding-left: 4.5mm; }
-.cl-b li { margin-bottom: 1mm; }
-
-/* deliverables table inside clause 2 */
-.dtab { margin: 1mm 0 2.5mm; }
-.dtab-head {
-  display: grid; grid-template-columns: 1fr 16mm; gap: 4mm;
-  font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--muted);
-  padding-bottom: 2mm; border-bottom: 1.2px solid var(--ink);
-}
-.dtab-row {
-  display: grid; grid-template-columns: 1fr 16mm; gap: 4mm;
-  font-size: 11px; padding: 2.6mm 0; border-bottom: 1px solid var(--line);
-  align-items: baseline;
-}
-.dtab-row .t-title { font-weight: 600; font-size: 11.5px; }
-.dtab-row .t-sub { font-size: 9.5px; color: var(--muted); margin-top: 1mm; line-height: 1.4; }
-.dtab .t-c { text-align: center; font-variant-numeric: tabular-nums; }
-
-/* Fee callout — a contract states its number, it does not advertise it.
-   No filled slab: hairline rules top and bottom, the amount set large in
-   ink. Weight comes from type size, not from a block of colour. */
-.fee-bar {
-  margin: 1mm 0 3mm;
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding: 3mm 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.fee-bar .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--muted); }
-.fee-bar .val { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--ink); }
-
-/* key-value strip used by timeline / rights */
-.kv-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.4mm 5mm; font-size: 11px; line-height: 1.5; margin: 1mm 0 2mm; }
-.kv-grid .k { color: var(--muted); white-space: nowrap; }
-.kv-grid .v { font-weight: 600; }
-
-/* --- Signature page ---------------------------------------------------
-   Its own page, styled like an execution certificate: guilloche-style
-   engraved border, centred title, then the two signature panels. The
-   pattern is pure CSS gradients (no image asset, nothing to 404).
-   ---------------------------------------------------------------------- */
-/* Spacer carrying the forced page break (see @media print). */
-.sign-break { display: block; height: 10mm; }
-
-/* --- Certificate page ------------------------------------------------
-   A full-bleed security document: engraved guilloche field behind the
-   whole sheet, engine-turned border, then the signing panels. The
-   pattern is generated by layered SVG <path> curves (real elements, not
-   CSS pseudo-elements, which painted inconsistently across page edges).
-   Fields are only the four that were agreed: signature, name, title,
-   date. Nothing is printed that this tool cannot actually know.
-   -------------------------------------------------------------------- */
-.d-signblock {
-  break-inside: avoid; page-break-inside: avoid;
-  position: relative;
-  isolation: isolate;
-  padding: 0;
-  min-height: 247mm;              /* fills the printable page */
-  background: #FCFCF9;
-  border: 1px solid var(--line-2);
-  overflow: hidden;
-}
-
-/* full-page engraved field, sits behind everything */
-.cert-field {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  z-index: 0;
-  opacity: .22;    /* present but never competing with the type */
-}
-/* inner engine-turned frame */
-.cert-frame {
-  position: absolute; inset: 6mm;
-  border: 1.2px solid var(--ink);
-  z-index: 1;
-  pointer-events: none;
-}
-.cert-frame::after {
-  content: "";
-  position: absolute; inset: 1.4mm;
-  border: .5px solid var(--ink);
-  opacity: .55;
-}
-
-.cert-inner {
-  position: relative; z-index: 2;
-  padding: 20mm 16mm 16mm;
-  display: flex; flex-direction: column;
-  min-height: 247mm;
-}
-
-/* Header sits on a soft wash so the guilloche never fights the wordmark. */
-.cert-head {
-  text-align: center;
-  background: radial-gradient(ellipse 74% 84% at 50% 42%, rgba(252,252,249,.97) 55%, rgba(252,252,249,0) 100%);
-  padding: 3mm 0 5mm;
-}
-.sign-title {
-  font-size: 25px; font-weight: 800; letter-spacing: -0.02em;
-  text-transform: uppercase; line-height: 1.05;
-  margin: 0 0 3mm;
-}
-.sign-title em {
-  font-family: var(--serif); font-style: italic; font-weight: 400;
-  text-transform: none; letter-spacing: 0; color: var(--blue);
-}
-.cert-rule {
-  width: 46mm; height: 0;
-  border-top: 1.4px solid var(--blue);
-  margin: 0 auto 4mm;
-}
-.sign-ref {
-  font-size: 8.5px; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--muted); font-weight: 700; line-height: 1.7;
-}
-.sign-ref b { color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: .1em; }
-
-.sign-intro {
-  font-size: 10px; line-height: 1.65; color: var(--muted);
-  margin: 7mm auto 0; max-width: 118mm; text-align: center;
-}
-
-/* signing panels */
-.sign-cols {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10mm;
-  margin-top: 13mm;
-}
-.sign-col {
-  border: 1px solid var(--line-2);
-  background: rgba(255,255,255,.9);   /* fields must be unambiguous to write on */
-  padding: 7mm 7mm 8mm;
-}
-.sign-col .p-lab {
-  margin: 0 0 6mm; text-align: center; color: var(--blue);
-  font-size: 8.5px; letter-spacing: .14em;
-  padding-bottom: 3mm; border-bottom: 1px solid var(--line);
-}
-.sign-row { margin-bottom: 6mm; }
-.sign-row:last-child { margin-bottom: 0; }
-.sign-row .k {
-  font-size: 8px; text-transform: uppercase; letter-spacing: .12em;
-  font-weight: 700; color: var(--muted); display: block; margin-bottom: 1.5mm;
-}
-.sign-rule { border-bottom: 1px solid var(--ink); height: 9mm; }
-.sign-rule.filled {
-  display: flex; align-items: flex-end; padding-bottom: 1.2mm;
-  font-size: 11.5px; font-weight: 600;
-}
-
-/* foot of the certificate */
-.cert-foot {
-  margin-top: auto; padding-top: 10mm;
-  display: flex; justify-content: space-between; align-items: flex-end;
-  font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--muted); font-weight: 700;
-}
-.cert-seal {
-  width: 22mm; height: 22mm; flex-shrink: 0;
-  opacity: .75;
-}
-
-/* footer band */
-.d-foot {
-  margin-top: auto;
-  background: var(--panel);
-  border-top: 1px solid var(--line);
-  padding: 6mm 16mm;
-  display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 9.5px; color: var(--muted);
-}
-.d-foot b { color: var(--ink); font-weight: 700; }
-
-/* ============================================================
-   PRINT
-   ============================================================ */
-@media print {
-  /* Per-page vertical margin that is actually PAINTED.
-     The trick is declaring `background` on @page itself, not just on <html>.
-     Chrome honours it and fills the margin strips, so the margin reserves
-     real space on EVERY page (nothing clipped, nothing overlaid) while the
-     cream still bleeds to all four edges. Setting the background only on
-     <html> does not work; that is why earlier attempts concluded a white
-     bar was unavoidable. Left/right stay 0 so the spine reaches the edge. */
-  @page { size: A4; margin: 14mm 0; background: #FBFAF6; }
-  html, body { background: var(--paper) !important; }
-  .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
-  .inv-top, .inv-form, .no-print { display: none !important; }
-  .inv-doc-wrap { display: block; height: auto !important; }
-  .inv-doc {
-    transform: none !important;
-    box-shadow: none; margin: 0;
-    /* Horizontal inset only; the @page margin now owns vertical space on every
-       page. Left = 16mm text + 3mm spine. Never add TOP padding here: it would
-       stack on top of the @page margin on page one only, unbalancing it. */
-    padding: 0 16mm 0 19mm;
-    width: auto; min-height: 0;
-    overflow: visible;
-    display: block;
-    border-left: none;
-    background: none;
-  }
-  /* .inv-doc's padding already supplies the opening space. */
-  .d-head { padding: 0; }
-  .d-body { display: block; padding: 0; }
-  .d-foot { display: none; }
-
-  /* Keep visually-bounded blocks off the fold, so nothing splits awkwardly. */
-  .fee-bar, .kv-grid, .dtab, .sign-cols, .sign-col { break-inside: avoid; page-break-inside: avoid; }
-  .cl-h { break-after: avoid; page-break-after: avoid; }
-
-  /* The forced break is carried by this spacer rather than by .d-signblock:
-     a top margin on the block itself collapses through the break and has no
-     effect, and padding would move its contents rather than its frame. */
-  .sign-break {
-    display: block; height: 0;       /* @page margin already spaces the page */
-    break-before: page; page-break-before: always;
-  }
-
-  /* Cream ground, drawn per page by a fixed layer (a fixed element repeats on
-     every page in paged media). It sits BEHIND the text, which is the crucial
-     difference from the earlier overlay bands that painted over real
-     sentences. */
-  .pg-band {
-    display: block !important;
-    position: fixed;
-    top: 0; bottom: 0; left: 0; right: 0;
-  }
-  .pg-band--top { background: var(--paper); z-index: 0; }
-
-  /* THE BLUE SPINE IS DELIBERATELY NOT PRINTED. Screen keeps it.
-     Chrome clips fixed elements to the page content area, so in print the
-     spine stopped 14mm short at the top and bottom of every sheet and read
-     as a rendering fault. `border-left` on @page would carry it through the
-     margins but Chrome ignores that property, so there is no way to make it
-     bleed while the page also has the vertical margin that gives each page
-     its breathing room. A clean cream page beats a broken-looking bar; the
-     brand still carries via the masthead, blue clause numbers, the handle,
-     and the certificate page. Do not "restore" this without solving the
-     bleed first. */
-  .pg-band--bot { display: none !important; }
-
-  .inv-doc { position: relative; z-index: 2; }   /* content rides above the ground */
-
-  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-}
+/* Document CSS + the whole @media print block now live in
+   agreement-doc.css, shared with sign.html so the brand's view and
+   the creator's preview cannot drift apart. Bump ?v=N there. */
 </style>
+<!-- MUST stay AFTER the inline <style> above. Same rules in a different order
+     are not the same stylesheet: this file ends with @media print, and if it
+     loads first, the app-chrome rules above win over the print reset and the
+     whole document renders at a smaller scale with every clause rewrapped.
+     Verified by rendering PDFs, not by reading the diff. -->
+<link rel="stylesheet" href="agreement-doc.css?v=1" />
 </head>
 <body>
 
@@ -879,6 +509,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 </div>
 
+<script src="agreement-doc.js?v=1"></script>
 <script>
 /* ============================================================
    Agreement studio logic — vanilla, no dependencies.
@@ -888,21 +519,20 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 (function () {
   "use strict";
 
-  const ME = {
-    name: "Kunwar Deep",
-    handle: "@the_ecomjet",
-    entity: "NEVER SETTLE",   // the invoicing entity; named only in the masthead line and at signature
-    address: "U/G/F-1/80, Shastri Park, New Delhi, India (110053)",
-    email: "kunwar@thecomjet.com"
-  };
+  // Identity, formatters and the clause engine live in agreement-doc.js,
+  // shared with sign.html. Aliased here so the rest of this file is unchanged.
+  const KD = window.KDAgreement;
+  const ME = KD.ME;
+  const esc = KD.esc;
+  const nl2br = KD.nl2br;
+  const fmtMoney = KD.fmtMoney;
+  const fmtDate = KD.fmtDate;
 
   const SEED_YEAR = 2026;
   const SEED_SEQUENCE = 15;          // first suggested number is 0016
   const LS_KEY = "kd_agreements";
 
   const pad4 = n => String(n).padStart(4, "0");
-  const esc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
-  const nl2br = s => esc(s).replace(/\n/g, "<br>");
 
   function getAll() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch (e) { return []; } }
   function saveAll(list) { localStorage.setItem(LS_KEY, JSON.stringify(list)); }
@@ -937,19 +567,6 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     // Respect the seed for the seed year until saved agreements pass it.
     if (yr === SEED_YEAR) max = Math.max(max, SEED_SEQUENCE);
     return "KD-A-" + yr + "-" + pad4(max + 1);
-  }
-
-  function fmtMoney(amount, cur) {
-    const opts = { style: "currency", maximumFractionDigits: 0, minimumFractionDigits: 0 };
-    if (cur === "INR") return new Intl.NumberFormat("en-IN", Object.assign({ currency: "INR" }, opts)).format(amount || 0);
-    return new Intl.NumberFormat("en-US", Object.assign({ currency: "USD" }, opts)).format(amount || 0);
-  }
-  function fmtDate(iso) {
-    if (!iso) return "";
-    const d = new Date(iso + "T00:00:00");
-    if (isNaN(d)) return iso;
-    const m = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    return d.getDate() + " " + m[d.getMonth()] + ", " + d.getFullYear();
   }
 
   const DL_PRESETS = [
@@ -988,268 +605,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     }));
   }
 
-  function payTermsText() {
-    const v = payTerms.value;
-    if (v === "__custom__") return payCustom.value.trim();
-    if (v === "__split__") return "50% of the total fee is payable in advance before work begins. The remaining 50% is payable within 7 days of the content going live.";
-    return v;
-  }
+  function payTermsText() { return KD.payTermsText(readForm()); }
 
-  // ---- Clause builders. Each returns {h, b} or null to omit. ----
-  function buildClauses() {
-    const cur = val("f-currency") || "USD";
-    const fee = parseFloat(val("f-fee")) || 0;
-    const brand = val("f-brand") || "the Brand";
-    const out = [];
-
-    // 1. Scope
-    const campaign = val("f-campaign");
-    out.push({
-      h: "Scope of work",
-      b: "<p>" + esc(brand) + " engages the Creator to produce and publish sponsored content" +
-         (campaign ? " for <b>" + esc(campaign) + "</b>" : "") +
-         " on the Creator's Instagram channel " + esc(ME.handle) + ", on the terms set out below. " +
-         "This agreement covers the deliverables listed in clause 2. Additional work can be added by agreeing it in writing.</p>"
-    });
-
-    // 2. Deliverables
-    const items = readDeliverables().filter(d => d.desc.trim());
-    let dtab = "";
-    if (items.length) {
-      dtab = '<div class="dtab"><div class="dtab-head"><span>Deliverable</span><span class="t-c">Qty</span></div>' +
-        items.map(it => {
-          const parts = it.desc.split("\n");
-          const sub = parts.slice(1).join(" · ");
-          return '<div class="dtab-row"><div><div class="t-title">' + esc(parts[0]) + '</div>' +
-            (sub ? '<div class="t-sub">' + esc(sub) + '</div>' : "") + '</div>' +
-            '<div class="t-c">' + it.qty + '</div></div>';
-        }).join("") + '</div>';
-    }
-    out.push({
-      h: "Deliverables",
-      b: dtab + "<p>The Creator writes, films, edits and publishes the above. Concept and script are the Creator's, shaped by the brief the Brand provides.</p>"
-    });
-
-    // 3. Timeline & approval
-    const draft = fmtDate(val("f-draft-date"));
-    const live = fmtDate(val("f-live-date"));
-    const appDays = parseInt(val("f-approval-days"), 10) || 3;
-    const minLive = val("f-min-live");
-    let tl = "";
-    if (draft || live || minLive) {
-      tl = '<div class="kv-grid">' +
-        (draft ? '<span class="k">Draft delivered by</span><span class="v">' + esc(draft) + '</span>' : "") +
-        (live ? '<span class="k">Goes live on</span><span class="v">' + esc(live) + '</span>' : "") +
-        (minLive ? '<span class="k">Stays live for</span><span class="v">' + esc(minLive) + '</span>' : "") +
-        '</div>';
-    }
-    out.push({
-      h: "Timeline and approval",
-      b: tl +
-        "<p>The Brand has <b>" + appDays + " business days</b> from receiving a draft to approve it or request changes. " +
-        "If no feedback arrives within that window, the draft is treated as approved and can go live as planned. " +
-        "If feedback, product access or the brief arrive later than planned, the live date moves by the same number of days.</p>" +
-        (minLive && minLive !== "Permanently"
-          ? "<p>The content stays on the Creator's channel for at least " + esc(minLive) + " from the live date. After that the Creator may archive it.</p>"
-          : "")
-    });
-
-    // 4. Fee & payment
-    const late = val("f-late");
-    out.push({
-      h: "Fee and payment",
-      b: '<div class="fee-bar"><span class="lbl">Total <em>fee</em></span><span class="val">' + fmtMoney(fee, cur) + '</span></div>' +
-        "<p>" + esc(payTermsText()) + "</p>" +
-        "<p>The fee is quoted in " + esc(cur) + ", exclusive of taxes, and is paid by bank transfer. " +
-        "Transfer and currency conversion charges sit with the Brand, so the amount received matches the amount agreed. " +
-        "If tax has to be withheld at source, the Brand will share the withholding certificate so the Creator can claim the credit.</p>" +
-        (late ? "<p>If payment goes beyond " + esc(late) + " days past the due date, interest of 1.5% per month applies to the outstanding balance.</p>" : "")
-    });
-
-    // 5. Revisions
-    const revs = parseInt(val("f-revisions"), 10) || 2;
-    const revFee = parseFloat(val("f-revision-fee")) || 0;
-    out.push({
-      h: "Revisions",
-      b: "<p>The fee includes <b>" + revs + " round" + (revs === 1 ? "" : "s") + " of revisions</b>. " +
-        "A revision means changes to an existing edit: copy, captions, pacing, on-screen text, the order of shots. " +
-        "A change of concept, a new script, or anything needing fresh filming counts as a re-shoot, which is quoted separately.</p>" +
-        (revFee ? "<p>Further rounds beyond those included are billed at " + fmtMoney(revFee, cur) + " each.</p>" : "")
-    });
-
-    // 6. Creative control & disclosure
-    out.push({
-      h: "Creative control and disclosure",
-      b: "<p>The Creator keeps final say over creative execution, so the content reads as genuine to the audience it was built for. " +
-        "The Brand sets the message, claims and any legal must-haves, and the Creator will only publish claims the Brand has approved.</p>" +
-        "<p>The content will be disclosed as a paid partnership using the platform's own tools and clear wording, in line with FTC and ASCI guidance. Both parties will keep the partnership clearly disclosed.</p>"
-    });
-
-    // 7. Usage rights.
-    // Each scope carries its own grant sentence AND its own editing rule.
-    // A blanket "may not re-edit" is contradictory for ad formats, which
-    // require cutting the content into variants to run at all.
-    const scope = val("f-rights-scope");
-    const term = val("f-rights-term");
-    const terr = val("f-rights-territory");
-    const canEdit = $("f-rights-edit").checked;
-    const termPhrase = term
-      ? (term === "In perpetuity" ? "for as long as they wish" : "for <b>" + esc(term) + "</b> from the live date")
-      : "for the period the parties agree in writing";
-
-    const SCOPE_LABEL = {
-      organic: "Organic usage rights",
-      paid: "Organic + paid usage rights",
-      whitelist: "Whitelisting",
-      full: "Full paid media"
-    };
-
-    // grant sentence per scope
-    const SCOPE_GRANT = {
-      organic:
-        "The Brand may repost the content organically on its own social channels and website, " + termPhrase +
-        ". Organic means unpaid placement, so the content is not used in paid promotion.",
-      paid:
-        "The Brand may repost the content organically on its own channels, and may also run it as paid social advertising " +
-        "published from the Brand's own accounts, " + termPhrase + ". The ads run under the Brand's name, not the Creator's.",
-      whitelist:
-        "The Brand may run paid advertising from the Creator's own Instagram handle <b>@the_ecomjet</b> " + termPhrase +
-        ", using Meta's partnership ad tools. The Creator will grant the advertising permissions needed to do this and keep them " +
-        "active for the term. Ads appear to audiences as coming from the Creator's handle, which is why this right is limited to " +
-        "the term and territory stated above, and can be extended by a new written agreement.",
-      full:
-        "The Brand may use the content across all paid media channels, including paid social, display, connected TV, " +
-        "its owned properties and third-party placements, " + termPhrase + "."
-    };
-
-    // editing rule per scope
-    const SCOPE_EDIT = {
-      organic: canEdit
-        ? "The Brand may re-edit the content, provided the edit does not change the meaning of what the Creator said or imply a claim the Creator did not make."
-        : "The content runs as delivered, without re-editing or re-cutting. Trimming to fit a placement's aspect ratio or duration is allowed.",
-      paid: canEdit
-        ? "The Brand may re-edit or re-cut the content into advertising variants, provided the edit does not change the meaning of what the Creator said or imply a claim the Creator did not make."
-        : "The content runs as delivered, without re-editing or re-cutting. Trimming to fit a placement's aspect ratio or duration is allowed.",
-      whitelist:
-        "The Brand may trim and reformat the content to fit ad placements. Because these ads run from the Creator's handle, " +
-        "the edit otherwise stays as delivered, without added claims or changes to the meaning of what the Creator said. " +
-        "If an ad running from the Creator's handle does not reflect what they said, the Creator can ask for it to be paused, " +
-        "and the Brand will action that promptly.",
-      full:
-        "The Brand may cut the content into advertising variants and reformat it for different placements, provided no edit " +
-        "changes the meaning of what the Creator said or implies a claim the Creator did not make."
-    };
-
-    let rights = "";
-    if (scope || term || terr) {
-      rights = '<div class="kv-grid">' +
-        (scope ? '<span class="k">Scope</span><span class="v">' + SCOPE_LABEL[scope] + '</span>' : "") +
-        (term ? '<span class="k">Term</span><span class="v">' + esc(term) + '</span>' : "") +
-        (terr ? '<span class="k">Territory</span><span class="v">' + esc(terr) + '</span>' : "") +
-        '</div>';
-    }
-
-    const grant = SCOPE_GRANT[scope];
-    out.push({
-      h: "Usage rights",
-      b: rights +
-        (grant
-          ? "<p>The Creator grants the Brand a non-exclusive, non-transferable licence on the terms below" +
-            (terr ? (terr === "Worldwide" ? ", worldwide" : ", in " + esc(terr)) : "") + ".</p><p>" + grant + "</p>"
-          : "<p>No usage rights are granted. The content stays on the Creator's channel and the Brand may not repost, " +
-            "reproduce or advertise with it. If the Brand wants usage rights, they are agreed and priced separately in writing.</p>") +
-        (SCOPE_EDIT[scope] ? "<p>" + SCOPE_EDIT[scope] + "</p>" : "") +
-        (grant
-          ? "<p>Use beyond the scope, term or territory above can be arranged in writing and is priced separately. " +
-            "This licence covers the Brand's own use, and does not extend to sub-licensing or reselling the content to a third party.</p>"
-          : "")
-    });
-
-    // 8. Ownership
-    out.push({
-      h: "Ownership",
-      b: "<p>The Creator owns the copyright in the content, including all raw footage and project files. The Brand receives the licence described in clause 7, not ownership. " +
-        "Raw footage is included only when listed as a deliverable.</p>" +
-        "<p>The Brand keeps ownership of its trademarks, logos, product footage and any material it supplies, and grants the Creator the right to use them for this campaign.</p>"
-    });
-
-    // 9. Exclusivity (optional)
-    if (exclOn.checked) {
-      const cat = val("f-excl-cat");
-      const days = parseInt(val("f-excl-days"), 10) || 30;
-      const named = val("f-excl-named");
-      out.push({
-        h: "Exclusivity",
-        b: "<p>For <b>" + days + " days</b> from the live date, the Creator will not publish sponsored content for a directly competing " +
-          (cat ? "product in the " + esc(cat) + " category" : "product in the same category") + "." +
-          (named ? " This includes " + esc(named) + "." : "") + "</p>" +
-          "<p>This applies to paid placements only. It does not restrict the Creator's unpaid editorial coverage, and it does not extend to content already published or already contracted before the date of this agreement.</p>"
-      });
-    }
-
-    // 10. Confidentiality (optional)
-    if ($("f-nda-on").checked) {
-      out.push({
-        h: "Confidentiality",
-        b: "<p>Each party will keep the other's non-public information private, including unreleased products, roadmaps, pricing and the commercial terms of this agreement. " +
-          "This does not cover information that is already public, was already known, or must be disclosed by law.</p>" +
-          "<p>The Creator may name the Brand as a client and show the published content in a portfolio, case study or media kit.</p>"
-      });
-    }
-
-    // 11. Content deletion (optional)
-    if ($("f-del-on").checked) {
-      out.push({
-        h: "Use after the licence ends",
-        b: "<p>When the licence term in clause 7 ends, the Brand will stop running the content in paid placements and take it down from its owned channels within 14 days, unless the parties agree a renewal in writing.</p>" +
-          "<p>Archived copies held for internal record keeping are fine. Continued public use after the term is a new licence and is charged at the Creator's then-current rate.</p>"
-      });
-    }
-
-    // 12. Cancellation
-    const kill = val("f-kill");
-    out.push({
-      h: "Cancellation",
-      b: (kill
-          ? "<p>If the Brand cancels after this agreement is signed and work has begun, <b>" + esc(kill) + "% of the total fee</b> is payable. Any advance already paid counts toward that amount. If the content has already been delivered, the full fee remains payable, since the work has been completed.</p>"
-          : "<p>Either party may cancel in writing before work begins, at no cost. Once the content has been delivered, the full fee remains payable, since the work has been completed.</p>") +
-        "<p>If the Creator cannot deliver, any advance paid is refunded in full. Neither party is liable for delays caused by events outside their reasonable control, provided they say so promptly.</p>"
-    });
-
-    // 13. Warranties & liability
-    out.push({
-      h: "Warranties and liability",
-      b: "<p>The Creator warrants that the content is original work, that it does not knowingly infringe anyone's rights, and that any music or stock used is properly licensed. " +
-        "The Brand warrants that the claims and materials it supplies are accurate and that it has the right to supply them.</p>" +
-        "<p>Each party indemnifies the other against claims arising from its own breach of the above. Neither party is liable for indirect or consequential loss, and each party's total liability under this agreement is capped at the total fee.</p>"
-    });
-
-    // 14. Disputes
-    const seat = val("f-seat");
-    out.push({
-      h: "Disputes",
-      b: "<p>If a disagreement comes up, the parties will first try to resolve it directly and in good faith, in writing, within 15 days of one party raising it.</p>" +
-        "<p>Anything unresolved after that goes to arbitration before a single arbitrator. The arbitration is conducted remotely, in English, and the seat and venue are " +
-        (seat ? "<b>" + esc(seat) + "</b>" : "as the parties agree in writing at the time") +
-        ". The arbitrator's decision is final and binding, and each party bears its own costs unless the arbitrator decides otherwise.</p>"
-    });
-
-    // 15. General (+ optional governing law)
-    const law = val("f-law");
-    out.push({
-      h: "General",
-      b: (law ? "<p>This agreement is governed by the laws of " + esc(law) + ".</p>" : "") +
-        "<p>This is the whole agreement between the parties on this campaign and replaces anything discussed before it. Changes must be in writing and signed by both parties. " +
-        "The Creator works as an independent contractor. " +
-        "If any clause is found unenforceable, the rest stays in force. Notices go to the email addresses on page one.</p>"
-    });
-
-    // 16. Additional terms (optional)
-    const notes = val("f-notes");
-    if (notes) out.push({ h: "Additional terms", b: "<p>" + nl2br(notes) + "</p>" });
-
-    return out;
-  }
+  function buildClauses() { return KD.buildClauses(readForm()); }
 
   // Plain-language explanation shown under the scope dropdown, so the choice
   // is obvious without reading the generated clause.
@@ -1273,42 +631,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     $("f-rights-edit-wrap").hidden = !(s === "organic" || s === "paid");
   }
 
+  // The document itself is drawn by the shared renderer from a plain object,
+  // which is the same object sign.html receives from the server. Anything
+  // that changes the printed contract belongs in agreement-doc.js, not here.
   function render() {
     syncRightsFields();
-    $("d-num").textContent = elNum.value || "";
-    $("d-foot-num").textContent = elNum.value || "";
-    $("d-date").textContent = fmtDate(elDate.value);
-
-    const brand = val("f-brand") || "Brand name";
-    $("d-brand-name").textContent = brand;
-    $("d-brand-addr").innerHTML = nl2br($("f-brand-addr").value);
-    $("d-me-addr").textContent = ME.address;
-
-    const email = val("f-brand-email");
-    const contact = $("d-brand-contact");
-    if (email) { contact.hidden = false; contact.innerHTML = '<span class="k">Email</span> ' + esc(email); }
-    else contact.hidden = true;
-
-    $("d-sign-name").textContent = val("f-brand-sign");
-    $("d-sign-title").textContent = val("f-brand-title");
-    $("d-sign-ref").textContent = elNum.value || "";
-    $("d-sign-parties").textContent = ME.name + " and " + (val("f-brand") || "the Brand");
-
-    // Lead with the name and handle the brand recognises. The entity is not
-    // named here: it appears in the masthead line and at signature, which is
-    // enough to tie the agreement to the account that invoices and gets paid.
-    $("d-preamble").innerHTML =
-      "This collaboration agreement is made on <b>" + (esc(fmtDate(elDate.value)) || "the date signed below") +
-      "</b> between <b>" + esc(ME.name) + "</b>, creator of <b>" + esc(ME.handle) +
-      "</b> on Instagram (the Creator), and <b>" + esc(brand) + "</b> (the Brand).";
-
-    // clauses
-    const clauses = buildClauses();
-    $("d-clauses").innerHTML = clauses.map((c, i) =>
-      '<div class="cl"><div class="cl-h"><span class="n">' + (i + 1) + '.</span><span>' + esc(c.h) + '</span></div>' +
-      '<div class="cl-b">' + c.b + '</div></div>'
-    ).join("");
-
+    KD.renderDoc($("doc"), readForm());
     fitDoc();
   }
 
