@@ -10,7 +10,7 @@
      do the actual work. See docs/agreement-tool.md. -->
 <meta name="robots" content="noindex, nofollow" />
 <meta name="referrer" content="no-referrer" />
-<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
+<link rel="icon" type="image/jpeg" href="/photos/Kunwar.jpg" />
 <title>Collaboration agreement</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,7 +139,11 @@
 <!-- MUST stay AFTER the inline <style> above: this file ends with @media
      print, and loading it first lets the screen rules above beat the print
      reset. Verified by rendering PDFs. Same note as in agreement.html. -->
-<link rel="stylesheet" href="agreement-doc.css?v=1" />
+<!-- Absolute paths are REQUIRED here. This page is served at /s/<token>, so a
+     relative "agreement-doc.css" would resolve to /s/agreement-doc.css, which
+     the /s/ rewrite happily answers with this HTML page instead of the
+     stylesheet. The document then renders completely unstyled. -->
+<link rel="stylesheet" href="/agreement-doc.css?v=1" />
 </head>
 <body>
 
@@ -303,7 +307,7 @@
   </div>
 </div>
 
-<script src="agreement-doc.js?v=1"></script>
+<script src="/agreement-doc.js?v=1"></script>
 <script>
 /* ============================================================
    Sign view logic.
