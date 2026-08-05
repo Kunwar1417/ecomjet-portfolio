@@ -8,9 +8,7 @@ Companion to `docs/agreement-tool.md` (which covers mechanics: clauses, numberin
 
 The direction is a **PandaDoc-like experience**: send the brand a link, they open the agreement in the browser and fill their own fields, and it is executed online.
 
-**Phase 1 shipped (August 2026): the shareable read-only link.** The brand opens `/s/<token>`, reads the agreement, downloads the PDF. The creator sees Sent / Opened without asking. Terms are frozen server-side, so the document the brand sees cannot be altered by anyone. Mechanics in `agreement-tool.md`.
-
-**Phase 2, not built: in-browser signing.** Until then the brand still signs the downloaded PDF and emails it back.
+**Shipped (August 2026): the full loop.** The brand opens `/s/<token>`, reads the agreement, signs in the browser, and downloads the executed copy. The creator countersigns from the studio. Terms are frozen server-side, so the document the brand signs cannot be altered by anyone. No PDF is emailed in either direction. Mechanics in `agreement-tool.md`.
 
 What that implies for anyone working on this:
 
@@ -19,12 +17,12 @@ What that implies for anyone working on this:
 - **The signature panel fields (signature, name, title, date) are the counterparty inputs.** Do not merge them into prose.
 - **Only capture what you will honestly print.** There is a server now, so signing metadata is *possible*; §5 still governs what may appear on the page.
 
-### When Phase 2 is built
+### Rules the signing build locked in (do not relax)
 
-- A signature normalises to an image rendered into the existing `.sign-rule` via an **additive** `.sign-rule.signed` class capped at `max-height: 8mm`. The 9mm box must never grow, or `break-inside: avoid` on the certificate reflows the page.
-- The sign endpoint accepts **only signer fields**. It must never accept terms, and must be idempotent on the token so a retry after a dropped connection cannot double-sign.
-- Re-verify `terms_sha256` at signing time and store both digests.
-- Only then may the certificate print `signed_at`, `first_viewed_at`, the method, and a short hash. Never before: Phase 1 captures no signature, so its certificate keeps four blank rules.
+- A signature is an image clamped by the **additive** `.sign-rule.signed` class to `max-height: 8mm`. The 9mm box must never grow, or `break-inside: avoid` on the certificate reflows the page.
+- The sign endpoint accepts **only signer fields**, never terms, and is idempotent on the token.
+- `terms_sha256` is re-verified at signing time; a mismatch aborts.
+- The certificate prints only genuinely captured facts. An unsigned agreement still shows four blank rules and no metadata.
 
 ---
 

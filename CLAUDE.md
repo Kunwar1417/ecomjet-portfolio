@@ -53,7 +53,7 @@ python3 -m http.server 8899          # serve root, so fonts + images load
 
 **Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice and rates tools live.
 
-**Shareable agreement links are live** (Neon database `neon-bisque-queen` linked, `SHARE_SECRET` set). The creator shares `/s/<token>`; the brand reads the contract in the browser. Read-only for now: in-browser signing is the next phase. See `docs/agreement-tool.md`.
+**Shareable agreement links with in-browser signing are live** (Neon database `neon-bisque-queen`, `SHARE_SECRET` set). Share `/s/<token>` → the brand reads and signs in the browser → countersign from the studio → both parties download the executed PDF. No emailed attachments. See `docs/agreement-tool.md`.
 
 ## Assets
 

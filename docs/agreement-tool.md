@@ -104,7 +104,15 @@ Optional (off by default): **Exclusivity** (category, days, named competitors) �
 
 ## Shareable links (`/s/<token>`)
 
-Instead of emailing a PDF, the creator can send a link. The brand opens the agreement in a browser, reads it, and downloads their own PDF. **Phase 1 is read-only: the brand still signs the PDF and sends it back.** In-browser signing is the next phase.
+Instead of emailing a PDF, the creator sends a link. The brand opens the agreement in a browser, reads it, **signs it in place**, and downloads the executed copy. The creator countersigns from the studio in one click. No attachments move in either direction.
+
+The flow:
+
+1. Fill the form → **Create share link** → URL copied to the clipboard.
+2. The brand opens it, reads, types or draws a signature, ticks consent, signs.
+3. The studio's "Shared links" list shows **Sent → Opened → Signed**.
+4. **Countersign** applies `photos/signature.png`; status becomes **Executed**.
+5. Both parties download the same executed PDF from the same link.
 
 ### Files
 
@@ -115,8 +123,36 @@ Instead of emailing a PDF, the creator can send a link. The brand opens the agre
 | `sign.html` | The brand's view. Fetches terms by token, renders with the shared renderer. |
 | `api/_lib/db.js` | Neon connection, schema, token/hash helpers. |
 | `api/agreements/create.js` | POST, creator-only. Freezes terms, returns a token. |
-| `api/agreements/[token].js` | GET, public. The only endpoint the brand calls. |
+| `api/agreements/[token].js` | GET, public. Terms + execution record for the brand. |
+| `api/agreements/[token]/sign.js` | POST, public. The brand signs. |
+| `api/agreements/[token]/countersign.js` | POST, creator-only. Applies `signature.png`. |
 | `api/agreements/index.js` | GET, creator-only. Backs the "Shared links" list. |
+
+### Signing rules that must not be relaxed
+
+- **The sign endpoint accepts signer fields only.** Terms are never read from the request body. They were frozen at share time and are re-hashed before signing, so what is signed is provably what was sent. A body claiming a different fee has no effect; there is a test for exactly this, run against production.
+- **Idempotent on the token.** A second sign returns the first signature rather than an error, so a retry after a dropped connection lands softly and a leaked link cannot be re-signed by someone else. The first signer wins.
+- **Countersigning is refused until the brand has signed** (409). Sending a pre-signed contract weakens the negotiating position and puts a liftable signature in every prospect's inbox.
+- **Signatures are capped at 400KB** and must match a PNG data-URL pattern, so this endpoint cannot be used to fill the database.
+- A **terms-hash mismatch aborts signing** with a 409. If that ever fires, something is badly wrong and signing must not proceed.
+
+### Signature capture
+
+Typed and drawn both normalise to a **trimmed transparent PNG**. One artifact means one print path, and it removes a real failure mode: a typed signature left as live text silently renders in the body font if the script webfont fails to load, which looks like a typo rather than a signature.
+
+- Typed uses **Ephesis**, appended to the *existing* Google Fonts request. Do not add a second request to a contract-signing page.
+- Drawn is ~60 lines of canvas with quadratic smoothing between midpoints (that is what stops finger-drawn strokes looking like polygons). No third-party library.
+- `trimCanvas` crops transparent margins so the signature sits on the rule rather than floating inside an arbitrary box.
+
+### ⚠️ The 9mm box must never grow
+
+`.sign-rule.signed` is **purely additive** and clamps the image to `max-height: 8mm` inside the existing 9mm box. `.sign-cols` and `.sign-col` carry `break-inside: avoid`, so a taller box pushes the panels and reflows the certificate onto a second page. The signature is **clipped to fit, never allowed to expand its container**. Verified with a deliberately oversized 600x300px signature: still 5 pages, 0 clipped.
+
+### What the certificate may print
+
+Only server-observed facts: signed-at, opened-at, method (typed/drawn), countersigned-at, and the first 16 characters of the terms hash.
+
+**Never** IP addresses, "email verified", QR codes, or a verification ID. IP and user agent *are* stored, because they corroborate in a dispute, but they are deliberately kept out of the printed document and out of the brand's API response, since a signed PDF gets forwarded around. An unsigned agreement prints no metadata at all and keeps four blank rules.
 
 ### ⚠️ The `<link>` must come AFTER the inline `<style>`
 
