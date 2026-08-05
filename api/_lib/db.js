@@ -52,8 +52,26 @@ export function ensureSchema() {
         expires_at      timestamptz NOT NULL,
         events          jsonb NOT NULL DEFAULT '[]'::jsonb
       )
-    `.then(() => sql`CREATE INDEX IF NOT EXISTS agreements_created_idx ON agreements (created_at DESC)`)
-     .catch((e) => { ready = null; throw e; });
+    `
+      /* Signing columns are added separately rather than being folded into the
+         CREATE above, because the table already exists in production and
+         CREATE TABLE IF NOT EXISTS would silently skip them. ADD COLUMN IF NOT
+         EXISTS is safe to run on both a fresh and an existing database. */
+      .then(() => sql`
+        ALTER TABLE agreements
+          ADD COLUMN IF NOT EXISTS signed_at         timestamptz,
+          ADD COLUMN IF NOT EXISTS signer_name       text,
+          ADD COLUMN IF NOT EXISTS signer_title      text,
+          ADD COLUMN IF NOT EXISTS signer_email      text,
+          ADD COLUMN IF NOT EXISTS signature_img     text,
+          ADD COLUMN IF NOT EXISTS signature_kind    text,
+          ADD COLUMN IF NOT EXISTS signer_ip         text,
+          ADD COLUMN IF NOT EXISTS signer_ua         text,
+          ADD COLUMN IF NOT EXISTS countersigned_at  timestamptz,
+          ADD COLUMN IF NOT EXISTS counter_signature text
+      `)
+      .then(() => sql`CREATE INDEX IF NOT EXISTS agreements_created_idx ON agreements (created_at DESC)`)
+      .catch((e) => { ready = null; throw e; });
   }
   return ready;
 }

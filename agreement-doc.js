@@ -327,11 +327,74 @@
     return out;
   }
 
+  /* ---- Signing helpers -------------------------------------------------
+     A signature is always an image (a PNG data URL), whether it was drawn
+     with a finger or typed in a script face. Normalising both to one artifact
+     means there is a single print path, and a typed signature cannot silently
+     fall back to body text if a webfont fails to load. -------------------- */
+  function fillSignature(el, dataUrl, alt) {
+    if (!el) return;
+    if (!dataUrl) { el.className = "sign-rule"; el.innerHTML = ""; return; }
+    el.className = "sign-rule signed";
+    var img = document.createElement("img");
+    img.src = dataUrl;
+    img.alt = alt ? "Signature of " + alt : "Signature";
+    el.innerHTML = "";
+    el.appendChild(img);
+  }
+
+  function fillDate(el, iso) {
+    if (!el) return;
+    if (!iso) { el.className = "sign-rule"; el.textContent = ""; return; }
+    el.className = "sign-rule dated";
+    el.textContent = fmtDate(String(iso).slice(0, 10));
+  }
+
+  /* The execution record. Every line here must be something the server
+     actually observed. Do NOT add "email verified", a QR code, or a
+     verification ID unless the thing it claims is genuinely implemented:
+     a fabricated assurance is worse than none if a contract is disputed. */
+  function renderExecution(el, exec, anySigned) {
+    if (!el) return;
+    if (!anySigned) { el.hidden = true; el.innerHTML = ""; return; }
+
+    var rows = [];
+    if (exec.signedAt) {
+      rows.push(["Signed", "<b>" + esc(exec.signerName || "The Brand") + "</b> on " +
+        esc(fmtDateTime(exec.signedAt)) +
+        (exec.signatureKind ? " · " + (exec.signatureKind === "drawn" ? "drawn" : "typed") + " signature" : "")]);
+    }
+    if (exec.firstViewedAt) {
+      rows.push(["Opened", esc(fmtDateTime(exec.firstViewedAt))]);
+    }
+    if (exec.counterSignedAt) {
+      rows.push(["Countersigned", "<b>" + esc(ME.name) + "</b> on " + esc(fmtDateTime(exec.counterSignedAt))]);
+    }
+    if (exec.termsSha256) {
+      rows.push(["Document", "SHA-256 <code>" + esc(String(exec.termsSha256).slice(0, 16)) + "</code>"]);
+    }
+
+    el.hidden = false;
+    el.innerHTML = rows.map(function (r) {
+      return '<div class="ex-row"><span>' + r[0] + "</span><span>" + r[1] + "</span></div>";
+    }).join("");
+  }
+
+  // UTC, spelled out, so the record is unambiguous across time zones.
+  function fmtDateTime(iso) {
+    var dt = new Date(iso);
+    if (isNaN(dt)) return String(iso);
+    var m = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var hh = String(dt.getUTCHours()).padStart(2, "0");
+    var mm = String(dt.getUTCMinutes()).padStart(2, "0");
+    return dt.getUTCDate() + " " + m[dt.getUTCMonth()] + ", " + dt.getUTCFullYear() + " at " + hh + ":" + mm + " UTC";
+  }
+
   /* ---- Render the whole document into `root` (the .inv-doc element).
      `root` must contain the document skeleton with its d-* ids; this fills
      them in. Nothing here touches the editor form, so sign.html can call it
      with a plain object fetched from the server. ---- */
-  function renderDoc(root, d) {
+  function renderDoc(root, d, exec) {
     d = d || {};
     var q = function (id) { return root.querySelector("#" + id); };
     var set = function (id, text) { var el = q(id); if (el) el.textContent = text; };
@@ -355,10 +418,29 @@
       else contact.hidden = true;
     }
 
-    set("d-sign-name", s(d.brandSign));
-    set("d-sign-title", s(d.brandTitle));
     set("d-sign-ref", num);
     set("d-sign-parties", ME.name + " and " + (s(d.brand) || "the Brand"));
+
+    /* Signing panels. `exec` is the EXECUTION RECORD and is a separate
+       argument on purpose: the terms come from the creator, the signature
+       comes from the counterparty, and merging them would make "these are the
+       terms that were signed" unprovable. When exec is absent, the panels stay
+       blank and the certificate prints exactly as an unsigned document. */
+    exec = exec || {};
+    var brandSigned = !!exec.signature;
+    var creatorSigned = !!exec.counterSignature;
+
+    // Name and title: the signer's own typed values win over the drafted ones,
+    // because they are who actually signed.
+    set("d-sign-name", s(exec.signerName) || s(d.brandSign));
+    set("d-sign-title", s(exec.signerTitle) || s(d.brandTitle));
+
+    fillSignature(q("d-sig-brand"), exec.signature, s(exec.signerName) || s(d.brandSign));
+    fillDate(q("d-sigdate-brand"), exec.signedAt);
+    fillSignature(q("d-sig-creator"), exec.counterSignature, ME.name);
+    fillDate(q("d-sigdate-creator"), exec.counterSignedAt);
+
+    renderExecution(q("d-exec"), exec, brandSigned || creatorSigned);
 
     // Lead with the name and handle the brand recognises. The entity is not
     // named here: it appears in the masthead line and at signature, which is
@@ -377,15 +459,149 @@
     }).join(""));
   }
 
+  /* ---- Signature capture ----------------------------------------------
+     Both paths end in the same artifact: a trimmed, transparent PNG data URL
+     drawn in ink. Rendering typed text to a canvas (rather than leaving it as
+     live text) means the printed signature does not depend on a webfont
+     having loaded, and gives one code path for print. ------------------- */
+  var SIG_H = 220;          // source height in px; downscaled to 8mm in print
+  var SIG_INK = "#14213A";
+
+  // Trim transparent margins so the signature sits on the rule rather than
+  // floating in the middle of an arbitrary bounding box.
+  function trimCanvas(cv) {
+    var ctx = cv.getContext("2d");
+    var w = cv.width, h = cv.height;
+    var data = ctx.getImageData(0, 0, w, h).data;
+    var top = h, left = w, right = 0, bottom = 0, found = false;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        if (data[(y * w + x) * 4 + 3] > 8) {
+          found = true;
+          if (y < top) top = y;
+          if (y > bottom) bottom = y;
+          if (x < left) left = x;
+          if (x > right) right = x;
+        }
+      }
+    }
+    if (!found) return null;
+    var pad = 6;
+    left = Math.max(0, left - pad); top = Math.max(0, top - pad);
+    right = Math.min(w - 1, right + pad); bottom = Math.min(h - 1, bottom + pad);
+    var out = document.createElement("canvas");
+    out.width = right - left + 1;
+    out.height = bottom - top + 1;
+    out.getContext("2d").drawImage(cv, left, top, out.width, out.height, 0, 0, out.width, out.height);
+    return out;
+  }
+
+  /* Typed signature. The script face is loaded by the page; if it has not
+     arrived we wait for it, because rendering to canvas bakes in whatever
+     font is resolved at that moment. */
+  function typedSignature(name, font) {
+    name = String(name || "").trim();
+    if (!name) return Promise.resolve(null);
+    font = font || '"Ephesis", cursive';
+
+    var draw = function () {
+      var cv = document.createElement("canvas");
+      var ctx = cv.getContext("2d");
+      var px = Math.round(SIG_H * 0.62);
+      ctx.font = px + 'px ' + font;
+      var w = Math.ceil(ctx.measureText(name).width) + 40;
+      cv.width = Math.max(w, 60);
+      cv.height = SIG_H;
+      ctx = cv.getContext("2d");
+      ctx.font = px + 'px ' + font;
+      ctx.fillStyle = SIG_INK;
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(name, 20, SIG_H * 0.72);
+      var t = trimCanvas(cv);
+      return t ? t.toDataURL("image/png") : null;
+    };
+
+    if (document.fonts && document.fonts.load) {
+      return document.fonts.load(Math.round(SIG_H * 0.62) + 'px ' + font, name)
+        .then(draw, draw);
+    }
+    return Promise.resolve(draw());
+  }
+
+  /* Drawn signature. Quadratic smoothing between midpoints, which is what
+     stops finger-drawn strokes looking like polygons. ~60 lines, so no
+     third-party library is pulled onto a contract-signing page. */
+  function drawPad(canvas) {
+    var ctx = canvas.getContext("2d");
+    var dpr = window.devicePixelRatio || 1;
+    var pts = [], drawing = false, dirty = false;
+
+    function resize() {
+      var r = canvas.getBoundingClientRect();
+      canvas.width = Math.round(r.width * dpr);
+      canvas.height = Math.round(r.height * dpr);
+      ctx.scale(dpr, dpr);
+      ctx.lineWidth = 2.2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = SIG_INK;
+    }
+    resize();
+
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      var p = e.touches ? e.touches[0] : e;
+      return { x: p.clientX - r.left, y: p.clientY - r.top };
+    }
+    function start(e) { e.preventDefault(); drawing = true; pts = [pos(e)]; }
+    function move(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      pts.push(pos(e));
+      dirty = true;
+      if (pts.length < 3) return;
+      var n = pts.length;
+      var p0 = pts[n - 3], p1 = pts[n - 2], p2 = pts[n - 1];
+      var m1 = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 };
+      var m2 = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+      ctx.beginPath();
+      ctx.moveTo(m1.x, m1.y);
+      ctx.quadraticCurveTo(p1.x, p1.y, m2.x, m2.y);
+      ctx.stroke();
+    }
+    function end() { drawing = false; }
+
+    canvas.addEventListener("pointerdown", start);
+    canvas.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", end);
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("touchend", end);
+
+    return {
+      clear: function () { ctx.clearRect(0, 0, canvas.width, canvas.height); dirty = false; },
+      isEmpty: function () { return !dirty; },
+      toDataURL: function () {
+        if (!dirty) return null;
+        var t = trimCanvas(canvas);
+        return t ? t.toDataURL("image/png") : null;
+      },
+      resize: resize
+    };
+  }
+
   global.KDAgreement = {
     ME: ME,
     esc: esc,
     nl2br: nl2br,
     fmtMoney: fmtMoney,
     fmtDate: fmtDate,
+    fmtDateTime: fmtDateTime,
     payTermsText: payTermsText,
     buildClauses: buildClauses,
     renderDoc: renderDoc,
+    typedSignature: typedSignature,
+    drawPad: drawPad,
     SCOPE_LABEL: SCOPE_LABEL
   };
 })(window);

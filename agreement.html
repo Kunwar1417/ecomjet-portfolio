@@ -144,7 +144,15 @@
   white-space: nowrap;
 }
 .sent-pill--viewed { background: #E6EAFB; color: var(--blue); }
+.sent-pill--signed { background: #E3F1E8; color: #2E7D4F; }
+.sent-pill--done { background: #2E7D4F; color: #fff; }
 .sent-pill--expired { background: #F3E3E7; color: #9A3B57; }
+.sent-counter {
+  flex-shrink: 0; font-size: 11px; font-weight: 700;
+  padding: 0 10px; border-radius: 8px;
+  border: 1px solid var(--blue); color: var(--blue); background: #fff;
+}
+.sent-counter:hover { background: var(--blue); color: #fff; }
 
 .zoom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .zoom-row label { font-size: 12px; color: var(--muted); font-weight: 600; }
@@ -502,22 +510,30 @@
               <div class="sign-intro">Signed in counterparts, each an original. An electronic or scanned signature has the same effect as an ink one.</div>
             </div>
 
+            <!-- The four rules per party carry stable ids so a captured
+                 signature can be placed into them. They stay empty unless a
+                 signature was genuinely captured; see docs/agreement-tool.md. -->
             <div class="sign-cols">
               <div class="sign-col">
                 <div class="p-lab">For the Creator</div>
-                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule" id="d-sig-creator"></div></div>
                 <div class="sign-row"><span class="k">Name</span><div class="sign-rule filled">Kunwar Deep</div></div>
                 <div class="sign-row"><span class="k">Title</span><div class="sign-rule filled">Creator, @the_ecomjet</div></div>
-                <div class="sign-row"><span class="k">Date</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Date</span><div class="sign-rule" id="d-sigdate-creator"></div></div>
               </div>
               <div class="sign-col">
                 <div class="p-lab">For the Brand</div>
-                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule" id="d-sig-brand"></div></div>
                 <div class="sign-row"><span class="k">Name</span><div class="sign-rule filled" id="d-sign-name"></div></div>
                 <div class="sign-row"><span class="k">Title</span><div class="sign-rule filled" id="d-sign-title"></div></div>
-                <div class="sign-row"><span class="k">Date</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Date</span><div class="sign-rule" id="d-sigdate-brand"></div></div>
               </div>
             </div>
+
+            <!-- Execution record. Hidden until a signature is actually
+                 captured, and it prints ONLY server-observed facts. Never add
+                 a field here that the system did not genuinely record. -->
+            <div class="cert-exec" id="d-exec" hidden></div>
 
             <div class="cert-foot">
               <span>Kunwar Deep · @the_ecomjet<br>Collaboration agreement</span>
@@ -896,10 +912,52 @@
   }
 
   function sentPill(row) {
+    if (row.countersigned_at) return ["Executed", "sent-pill--done"];
+    if (row.signed_at) return ["Signed", "sent-pill--signed"];
     if (new Date(row.expires_at).getTime() < Date.now()) return ["Expired", "sent-pill--expired"];
-    if (row.status === "signed") return ["Signed", "sent-pill--viewed"];
     if (row.first_viewed_at) return ["Opened", "sent-pill--viewed"];
     return ["Sent", ""];
+  }
+
+  /* Countersigning applies photos/signature.png, the same signature the
+     invoice uses. It is only offered once the brand has signed: sending a
+     pre-signed contract weakens the position and puts a liftable signature
+     in every prospect's inbox. */
+  let signaturePngPromise = null;
+  function creatorSignaturePng() {
+    if (!signaturePngPromise) {
+      signaturePngPromise = fetch("photos/signature.png")
+        .then(r => { if (!r.ok) throw new Error("missing"); return r.blob(); })
+        .then(b => new Promise((res, rej) => {
+          const fr = new FileReader();
+          fr.onload = () => res(fr.result);
+          fr.onerror = rej;
+          fr.readAsDataURL(b);
+        }));
+    }
+    return signaturePngPromise;
+  }
+
+  async function countersign(token, num) {
+    const key = localStorage.getItem(KEY_LS);
+    if (!key) { setHint("Enter the share key first.", true); return; }
+    if (!confirm("Countersign " + num + "?\n\nYour signature is applied and the agreement becomes fully executed. This cannot be undone.")) return;
+
+    setHint("Countersigning…");
+    try {
+      const signature = await creatorSignaturePng();
+      const r = await fetch("/api/agreements/" + encodeURIComponent(token) + "/countersign", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-kd-key": key },
+        body: JSON.stringify({ signature })
+      });
+      const body = await r.json().catch(() => ({}));
+      if (!r.ok) { setHint(esc(body.error || "Could not countersign."), true); return; }
+      setHint("Countersigned. The brand sees the executed copy at the same link.");
+      loadSent();
+    } catch (e) {
+      setHint("Could not read photos/signature.png.", true);
+    }
   }
 
   async function loadSent() {
@@ -918,12 +976,23 @@
       }
       ul.innerHTML = agreements.map(row => {
         const [label, cls] = sentPill(row);
+        // Countersign is offered only where it is actually possible.
+        const canCounter = row.signed_at && !row.countersigned_at;
         return '<li><a class="sent-row" href="/s/' + esc(row.token) + '" target="_blank" rel="noopener">' +
           '<span class="sent-num">' + esc(row.num) + "</span>" +
           '<span class="sent-brand">' + (esc(row.brand) || "&mdash;") + "</span>" +
           '<span class="sent-pill ' + cls + '">' + label + "</span>" +
-          "</a></li>";
+          "</a>" +
+          (canCounter
+            ? '<button type="button" class="sent-counter" data-token="' + esc(row.token) +
+              '" data-num="' + esc(row.num) + '" title="Apply your signature">Countersign</button>'
+            : "") +
+          "</li>";
       }).join("");
+
+      ul.querySelectorAll(".sent-counter").forEach(btn => {
+        btn.addEventListener("click", () => countersign(btn.dataset.token, btn.dataset.num));
+      });
     } catch (e) {
       ul.innerHTML = '<li class="empty">Could not load shared links.</li>';
     }

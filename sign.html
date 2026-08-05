@@ -14,7 +14,7 @@
 <title>Collaboration agreement</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Ephesis&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    Sign view — what a brand sees when they open a share link.
@@ -126,6 +126,111 @@
 
 [hidden] { display: none !important; }
 
+/* ---- Signed confirmation in the rail ------------------------------ */
+.sv-done {
+  display: flex; gap: 11px; align-items: flex-start;
+  margin-top: 16px; padding: 13px 14px;
+  background: #EDF7F0; border: 1px solid #BFE0CB; border-radius: 10px;
+}
+.sv-done__tick {
+  flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+  background: #2E7D4F; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; line-height: 1;
+}
+.sv-done b { display: block; font-size: 14px; letter-spacing: -0.01em; }
+.sv-done span { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+/* ---- Signing panel ------------------------------------------------- */
+.sg {
+  margin: 26px auto 0;
+  width: min(210mm, 100%);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -28px rgba(20,20,40,.35);
+  padding: 26px 28px 28px;
+}
+.sg-head h2 { font-size: 19px; font-weight: 800; letter-spacing: -0.025em; margin: 0; }
+.sg-head p { font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 8px 0 0; }
+.sg-head b { color: var(--ink); font-weight: 700; }
+
+.sg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+@media (max-width: 640px) { .sg-grid { grid-template-columns: 1fr; } }
+.sg-field { display: block; }
+.sg-lab {
+  display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .02em;
+  margin-bottom: 6px;
+}
+.sg-lab em {
+  font-style: normal; font-weight: 600; color: var(--muted);
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; margin-left: 5px;
+}
+.sg-field input {
+  width: 100%; font: inherit; font-size: 14px;
+  padding: 11px 13px; border: 1px solid var(--line-2); border-radius: 9px;
+  background: #fff; color: var(--ink);
+}
+.sg-field input:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+
+.sg-sigblock { margin-top: 20px; }
+.sg-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.sg-tab {
+  font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-2); background: transparent; color: var(--muted);
+}
+.sg-tab.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.sg-preview, .sg-canvaswrap {
+  position: relative;
+  height: 108px; background: #fff;
+  border: 1px solid var(--line-2); border-radius: 10px;
+}
+/* The dotted baseline reads as "sign on this line" without being a real rule. */
+.sg-preview::after, .sg-canvaswrap::after {
+  content: ""; position: absolute; left: 18px; right: 18px; bottom: 26px;
+  border-bottom: 1px dashed var(--line-2); pointer-events: none;
+}
+.sg-preview { display: flex; align-items: center; justify-content: flex-start; padding: 0 18px; overflow: hidden; }
+.sg-preview img { max-height: 64px; max-width: 100%; object-fit: contain; object-position: left center; position: relative; z-index: 1; }
+.sg-placeholder { font-size: 13px; color: var(--muted); font-style: italic; }
+#sg-canvas { width: 100%; height: 100%; display: block; touch-action: none; border-radius: 10px; cursor: crosshair; }
+.sg-clear {
+  position: absolute; top: 8px; right: 10px; z-index: 2;
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line-2); background: #fff;
+}
+.sg-clear:hover { color: var(--ink); border-color: var(--ink); }
+.sg-hint { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+
+.sg-consent {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-top: 20px; font-size: 13px; line-height: 1.6; color: var(--ink);
+}
+.sg-consent input { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--blue); flex-shrink: 0; }
+
+.sg-submit { margin-top: 20px; }
+.sg-submit .sv-btn { width: auto; min-width: 200px; padding: 13px 26px; }
+.sv-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+.sg-error { color: #9A3B57; font-size: 13px; margin: 10px 0 0; font-weight: 600; }
+
+/* ---- Jump-to-sign nudge -------------------------------------------- */
+.sv-jump {
+  position: fixed; right: 22px; bottom: 22px; z-index: 40;
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-radius: 999px;
+  background: var(--blue); color: #fff;
+  font-size: 13.5px; font-weight: 700;
+  box-shadow: 0 10px 26px -10px rgba(43,73,196,.8);
+}
+.sv-jump:hover { background: var(--blue-d); }
+@media (max-width: 640px) { .sv-jump { right: 14px; bottom: 14px; } }
+
+/* Brief highlight when the signing panel is jumped to. */
+@keyframes sg-flash { 0%, 100% { box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -28px rgba(20,20,40,.35); } 30% { box-shadow: 0 0 0 3px rgba(43,73,196,.35); } }
+.sg.is-target { animation: sg-flash 1.4s ease; }
+@media (prefers-reduced-motion: reduce) { .sg.is-target { animation: none; } }
+
 /* On screen the document is scaled to fit its column, exactly as in the
    editor. fitDoc() sets the transform; this just centres the result. */
 .inv-doc-wrap { display: flex; justify-content: center; overflow: visible; }
@@ -179,15 +284,38 @@
 
     <div class="sv-pill" id="sv-status">Opened</div>
 
-    <p class="sv-note">
-      Please read the agreement, then download a copy. To accept, sign the last
-      page and send it back. Any question about the terms can go straight to
-      Kunwar before you sign.
-    </p>
+    <!-- Unsigned state -->
+    <div id="sv-unsigned">
+      <p class="sv-note">
+        Please read the agreement. When you are happy with it, sign at the
+        bottom of this page. Any question about the terms can go straight to
+        Kunwar before you sign.
+      </p>
 
-    <div class="sv-actions">
-      <button type="button" class="sv-btn" id="sv-pdf">Download PDF</button>
-      <a class="sv-btn sv-btn--ghost" id="sv-mail" href="mailto:kunwar@thecomjet.com">Ask a question</a>
+      <div class="sv-actions">
+        <button type="button" class="sv-btn" id="sv-start">Review and sign</button>
+        <button type="button" class="sv-btn sv-btn--ghost" id="sv-pdf">Download a copy</button>
+        <a class="sv-btn sv-btn--ghost" id="sv-mail" href="mailto:kunwar@thecomjet.com">Ask a question</a>
+      </div>
+    </div>
+
+    <!-- Signed state -->
+    <div id="sv-signed" hidden>
+      <div class="sv-done">
+        <div class="sv-done__tick" aria-hidden="true">✓</div>
+        <div>
+          <b id="sv-done-title">Signed</b>
+          <span id="sv-done-sub"></span>
+        </div>
+      </div>
+      <p class="sv-note" id="sv-signed-note">
+        A copy has been kept for both parties. You can download it any time
+        from this link.
+      </p>
+      <div class="sv-actions">
+        <button type="button" class="sv-btn" id="sv-pdf2">Download signed copy</button>
+        <a class="sv-btn sv-btn--ghost" href="mailto:kunwar@thecomjet.com">Contact Kunwar</a>
+      </div>
     </div>
   </aside>
 
@@ -267,22 +395,30 @@
               <div class="sign-intro">Signed in counterparts, each an original. An electronic or scanned signature has the same effect as an ink one.</div>
             </div>
 
+            <!-- The four rules per party carry stable ids so a captured
+                 signature can be placed into them. They stay empty unless a
+                 signature was genuinely captured; see docs/agreement-tool.md. -->
             <div class="sign-cols">
               <div class="sign-col">
                 <div class="p-lab">For the Creator</div>
-                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule" id="d-sig-creator"></div></div>
                 <div class="sign-row"><span class="k">Name</span><div class="sign-rule filled">Kunwar Deep</div></div>
                 <div class="sign-row"><span class="k">Title</span><div class="sign-rule filled">Creator, @the_ecomjet</div></div>
-                <div class="sign-row"><span class="k">Date</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Date</span><div class="sign-rule" id="d-sigdate-creator"></div></div>
               </div>
               <div class="sign-col">
                 <div class="p-lab">For the Brand</div>
-                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Signature</span><div class="sign-rule" id="d-sig-brand"></div></div>
                 <div class="sign-row"><span class="k">Name</span><div class="sign-rule filled" id="d-sign-name"></div></div>
                 <div class="sign-row"><span class="k">Title</span><div class="sign-rule filled" id="d-sign-title"></div></div>
-                <div class="sign-row"><span class="k">Date</span><div class="sign-rule"></div></div>
+                <div class="sign-row"><span class="k">Date</span><div class="sign-rule" id="d-sigdate-brand"></div></div>
               </div>
             </div>
+
+            <!-- Execution record. Hidden until a signature is actually
+                 captured, and it prints ONLY server-observed facts. Never add
+                 a field here that the system did not genuinely record. -->
+            <div class="cert-exec" id="d-exec" hidden></div>
 
             <div class="cert-foot">
               <span>Kunwar Deep · @the_ecomjet<br>Collaboration agreement</span>
@@ -304,8 +440,66 @@
 
     </div>
   </div>
+
+  <!-- ============ SIGNING PANEL (screen only, never printed) ============
+       Sits under the document rather than on top of it, so the contract is
+       never obscured by the thing asking you to agree to it. -->
+  <section class="sg no-print" id="sg" hidden>
+    <div class="sg-head">
+      <h2>Sign this agreement</h2>
+      <p>You are signing agreement <b id="sg-num"></b> with <b>Kunwar Deep</b>. Your signature is applied to the certificate page above.</p>
+    </div>
+
+    <div class="sg-grid">
+      <label class="sg-field">
+        <span class="sg-lab">Full name <em>required</em></span>
+        <input type="text" id="sg-name" autocomplete="name" placeholder="Your full name" />
+      </label>
+      <label class="sg-field">
+        <span class="sg-lab">Title</span>
+        <input type="text" id="sg-title" autocomplete="organization-title" placeholder="Your role at the company" />
+      </label>
+    </div>
+
+    <div class="sg-sigblock">
+      <div class="sg-tabs" role="tablist">
+        <button type="button" class="sg-tab is-on" id="sg-tab-type" role="tab">Type it</button>
+        <button type="button" class="sg-tab" id="sg-tab-draw" role="tab">Draw it</button>
+      </div>
+
+      <div class="sg-pane" id="sg-pane-type">
+        <div class="sg-preview" id="sg-preview"><span class="sg-placeholder">Your signature appears here</span></div>
+        <p class="sg-hint">Typed from the name above.</p>
+      </div>
+
+      <div class="sg-pane" id="sg-pane-draw" hidden>
+        <div class="sg-canvaswrap">
+          <canvas id="sg-canvas" aria-label="Draw your signature"></canvas>
+          <button type="button" class="sg-clear" id="sg-clear">Clear</button>
+        </div>
+        <p class="sg-hint">Draw with your finger, trackpad or mouse.</p>
+      </div>
+    </div>
+
+    <label class="sg-consent">
+      <input type="checkbox" id="sg-consent" />
+      <span>I have read the agreement and I have authority to sign it on behalf of <b id="sg-brand-name">the Brand</b>. I agree that this electronic signature is binding.</span>
+    </label>
+
+    <div class="sg-submit">
+      <button type="button" class="sv-btn" id="sg-submit" disabled>Sign agreement</button>
+      <p class="sg-error" id="sg-error" hidden></p>
+    </div>
+  </section>
   </div>
 </div>
+
+<!-- Nudge toward the signing panel while it is off screen. This is the
+     affordance that makes the flow feel guided rather than "scroll and hope". -->
+<button type="button" class="sv-jump no-print" id="sv-jump" hidden>
+  <span>Sign here</span>
+  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 4v14m0 0l-6-6m6 6l6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 
 <script src="/agreement-doc.js?v=1"></script>
 <script>
@@ -352,34 +546,191 @@
     wrap.style.height = (doc.offsetHeight * scale) + "px";
   }
 
+  var TERMS = null, TOKEN = "", pad = null, mode = "type", typedUrl = null;
+
   function show(data) {
     var t = data.terms || {};
+    TERMS = t;
 
-    KD.renderDoc($("doc"), t);
+    KD.renderDoc($("doc"), t, data.exec);
 
     $("sv-brand").textContent = t.brand || "Your agreement";
     $("sv-num").textContent = data.num || "";
     $("sv-date").textContent = KD.fmtDate(t.date) || "Not dated";
     $("sv-fee").textContent = t.fee ? KD.fmtMoney(parseFloat(t.fee), t.currency || "USD") : "See clause 4";
+    $("sg-num").textContent = data.num || "";
+    $("sg-brand-name").textContent = t.brand || "the Brand";
 
     document.title = "Collaboration agreement" + (data.num ? " " + data.num : "") +
       (t.brand ? " · " + t.brand : "");
 
+    if (data.exec && data.exec.signedAt) {
+      showSigned(data.exec);
+    } else {
+      // Prefill from the drafted signatory, but they remain editable: the
+      // person actually signing may not be the person the draft named.
+      $("sg-name").value = t.brandSign || "";
+      $("sg-title").value = t.brandTitle || "";
+      $("sg").hidden = false;
+      refreshTyped();
+      updateSubmit();
+    }
+
     $("sv-loading").hidden = true;
     $("sv-app").hidden = false;
     fitDoc();
+    updateJump();
   }
 
-  $("sv-pdf").addEventListener("click", function () { window.print(); });
-  window.addEventListener("resize", fitDoc);
+  function showSigned(exec) {
+    $("sv-unsigned").hidden = true;
+    $("sv-signed").hidden = false;
+    $("sg").hidden = true;
+    $("sv-jump").hidden = true;
+    $("sv-status").textContent = exec.counterSignedAt ? "Fully executed" : "Signed";
 
-  var token = readToken();
-  if (!token) {
+    $("sv-done-title").textContent = exec.counterSignedAt ? "Fully executed" : "Signed";
+    $("sv-done-sub").textContent = exec.counterSignedAt
+      ? "Signed by both parties."
+      : "Signed by " + (exec.signerName || "you") + ". Waiting on Kunwar to countersign.";
+    if (!exec.counterSignedAt) {
+      $("sv-signed-note").textContent =
+        "Kunwar will countersign shortly. This link stays live, so you can come back for the fully executed copy.";
+    }
+  }
+
+  /* ---- Signature capture ------------------------------------------- */
+  function refreshTyped() {
+    var name = $("sg-name").value.trim();
+    var box = $("sg-preview");
+    if (!name) {
+      typedUrl = null;
+      box.innerHTML = '<span class="sg-placeholder">Your signature appears here</span>';
+      updateSubmit();
+      return;
+    }
+    KD.typedSignature(name).then(function (url) {
+      typedUrl = url;
+      if (url) {
+        box.innerHTML = "";
+        var img = document.createElement("img");
+        img.src = url; img.alt = "Your typed signature";
+        box.appendChild(img);
+      }
+      updateSubmit();
+    });
+  }
+
+  function currentSignature() {
+    if (mode === "draw") return pad && !pad.isEmpty() ? pad.toDataURL() : null;
+    return typedUrl;
+  }
+
+  function updateSubmit() {
+    var ok = $("sg-name").value.trim() && $("sg-consent").checked && !!currentSignature();
+    $("sg-submit").disabled = !ok;
+  }
+
+  function setMode(next) {
+    mode = next;
+    var typing = next === "type";
+    $("sg-tab-type").classList.toggle("is-on", typing);
+    $("sg-tab-draw").classList.toggle("is-on", !typing);
+    $("sg-pane-type").hidden = !typing;
+    $("sg-pane-draw").hidden = typing;
+    if (!typing && !pad) pad = KD.drawPad($("sg-canvas"));
+    else if (!typing && pad) pad.resize();
+    updateSubmit();
+  }
+
+  /* ---- Jump nudge --------------------------------------------------- */
+  function updateJump() {
+    var sg = $("sg");
+    if (sg.hidden) { $("sv-jump").hidden = true; return; }
+    var r = sg.getBoundingClientRect();
+    // Hidden once the panel is actually on screen: a button pointing at
+    // something already visible is noise.
+    $("sv-jump").hidden = r.top < window.innerHeight - 90;
+  }
+
+  function jumpToSign() {
+    var sg = $("sg");
+    sg.scrollIntoView({ behavior: "smooth", block: "center" });
+    sg.classList.remove("is-target");
+    void sg.offsetWidth;
+    sg.classList.add("is-target");
+    setTimeout(function () { $("sg-name").focus({ preventScroll: true }); }, 420);
+  }
+
+  /* ---- Submit -------------------------------------------------------- */
+  function submitSignature() {
+    var sig = currentSignature();
+    var name = $("sg-name").value.trim();
+    if (!sig || !name) return;
+
+    var btn = $("sg-submit");
+    btn.disabled = true;
+    btn.textContent = "Signing…";
+    $("sg-error").hidden = true;
+
+    // Terms are deliberately NOT sent. The server signs the copy it froze.
+    fetch("/api/agreements/" + encodeURIComponent(TOKEN) + "/sign", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        signerName: name,
+        signerTitle: $("sg-title").value.trim(),
+        signature: sig,
+        signatureKind: mode === "draw" ? "drawn" : "typed"
+      })
+    })
+      .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+      .then(function (res) {
+        if (!res.ok) {
+          btn.disabled = false;
+          btn.textContent = "Sign agreement";
+          $("sg-error").textContent = (res.body && res.body.error) || "The signature could not be saved.";
+          $("sg-error").hidden = false;
+          return;
+        }
+        var exec = res.body.exec || {};
+        KD.renderDoc($("doc"), TERMS, exec);
+        fitDoc();
+        showSigned(exec);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = "Sign agreement";
+        $("sg-error").textContent = "Network problem, so nothing was signed. Please try again.";
+        $("sg-error").hidden = false;
+      });
+  }
+
+  /* ---- Wiring -------------------------------------------------------- */
+  $("sv-pdf").addEventListener("click", function () { window.print(); });
+  $("sv-pdf2").addEventListener("click", function () { window.print(); });
+  $("sv-start").addEventListener("click", jumpToSign);
+  $("sv-jump").addEventListener("click", jumpToSign);
+  $("sg-tab-type").addEventListener("click", function () { setMode("type"); });
+  $("sg-tab-draw").addEventListener("click", function () { setMode("draw"); });
+  $("sg-clear").addEventListener("click", function () { if (pad) pad.clear(); updateSubmit(); });
+  $("sg-canvas").addEventListener("pointerup", updateSubmit);
+  $("sg-canvas").addEventListener("touchend", updateSubmit);
+  $("sg-name").addEventListener("input", function () { refreshTyped(); });
+  $("sg-title").addEventListener("input", updateSubmit);
+  $("sg-consent").addEventListener("change", updateSubmit);
+  $("sg-submit").addEventListener("click", submitSignature);
+  window.addEventListener("resize", function () { fitDoc(); updateJump(); if (pad) pad.resize(); });
+  window.addEventListener("scroll", updateJump, { passive: true });
+
+  TOKEN = readToken();
+  if (!TOKEN) {
     fail("This link is missing its reference.");
     return;
   }
 
-  fetch("/api/agreements/" + encodeURIComponent(token), { headers: { accept: "application/json" } })
+  fetch("/api/agreements/" + encodeURIComponent(TOKEN), { headers: { accept: "application/json" } })
     .then(function (r) {
       return r.json().then(function (body) { return { ok: r.ok, status: r.status, body: body }; });
     })

@@ -24,7 +24,9 @@ export default async function handler(req, res) {
     await ensureSchema();
 
     const rows = await sql`
-      SELECT token, num, terms, terms_sha256, status, created_at, first_viewed_at, expires_at, events
+      SELECT token, num, terms, terms_sha256, status, created_at, first_viewed_at, expires_at, events,
+             signed_at, signer_name, signer_title, signature_img, signature_kind,
+             countersigned_at, counter_signature
       FROM agreements WHERE token = ${token}
     `;
     const row = rows[0];
@@ -55,12 +57,30 @@ export default async function handler(req, res) {
 
     // No caching: status changes, and a stale contract is worse than a slow one.
     res.setHeader("cache-control", "no-store");
+
+    /* The execution record is returned only once something was genuinely
+       signed, so an unsigned agreement renders with blank panels and no
+       metadata. IP and user agent stay server-side: they corroborate in the
+       creator's own audit view but never travel with a forwarded document. */
+    const exec = row.signed_at || row.countersigned_at ? {
+      signerName: row.signer_name,
+      signerTitle: row.signer_title,
+      signature: row.signature_img,
+      signatureKind: row.signature_kind,
+      signedAt: row.signed_at,
+      firstViewedAt: row.first_viewed_at,
+      counterSignature: row.counter_signature,
+      counterSignedAt: row.countersigned_at,
+      termsSha256: row.terms_sha256
+    } : null;
+
     return json(res, 200, {
       num: row.num,
       terms: row.terms,
       status: row.status === "sent" ? "viewed" : row.status,
       termsSha256: row.terms_sha256,
-      expiresAt: row.expires_at
+      expiresAt: row.expires_at,
+      exec
     });
   } catch (e) {
     console.error("fetch failed", e);

@@ -27,6 +27,7 @@ export default async function handler(req, res) {
     await ensureSchema();
     const rows = await sql`
       SELECT token, num, status, created_at, first_viewed_at, expires_at,
+             signed_at, signer_name, countersigned_at,
              terms->>'brand' AS brand,
              terms->>'fee' AS fee,
              terms->>'currency' AS currency
