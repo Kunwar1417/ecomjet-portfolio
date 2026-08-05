@@ -16,12 +16,22 @@ const CONNECTION =
   process.env.POSTGRES_URL ||
   process.env.DATABASE_URL_UNPOOLED;
 
-if (!CONNECTION) {
-  // Fail loudly at import time rather than returning a confusing 500 later.
-  console.error("No database connection string. Set DATABASE_URL in the Vercel project.");
-}
+/* neon() throws if the connection string is missing, and at module scope that
+ * crashes the whole function with an opaque FUNCTION_INVOCATION_FAILED. The
+ * database is provisioned separately from the deploy, so "not configured yet"
+ * is a state this code must survive: handlers call requireDb() and return a
+ * clean 503 instead. */
+export const dbConfigured = Boolean(CONNECTION);
+export const sql = dbConfigured ? neon(CONNECTION) : null;
 
-export const sql = neon(CONNECTION);
+/* Returns true when the request can proceed; otherwise answers it and
+ * returns false, so callers can `if (!requireDb(res)) return;`. */
+export function requireDb(res) {
+  if (dbConfigured) return true;
+  console.error("DATABASE_URL is not set. Link a Neon database in the Vercel project.");
+  json(res, 503, { error: "Sharing is not set up yet." });
+  return false;
+}
 
 /* One-time schema creation, run lazily on first use.
  * Cheap (IF NOT EXISTS) and keeps this project true to its no-build-step,

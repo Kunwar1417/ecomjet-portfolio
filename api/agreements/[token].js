@@ -11,10 +11,11 @@
  * status to 'viewed'. That is a real, server-observed event, which is why the
  * creator may be shown it. Nothing is inferred or backfilled.
  */
-import { sql, ensureSchema, appendEvent, clientIp, json } from "../_lib/db.js";
+import { sql, ensureSchema, requireDb, appendEvent, clientIp, json } from "../_lib/db.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return json(res, 405, { error: "Use GET." });
+  if (!requireDb(res)) return;
 
   const token = String(req.query.token || "");
   if (!token || token.length < 20) return json(res, 404, { error: "Not found." });

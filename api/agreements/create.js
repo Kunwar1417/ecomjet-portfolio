@@ -10,7 +10,7 @@
  * found this URL could mint agreements in Kunwar's name or fill the database.
  */
 import { timingSafeEqual } from "node:crypto";
-import { sql, ensureSchema, newToken, hashTerms, appendEvent, clientIp, json } from "../_lib/db.js";
+import { sql, ensureSchema, requireDb, newToken, hashTerms, appendEvent, clientIp, json } from "../_lib/db.js";
 
 const LINK_DAYS = 30;
 
@@ -26,6 +26,7 @@ function authorised(req) {
 export default async function handler(req, res) {
   if (req.method !== "POST") return json(res, 405, { error: "Use POST." });
   if (!authorised(req)) return json(res, 401, { error: "Not authorised." });
+  if (!requireDb(res)) return;
 
   let body = req.body;
   if (typeof body === "string") {
