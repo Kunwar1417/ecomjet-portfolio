@@ -39,21 +39,17 @@ The repo `.gitignore` ignores `.vercel`, `node_modules` and `**/.DS_Store` (macO
 - **`package.json` exists**, with one dependency (`@neondatabase/serverless`). Vercel installs it during deploy; the safe runbook above is unchanged, since the clone includes `package.json` and Vercel runs the install itself.
 - **`node_modules` is gitignored** and must never be committed.
 - **Two environment variables must exist in the Vercel project** (Project → Settings → Environment Variables, all environments):
-  - `SHARE_SECRET` — any long random string. Required to create share links. **The API fails closed:** if it is missing, every write is refused, which is the intended behaviour, not a bug. **Already set** for Production and Development.
-  - `DATABASE_URL` — the Neon Postgres connection string. **Not yet provisioned.** See below.
+  - `SHARE_SECRET` — any long random string. Required to create share links. **The API fails closed:** if it is missing, every write is refused, which is the intended behaviour, not a bug.
+  - `DATABASE_URL` — the Neon Postgres connection string, injected by the integration.
 
-### ⚠️ Remaining setup: link the database (one time, ~2 minutes)
+**Both are set, and the database is live** (Neon resource `neon-bisque-queen`, free tier, provisioned 5 Aug 2026 with `npx vercel integration add neon` once the marketplace terms had been accepted in a browser). The table creates itself on first use, so there is no migration step.
 
-Sharing returns `503 {"error":"Sharing is not set up yet."}` until this is done. Everything else on the site, including the agreement form and its PDF, works regardless.
+**Health check after any deploy:** `curl -s https://theecomjet.com/api/agreements/nonexistenttoken000000` must return `404 {"error":"This link is not valid."}`. A **503** means `DATABASE_URL` did not reach the function (env vars only apply to deploys made after they are set, so redeploy). A **500** means the connection string is wrong.
 
-It cannot be scripted: creating the database means accepting Neon's marketplace terms, which only the account owner can do in a browser.
+### Two traps specific to `/s/<token>`
 
-1. Vercel dashboard → the `ecomjet-portfolio` project → **Storage** → **Create Database** → **Neon** (Postgres). The free tier is ample here; a few hundred agreements is kilobytes.
-2. Accept the terms, create it, and **connect it to this project**. Vercel injects `DATABASE_URL` automatically.
-3. **Redeploy** (env vars only reach functions on a new deploy): use the SAFE DEPLOY RUNBOOK above.
-4. Verify: `curl -s https://theecomjet.com/api/agreements/nonexistenttoken000000` should return `404 {"error":"This link is not valid."}`. A 503 means the variable did not land; a 500 means the connection string is wrong.
-
-The table is created automatically on first use, so there is no migration step.
+1. **The rewrite destination must be extensionless.** `"destination": "/sign.html"` 404s, because `cleanUrls: true` redirects `.html` paths instead of serving them. Use `/sign`.
+2. **`sign.html` must use absolute asset paths** (`/agreement-doc.css`, not `agreement-doc.css`). Served at `/s/<token>`, a relative path resolves under `/s/`, where the catch-all rewrite answers it with the HTML page instead of the stylesheet. The symptom is a completely unstyled document plus a misleading "could not load" error, because `KDAgreement` ends up undefined.
 
 **The share key.** The first time "Create share link" is clicked, the browser asks for a key. That is `SHARE_SECRET`. Read the current value with `npx vercel env pull` (writes `.env.local`, which is gitignored), or set a new one with `npx vercel env rm SHARE_SECRET production` then `vercel env add`. It is entered once per browser and kept in `localStorage` under `kd_share_key`.
 - **The share features do not work over `python3 -m http.server`** or from `file://`, because there is no `/api` there. Use `npx vercel dev` to exercise them locally. Static pages, including `/agreement`'s form, preview and PDF, still work fine on the plain server.
