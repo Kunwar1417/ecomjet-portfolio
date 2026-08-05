@@ -438,11 +438,13 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
    PRINT
    ============================================================ */
 @media print {
-  /* Vertical margin MUST be a real @page margin: it is the only thing that
-     RESERVES space on every page, and reserving (not masking) is what keeps
-     text from being clipped. Left/right stay 0 so the cream ground and blue
-     spine bleed to the edges; the horizontal text inset lives on .inv-doc. */
-  @page { size: A4; margin: 12mm 0; }
+  /* ZERO page margin on every side. Chrome refuses to paint into an @page
+     margin, so any non-zero value prints a bare white bar at the top and
+     bottom of every sheet. With margin:0 the cream ground covers the full
+     page. Vertical breathing room comes from padding on .inv-doc, which
+     (verified) does NOT repeat after a page break: text flows continuously
+     across the fold, so nothing is clipped and no blank band appears. */
+  @page { size: A4; margin: 0; }
   html, body { background: var(--paper) !important; }
   .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
   .inv-top, .inv-form, .no-print { display: none !important; }
@@ -450,22 +452,19 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .inv-doc {
     transform: none !important;
     box-shadow: none; margin: 0;
-    /* Horizontal inset only. Side padding applies identically to every page;
-       TOP padding must never go here, as it is re-applied after each break
-       and opens a blank band at the top of pages 2+. Vertical space is the
-       @page margin's job. */
-    padding: 0 16mm 0 19mm;
+    /* Vertical padding gives page one its opening space and the last page its
+       closing space; it does not repeat mid-document, so continuation pages
+       start at the fold with no blank band (verified against a 3-page probe).
+       Left inset = 16mm text + 3mm spine. */
+    padding: 13mm 16mm 13mm 19mm;
     width: auto; min-height: 0;
     overflow: visible;
     display: block;
     border-left: none;
     background: none;
   }
-  /* Masthead keeps real top padding. This is SAFE where a top padding on
-     .d-body is not: .d-head renders once, on page one only, so it cannot be
-     re-applied after a page break. It restores the opening breathing room
-     the document is designed around. */
-  .d-head { padding: 10mm 0 0; }
+  /* .inv-doc's padding already supplies the opening space. */
+  .d-head { padding: 0; }
   .d-body { display: block; padding: 0; }
   .d-foot { display: none; }
 
@@ -477,17 +476,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
      a top margin on the block itself collapses through the break and has no
      effect, and padding would move its contents rather than its frame. */
   .sign-break {
-    display: block; height: 0;
+    display: block; height: 13mm;    /* matches .inv-doc top padding, which
+                                        does not apply after a forced break */
     break-before: page; page-break-before: always;
   }
 
   /* Cream ground + blue spine, drawn per page by fixed layers (a fixed element
      repeats on every page in paged media). They sit BEHIND the text, which is
      the crucial difference from the earlier overlay bands that painted over
-     real sentences. They cover the printable area only: nothing can paint
-     into a Chrome @page margin, verified with a probe, not even a fixed
-     element with negative offsets. The resulting hairline white strip top and
-     bottom is the accepted cost of never clipping a line of the contract. */
+     real sentences. With @page margin now 0 they span the whole sheet, so the
+     spine runs edge to edge and no bare white bar can appear. */
   .pg-band {
     display: block !important;
     position: fixed;
