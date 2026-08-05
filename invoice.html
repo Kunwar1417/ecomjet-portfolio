@@ -252,6 +252,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   align-items: end;
 }
 .pay-lab { font-size: 9.5px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--blue); margin-bottom: 4mm; }
+/* Payment method leads the block: it is the routing instruction, not another account field */
+.pay-method { font-size: 12px; font-weight: 700; color: var(--blue); margin-bottom: 2.5mm; padding-bottom: 2.5mm; border-bottom: 1px solid rgba(20,33,58,.14); }
 .pay-grid { display: grid; grid-template-columns: auto 1fr; gap: 1mm 4mm; font-size: 11.5px; line-height: 1.5; }
 .pay-grid .k { color: var(--muted); white-space: nowrap; }
 .pay-grid .v { font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -392,6 +394,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     </div>
 
     <div class="field intl-only">
+      <label>Client bank location</label>
+      <div class="seg" id="seg-bank">
+        <button type="button" data-bank="us" aria-pressed="true">United States</button>
+        <button type="button" data-bank="swift" aria-pressed="false">Outside the US</button>
+      </div>
+      <div class="hint-sm">US clients get the ACH block. Everyone else gets SWIFT/IBAN for an international wire.</div>
+    </div>
+
+    <div class="field intl-only">
       <label class="chk"><input type="checkbox" id="f-stripe" /> Include Stripe payment link</label>
     </div>
 
@@ -500,7 +511,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     gstin: "07HLKPK5143N1ZI",
     pan: "HLKPK5143N",
     india: { holder: "NEVER SETTLE", account: "5100999999", type: "Checking", ifsc: "KKBK0005294", bank: "Kotak Mahindra Bank", upi: "neversettle1417@kotak" },
-    us: { holder: "NEVER SETTLE", account: "8335491789", type: "Checking", ach: "026073150", bank: "Community Federal Savings Bank", bankAddr: "5 Penn Plaza, 14th Floor, New York, NY 10001, US" },
+    us: { holder: "NEVER SETTLE", method: "ACH (US domestic transfer)", account: "8335491789", type: "Checking", ach: "026073150", bank: "Community Federal Savings Bank", bankAddr: "5 Penn Plaza, 14th Floor, New York, NY 10001, US" },
+    swift: { holder: "NEVER SETTLE", method: "SWIFT (International wire)", iban: "GB76TCCL04143485695594", bic: "TCCLGB3L", type: "Checking", bank: "The Currency Cloud Limited", bankAddr: "1 Sheldon Square, London, W2 6TT, United Kingdom" },
     stripe: "https://buy.stripe.com/aFa00l22w6RN1GX4FJ5Vu0u"
   };
 
@@ -563,6 +575,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   const pcodeInput = document.getElementById("f-pcode");
 
   let TYPE = "intl";
+  let BANK = "us";                              // intl only: "us" (ACH) or "swift" (international wire)
   let SPLIT = "advance";
 
   const LI_PRESETS = [
@@ -714,13 +727,27 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
         '<img class="pay-qr" src="photos/upi-qr.png" alt="Scan to pay via UPI: ' + b.upi + '" onerror="this.style.display=\'none\';" />' +
         '<div class="pay-upi"><span class="or">or pay via UPI</span><div class="upi-id">' + b.upi + '</div><div class="upi-note">Scan the code or use the UPI ID above</div></div>' +
         '</div>';
+    } else if (BANK === "swift") {
+      const b = ME.swift;
+      let h = '<div class="pay-method">' + b.method + '</div>' +
+        '<div class="pay-grid">' +
+        '<span class="k">Account holder</span><span class="v">' + b.holder + '</span>' +
+        '<span class="k">Account number (IBAN)</span><span class="v">' + b.iban + '</span>' +
+        '<span class="k">BIC/SWIFT code</span><span class="v">' + b.bic + '</span>' +
+        '<span class="k">Type</span><span class="v">' + b.type + '</span>' +
+        '<span class="k">Bank</span><span class="v">' + b.bank + '</span>' +
+        '<span class="k">Bank address</span><span class="v">' + b.bankAddr + '</span>' +
+        '</div>';
+      if (stripeChk.checked) h += '<div class="pay-stripe">Prefer card? <a class="stripe-btn" href="' + esc(ME.stripe) + '">Pay with Stripe</a> <span class="stripe-hint">(enter the invoice total at checkout)</span></div>';
+      dPay.innerHTML = h;
     } else {
       const b = ME.us;
-      let h = '<div class="pay-grid">' +
+      let h = '<div class="pay-method">' + b.method + '</div>' +
+        '<div class="pay-grid">' +
         '<span class="k">Account holder</span><span class="v">' + b.holder + '</span>' +
-        '<span class="k">Account no.</span><span class="v">' + b.account + '</span>' +
+        '<span class="k">Account number</span><span class="v">' + b.account + '</span>' +
+        '<span class="k">ACH routing number</span><span class="v">' + b.ach + '</span>' +
         '<span class="k">Type</span><span class="v">' + b.type + '</span>' +
-        '<span class="k">ACH routing</span><span class="v">' + b.ach + '</span>' +
         '<span class="k">Bank</span><span class="v">' + b.bank + '</span>' +
         '<span class="k">Bank address</span><span class="v">' + b.bankAddr + '</span>' +
         '</div>';
@@ -762,6 +789,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       termsSel: termsSel.value,
       termsCustom: termsCustom.value,
       split: SPLIT,
+      bank: BANK,
       stripe: stripeChk.checked,
       total: computeTotal()
     };
@@ -773,6 +801,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     document.querySelectorAll(".seg button[data-type]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.type === TYPE)));
     SPLIT = inv.split || "advance";
     document.querySelectorAll(".seg button[data-split]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.split === SPLIT)));
+    BANK = inv.bank || "us";
+    document.querySelectorAll(".seg button[data-bank]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.bank === BANK)));
 
     elNum.value = inv.num || "";
     elDate.value = inv.date || "";
@@ -884,6 +914,14 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       document.querySelectorAll(".seg button[data-split]").forEach(b => b.setAttribute("aria-pressed", "false"));
       btn.setAttribute("aria-pressed", "true");
       SPLIT = btn.dataset.split;
+      render();
+    });
+  });
+  document.querySelectorAll(".seg button[data-bank]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".seg button[data-bank]").forEach(b => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      BANK = btn.dataset.bank;
       render();
     });
   });
