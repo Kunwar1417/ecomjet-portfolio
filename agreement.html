@@ -97,7 +97,9 @@
 .btn-line { font-size: 13px; font-weight: 600; color: var(--blue); padding: 5px 0; }
 .btn-line:hover { text-decoration: underline; }
 
-.inv-actions { display: flex; gap: 10px; margin-top: 20px; position: sticky; bottom: 0; background: var(--paper); padding: 12px 0 4px; border-top: 1px solid var(--line); }
+/* Deliberately NOT sticky. The buttons scroll away with the form; pinning
+   them covered the fields underneath and floated over the clause options. */
+.inv-actions { display: flex; gap: 10px; margin-top: 20px; background: var(--paper); padding: 12px 0 4px; border-top: 1px solid var(--line); }
 .inv-btn { flex: 1; padding: 11px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; border: 1px solid var(--ink); text-align: center; }
 .inv-btn--primary { background: var(--blue); color: #fff; border-color: var(--blue); }
 .inv-btn--primary:hover { background: var(--blue-d); }
@@ -125,10 +127,13 @@
 .arch-del:hover { border-color: #B0345A; color: #B0345A; }
 
 /* Shared-link list. Same shape as the archive rows, plus a status pill. */
+/* These rows are <a> elements (each opens its share link), so the browser's
+   default blue underline has to be reset or they read as raw hyperlinks. */
 .sent-row {
   flex: 1; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline;
   text-align: left; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px;
   background: #fff; transition: border-color .12s;
+  color: var(--ink); text-decoration: none;
 }
 .sent-row:hover { border-color: var(--blue); }
 .sent-num { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12px; }
