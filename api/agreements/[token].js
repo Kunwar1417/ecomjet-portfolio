@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
     const rows = await sql`
       SELECT token, num, terms, terms_sha256, status, created_at, first_viewed_at, expires_at, events,
-             signed_at, signer_name, signer_title, signature_img, signature_kind,
+             signed_at, signer_name, signer_title, signer_address, signature_img, signature_kind,
              countersigned_at, counter_signature
       FROM agreements WHERE token = ${token}
     `;
@@ -65,6 +65,7 @@ export default async function handler(req, res) {
     const exec = row.signed_at || row.countersigned_at ? {
       signerName: row.signer_name,
       signerTitle: row.signer_title,
+      signerAddress: row.signer_address,
       signature: row.signature_img,
       signatureKind: row.signature_kind,
       signedAt: row.signed_at,

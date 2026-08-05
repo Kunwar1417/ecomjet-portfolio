@@ -62,6 +62,7 @@ export function ensureSchema() {
           ADD COLUMN IF NOT EXISTS signed_at         timestamptz,
           ADD COLUMN IF NOT EXISTS signer_name       text,
           ADD COLUMN IF NOT EXISTS signer_title      text,
+          ADD COLUMN IF NOT EXISTS signer_address    text,
           ADD COLUMN IF NOT EXISTS signer_email      text,
           ADD COLUMN IF NOT EXISTS signature_img     text,
           ADD COLUMN IF NOT EXISTS signature_kind    text,

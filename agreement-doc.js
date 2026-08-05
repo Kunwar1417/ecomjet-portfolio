@@ -408,15 +408,15 @@
     set("d-date", fmtDate(s(d.date)));
 
     set("d-brand-name", brand);
-    html("d-brand-addr", nl2br(d.brandAddr || ""));
     set("d-me-addr", ME.address);
 
-    var email = s(d.brandEmail);
-    var contact = q("d-brand-contact");
-    if (contact) {
-      if (email) { contact.hidden = false; contact.innerHTML = '<span class="k">Email</span> ' + esc(email); }
-      else contact.hidden = true;
-    }
+    /* The Brand's registered address comes from the signer if they supplied
+       one, otherwise from the draft. Only the Brand knows the correct
+       contracting entity address, so theirs wins. When neither exists the
+       element is left empty: sign.html turns empty fields into inputs, and
+       print leaves a blank line rather than inventing an address. */
+    exec = exec || {};
+    html("d-brand-addr", nl2br(s(exec.signerAddress) || d.brandAddr || ""));
 
     set("d-sign-ref", num);
     set("d-sign-parties", ME.name + " and " + (s(d.brand) || "the Brand"));
@@ -426,7 +426,6 @@
        comes from the counterparty, and merging them would make "these are the
        terms that were signed" unprovable. When exec is absent, the panels stay
        blank and the certificate prints exactly as an unsigned document. */
-    exec = exec || {};
     var brandSigned = !!exec.signature;
     var creatorSigned = !!exec.counterSignature;
 

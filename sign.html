@@ -141,95 +141,153 @@
 .sv-done b { display: block; font-size: 14px; letter-spacing: -0.01em; }
 .sv-done span { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
 
-/* ---- Signing panel ------------------------------------------------- */
-.sg {
-  margin: 26px auto 0;
-  width: min(210mm, 100%);
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -28px rgba(20,20,40,.35);
-  padding: 26px 28px 28px;
-}
-.sg-head h2 { font-size: 19px; font-weight: 800; letter-spacing: -0.025em; margin: 0; }
-.sg-head p { font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 8px 0 0; }
-.sg-head b { color: var(--ink); font-weight: 700; }
+/* ---- FILL IN PLACE ---------------------------------------------------
+   The client fills the document itself: clicking a blank field on the page
+   activates it, exactly as a paper form would work. There is no separate
+   panel to scroll to, because a field you can see is a field you can fill.
 
-.sg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
-@media (max-width: 640px) { .sg-grid { grid-template-columns: 1fr; } }
-.sg-field { display: block; }
-.sg-lab {
-  display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .02em;
-  margin-bottom: 6px;
-}
-.sg-lab em {
-  font-style: normal; font-weight: 600; color: var(--muted);
-  font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; margin-left: 5px;
-}
-.sg-field input {
-  width: 100%; font: inherit; font-size: 14px;
-  padding: 11px 13px; border: 1px solid var(--line-2); border-radius: 9px;
-  background: #fff; color: var(--ink);
-}
-.sg-field input:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+   Everything here is .no-print and only ever applied on sign.html. The
+   document CSS is untouched, so the printed contract is unaffected.
+   -------------------------------------------------------------------- */
 
-.sg-sigblock { margin-top: 20px; }
+/* A field awaiting input. The dashed blue fill reads as "type here" without
+   looking like a rendering fault, and the pulse draws the eye on load. */
+.kd-fill {
+  position: relative;
+  background: rgba(43,73,196,.07);
+  border: 1.5px dashed rgba(43,73,196,.55);
+  border-radius: 5px;
+  cursor: text;
+  transition: background .15s, border-color .15s;
+}
+.kd-fill:hover { background: rgba(43,73,196,.13); border-color: var(--blue); }
+.kd-fill.is-active { background: #fff; border-style: solid; border-color: var(--blue); cursor: auto; }
+.kd-fill.is-done { background: transparent; border-color: transparent; cursor: pointer; }
+.kd-fill.is-done:hover { background: rgba(43,73,196,.07); border: 1.5px dashed rgba(43,73,196,.4); }
+
+/* Small tag on an empty field, so its purpose is obvious at document scale. */
+.kd-fill__tag {
+  position: absolute; left: 0; top: -7px;
+  font-size: 6.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: #fff; background: var(--blue);
+  padding: 1.5px 5px; border-radius: 3px;
+  white-space: nowrap; pointer-events: none;
+  font-family: var(--sans);
+}
+.kd-fill.is-done .kd-fill__tag, .kd-fill.is-active .kd-fill__tag { display: none; }
+
+/* Inputs are transparent and inherit the document's own type, so filled text
+   looks like part of the contract rather than like a form control. */
+.kd-input {
+  width: 100%; border: 0; background: transparent; padding: 0;
+  font: inherit; color: inherit; letter-spacing: inherit;
+  outline: none; resize: none; overflow: hidden;
+}
+.kd-input::placeholder { color: rgba(20,33,58,.32); font-style: italic; }
+
+/* The signature rule: taller hit area than the 9mm print box needs, because
+   it has to be tappable on a phone. Print CSS is unaffected. */
+.sign-rule.kd-fill { min-height: 9mm; }
+.kd-sigbtn {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--blue); background: transparent; border: 0; cursor: pointer;
+  font-family: var(--sans);
+}
+
+/* ---- Signature popover, anchored to the field it fills --------------- */
+.kd-pop {
+  position: absolute; z-index: 60; width: min(420px, calc(100vw - 28px));
+  background: var(--paper); border: 1px solid var(--line-2); border-radius: 12px;
+  box-shadow: 0 22px 50px -18px rgba(20,20,40,.5);
+  padding: 16px;
+}
+.kd-pop__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.kd-pop__head h3 { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: -0.02em; }
+.kd-pop__close { font-size: 18px; line-height: 1; color: var(--muted); padding: 0 4px; }
+.kd-pop__close:hover { color: var(--ink); }
+
 .sg-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
 .sg-tab {
-  font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; padding: 6px 13px; border-radius: 999px;
   border: 1px solid var(--line-2); background: transparent; color: var(--muted);
 }
 .sg-tab.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
 
 .sg-preview, .sg-canvaswrap {
-  position: relative;
-  height: 108px; background: #fff;
-  border: 1px solid var(--line-2); border-radius: 10px;
+  position: relative; height: 92px; background: #fff;
+  border: 1px solid var(--line-2); border-radius: 9px;
 }
-/* The dotted baseline reads as "sign on this line" without being a real rule. */
 .sg-preview::after, .sg-canvaswrap::after {
-  content: ""; position: absolute; left: 18px; right: 18px; bottom: 26px;
+  content: ""; position: absolute; left: 16px; right: 16px; bottom: 22px;
   border-bottom: 1px dashed var(--line-2); pointer-events: none;
 }
-.sg-preview { display: flex; align-items: center; justify-content: flex-start; padding: 0 18px; overflow: hidden; }
-.sg-preview img { max-height: 64px; max-width: 100%; object-fit: contain; object-position: left center; position: relative; z-index: 1; }
-.sg-placeholder { font-size: 13px; color: var(--muted); font-style: italic; }
-#sg-canvas { width: 100%; height: 100%; display: block; touch-action: none; border-radius: 10px; cursor: crosshair; }
+.sg-preview { display: flex; align-items: center; padding: 0 16px; overflow: hidden; }
+.sg-preview img { max-height: 56px; max-width: 100%; object-fit: contain; object-position: left center; position: relative; z-index: 1; }
+.sg-placeholder { font-size: 12.5px; color: var(--muted); font-style: italic; }
+#sg-canvas { width: 100%; height: 100%; display: block; touch-action: none; border-radius: 9px; cursor: crosshair; }
 .sg-clear {
-  position: absolute; top: 8px; right: 10px; z-index: 2;
-  font-size: 11px; font-weight: 700; color: var(--muted);
-  padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line-2); background: #fff;
+  position: absolute; top: 7px; right: 9px; z-index: 2;
+  font-size: 10.5px; font-weight: 700; color: var(--muted);
+  padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line-2); background: #fff;
 }
 .sg-clear:hover { color: var(--ink); border-color: var(--ink); }
-.sg-hint { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+.sg-hint { font-size: 11.5px; color: var(--muted); margin: 8px 0 0; }
+.kd-pop__apply { width: 100%; margin-top: 12px; padding: 10px 16px; }
 
-.sg-consent {
-  display: flex; gap: 10px; align-items: flex-start;
-  margin-top: 20px; font-size: 13px; line-height: 1.6; color: var(--ink);
+/* ---- The guide bar --------------------------------------------------
+   Pinned to the TOP, not tucked in a corner. This is the element that tells
+   the client what is left to do and takes them to it, so it must be the
+   first thing they see and must never scroll away. Same role as the
+   DocuSign/PandaDoc action bar. -------------------------------------- */
+.kd-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 20px;
+  background: var(--ink); color: #fff;
+  box-shadow: 0 6px 22px -10px rgba(20,33,58,.7);
 }
-.sg-consent input { margin-top: 2px; width: 16px; height: 16px; accent-color: var(--blue); flex-shrink: 0; }
-
-.sg-submit { margin-top: 20px; }
-.sg-submit .sv-btn { width: auto; min-width: 200px; padding: 13px 26px; }
-.sv-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
-.sg-error { color: #9A3B57; font-size: 13px; margin: 10px 0 0; font-weight: 600; }
-
-/* ---- Jump-to-sign nudge -------------------------------------------- */
-.sv-jump {
-  position: fixed; right: 22px; bottom: 22px; z-index: 40;
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px 18px; border-radius: 999px;
+.kd-bar__count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px;
   background: var(--blue); color: #fff;
-  font-size: 13.5px; font-weight: 700;
-  box-shadow: 0 10px 26px -10px rgba(43,73,196,.8);
+  font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
-.sv-jump:hover { background: var(--blue-d); }
-@media (max-width: 640px) { .sv-jump { right: 14px; bottom: 14px; } }
+.kd-bar__text { font-size: 13.5px; font-weight: 600; flex: 1; min-width: 0; }
+.kd-bar__text b { font-weight: 800; }
+.kd-bar__sub { display: block; font-size: 11.5px; opacity: .68; font-weight: 500; margin-top: 1px; }
+.kd-bar__go {
+  display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
+  padding: 9px 17px; border-radius: 999px;
+  background: var(--blue); color: #fff;
+  font-size: 13px; font-weight: 800; letter-spacing: -0.01em;
+}
+.kd-bar__go:hover { background: #3E5BD8; }
+.kd-bar__go:disabled { opacity: .45; cursor: not-allowed; }
+.kd-bar--ready .kd-bar__go { background: #2E7D4F; }
+.kd-bar--ready .kd-bar__go:hover { background: #35915C; }
+/* Bouncing arrow: the "there is something below" cue. */
+@keyframes kd-nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+.kd-bar__go svg { animation: kd-nudge 1.5s ease-in-out infinite; }
+.kd-bar--ready .kd-bar__go svg { animation: none; }
+@media (prefers-reduced-motion: reduce) { .kd-bar__go svg { animation: none; } }
 
-/* Brief highlight when the signing panel is jumped to. */
-@keyframes sg-flash { 0%, 100% { box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -28px rgba(20,20,40,.35); } 30% { box-shadow: 0 0 0 3px rgba(43,73,196,.35); } }
-.sg.is-target { animation: sg-flash 1.4s ease; }
-@media (prefers-reduced-motion: reduce) { .sg.is-target { animation: none; } }
+/* The bar is fixed, so the page needs room for it. */
+body.has-bar { padding-top: 58px; }
+@media (max-width: 640px) {
+  .kd-bar { padding: 9px 12px; gap: 9px; }
+  .kd-bar__text { font-size: 12px; }
+  .kd-bar__sub { display: none; }
+  .kd-bar__go { padding: 9px 13px; font-size: 12px; }
+  body.has-bar { padding-top: 52px; }
+}
+
+/* Ring drawn around the field the guide just took you to. */
+@keyframes kd-ring { 0% { box-shadow: 0 0 0 0 rgba(43,73,196,.55); } 100% { box-shadow: 0 0 0 12px rgba(43,73,196,0); } }
+.kd-fill.is-target { animation: kd-ring 1.1s ease-out 2; }
+@media (prefers-reduced-motion: reduce) { .kd-fill.is-target { animation: none; } }
 
 /* On screen the document is scaled to fit its column, exactly as in the
    editor. fitDoc() sets the transform; this just centres the result. */
@@ -239,6 +297,28 @@
   /* The rail is chrome, never part of the contract. */
   .sv-rail, .sv-state, .no-print { display: none !important; }
   .sv-app { display: block; padding: 0; margin: 0; max-width: none; }
+  body.has-bar { padding-top: 0 !important; }
+
+  /* The fill highlights live ON the document, so unlike the bar and the
+     popovers they cannot simply be .no-print. Strip them back to plain
+     document text: a printed contract must show what was typed, never the
+     editing affordances used to type it. */
+  .kd-fill {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    animation: none !important;
+  }
+  .kd-fill__tag, .kd-sigbtn { display: none !important; }
+  .kd-input {
+    border: 0 !important; background: transparent !important;
+    padding: 0 !important; resize: none !important;
+    color: inherit !important; font: inherit !important;
+  }
+  /* Placeholder text is stripped in JS before printing, not merely hidden:
+     `color: transparent` still leaves the words in the PDF's text layer, so
+     a downloaded blank contract would literally contain "Full name" where a
+     name belongs. See the beforeprint handler. */
 }
 </style>
 <!-- MUST stay AFTER the inline <style> above: this file ends with @media
@@ -279,42 +359,34 @@
     <div class="sv-meta">
       <span class="k">Agreement</span><span class="v" id="sv-num"></span>
       <span class="k">Dated</span><span class="v" id="sv-date"></span>
-      <span class="k">Fee</span><span class="v" id="sv-fee"></span>
     </div>
 
-    <div class="sv-pill" id="sv-status">Opened</div>
-
-    <!-- Unsigned state -->
+    <!-- Unsigned. No fee (it is clause 4), no "opened" status (that is the
+         creator's telemetry, not the client's business), and no contact
+         button (it invites a new email thread mid-signing; the covering note
+         already says to reply there if anything needs changing). -->
     <div id="sv-unsigned">
       <p class="sv-note">
-        Please read the agreement. When you are happy with it, sign at the
-        bottom of this page. Any question about the terms can go straight to
-        Kunwar before you sign.
+        Please read the agreement and complete the highlighted fields. Your
+        signature is applied on the certificate page at the end.
       </p>
-
       <div class="sv-actions">
-        <button type="button" class="sv-btn" id="sv-start">Review and sign</button>
         <button type="button" class="sv-btn sv-btn--ghost" id="sv-pdf">Download a copy</button>
-        <a class="sv-btn sv-btn--ghost" id="sv-mail" href="mailto:kunwar@thecomjet.com">Ask a question</a>
       </div>
     </div>
 
-    <!-- Signed state -->
+    <!-- Signed -->
     <div id="sv-signed" hidden>
       <div class="sv-done">
-        <div class="sv-done__tick" aria-hidden="true">✓</div>
+        <div class="sv-done__tick" aria-hidden="true">&#10003;</div>
         <div>
           <b id="sv-done-title">Signed</b>
           <span id="sv-done-sub"></span>
         </div>
       </div>
-      <p class="sv-note" id="sv-signed-note">
-        A copy has been kept for both parties. You can download it any time
-        from this link.
-      </p>
+      <p class="sv-note" id="sv-signed-note"></p>
       <div class="sv-actions">
         <button type="button" class="sv-btn" id="sv-pdf2">Download signed copy</button>
-        <a class="sv-btn sv-btn--ghost" href="mailto:kunwar@thecomjet.com">Contact Kunwar</a>
       </div>
     </div>
   </aside>
@@ -441,65 +513,62 @@
     </div>
   </div>
 
-  <!-- ============ SIGNING PANEL (screen only, never printed) ============
-       Sits under the document rather than on top of it, so the contract is
-       never obscured by the thing asking you to agree to it. -->
-  <section class="sg no-print" id="sg" hidden>
-    <div class="sg-head">
-      <h2>Sign this agreement</h2>
-      <p>You are signing agreement <b id="sg-num"></b> with <b>Kunwar Deep</b>. Your signature is applied to the certificate page above.</p>
-    </div>
-
-    <div class="sg-grid">
-      <label class="sg-field">
-        <span class="sg-lab">Full name <em>required</em></span>
-        <input type="text" id="sg-name" autocomplete="name" placeholder="Your full name" />
-      </label>
-      <label class="sg-field">
-        <span class="sg-lab">Title</span>
-        <input type="text" id="sg-title" autocomplete="organization-title" placeholder="Your role at the company" />
-      </label>
-    </div>
-
-    <div class="sg-sigblock">
-      <div class="sg-tabs" role="tablist">
-        <button type="button" class="sg-tab is-on" id="sg-tab-type" role="tab">Type it</button>
-        <button type="button" class="sg-tab" id="sg-tab-draw" role="tab">Draw it</button>
-      </div>
-
-      <div class="sg-pane" id="sg-pane-type">
-        <div class="sg-preview" id="sg-preview"><span class="sg-placeholder">Your signature appears here</span></div>
-        <p class="sg-hint">Typed from the name above.</p>
-      </div>
-
-      <div class="sg-pane" id="sg-pane-draw" hidden>
-        <div class="sg-canvaswrap">
-          <canvas id="sg-canvas" aria-label="Draw your signature"></canvas>
-          <button type="button" class="sg-clear" id="sg-clear">Clear</button>
-        </div>
-        <p class="sg-hint">Draw with your finger, trackpad or mouse.</p>
-      </div>
-    </div>
-
-    <label class="sg-consent">
-      <input type="checkbox" id="sg-consent" />
-      <span>I have read the agreement and I have authority to sign it on behalf of <b id="sg-brand-name">the Brand</b>. I agree that this electronic signature is binding.</span>
-    </label>
-
-    <div class="sg-submit">
-      <button type="button" class="sv-btn" id="sg-submit" disabled>Sign agreement</button>
-      <p class="sg-error" id="sg-error" hidden></p>
-    </div>
-  </section>
+  <!-- The client fills the document itself; there is no separate panel.
+       See the FILL IN PLACE styles above. -->
   </div>
 </div>
 
-<!-- Nudge toward the signing panel while it is off screen. This is the
-     affordance that makes the flow feel guided rather than "scroll and hope". -->
-<button type="button" class="sv-jump no-print" id="sv-jump" hidden>
-  <span>Sign here</span>
-  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 4v14m0 0l-6-6m6 6l6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-</button>
+<!-- Guide bar. Pinned to the top so it cannot be missed, and it names
+     exactly what is outstanding rather than just saying "sign". -->
+<div class="kd-bar no-print" id="kd-bar" hidden>
+  <span class="kd-bar__count" id="kd-bar-count">3</span>
+  <span class="kd-bar__text">
+    <b id="kd-bar-title">fields to complete</b>
+    <span class="kd-bar__sub" id="kd-bar-sub">Fill the highlighted fields in the agreement, then sign.</span>
+  </span>
+  <button type="button" class="kd-bar__go" id="kd-bar-go">
+    <span id="kd-bar-go-label">Start</span>
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 4v14m0 0l-6-6m6 6l6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- Signature popover, positioned next to the field it fills. -->
+<div class="kd-pop no-print" id="kd-pop" hidden>
+  <div class="kd-pop__head">
+    <h3>Add your signature</h3>
+    <button type="button" class="kd-pop__close" id="kd-pop-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="sg-tabs" role="tablist">
+    <button type="button" class="sg-tab is-on" id="sg-tab-type" role="tab">Type it</button>
+    <button type="button" class="sg-tab" id="sg-tab-draw" role="tab">Draw it</button>
+  </div>
+  <div id="sg-pane-type">
+    <div class="sg-preview" id="sg-preview"><span class="sg-placeholder">Type your name above to see it here</span></div>
+    <p class="sg-hint" id="sg-hint-type">Taken from the name on the certificate.</p>
+  </div>
+  <div id="sg-pane-draw" hidden>
+    <div class="sg-canvaswrap">
+      <canvas id="sg-canvas" aria-label="Draw your signature"></canvas>
+      <button type="button" class="sg-clear" id="sg-clear">Clear</button>
+    </div>
+    <p class="sg-hint">Draw with your finger, trackpad or mouse.</p>
+  </div>
+  <button type="button" class="sv-btn kd-pop__apply" id="kd-pop-apply">Apply signature</button>
+</div>
+
+<!-- Confirm step, shown once every field is complete. -->
+<div class="kd-pop no-print" id="kd-confirm" hidden>
+  <div class="kd-pop__head">
+    <h3>Sign this agreement</h3>
+    <button type="button" class="kd-pop__close" id="kd-confirm-close" aria-label="Close">&times;</button>
+  </div>
+  <label class="sg-consent">
+    <input type="checkbox" id="sg-consent" />
+    <span>I have read the agreement and I have authority to sign it on behalf of <b id="sg-brand-name">the Brand</b>. I agree that this electronic signature is binding.</span>
+  </label>
+  <button type="button" class="sv-btn kd-pop__apply" id="sg-submit" disabled>Sign agreement</button>
+  <p class="sg-error" id="sg-error" hidden></p>
+</div>
 
 <script src="/agreement-doc.js?v=1"></script>
 <script>
@@ -546,78 +615,192 @@
     wrap.style.height = (doc.offsetHeight * scale) + "px";
   }
 
+  /* ---- FILL IN PLACE --------------------------------------------------
+     The client fills the document itself. Clicking a highlighted field
+     activates it, exactly as a paper form works, so there is nothing to
+     scroll to and nothing to discover.
+
+     Every field lives in the document DOM that the shared renderer built,
+     which is why the printed contract is unaffected: the inputs are removed
+     the moment the agreement is signed and replaced by plain text.
+     -------------------------------------------------------------------- */
   var TERMS = null, TOKEN = "", pad = null, mode = "type", typedUrl = null;
+  var values = { signerName: "", signerTitle: "", signerAddress: "", signature: "" };
 
-  function show(data) {
-    var t = data.terms || {};
-    TERMS = t;
+  // Ordered: this is the sequence the guide walks the client through.
+  var FIELDS = [
+    { key: "signerName",    el: "d-sign-name",   tag: "Your name",  ph: "Full name",     required: true },
+    { key: "signerTitle",   el: "d-sign-title",  tag: "Your title", ph: "Job title",     required: false },
+    { key: "signerAddress", el: "d-brand-addr",  tag: "Your address", ph: "Registered address", required: true, multiline: true },
+    { key: "signature",     el: "d-sig-brand",   tag: "Sign here",  signature: true,     required: true }
+  ];
 
-    KD.renderDoc($("doc"), t, data.exec);
+  function fieldByKey(k) {
+    for (var i = 0; i < FIELDS.length; i++) if (FIELDS[i].key === k) return FIELDS[i];
+    return null;
+  }
 
-    $("sv-brand").textContent = t.brand || "Your agreement";
-    $("sv-num").textContent = data.num || "";
-    $("sv-date").textContent = KD.fmtDate(t.date) || "Not dated";
-    $("sv-fee").textContent = t.fee ? KD.fmtMoney(parseFloat(t.fee), t.currency || "USD") : "See clause 4";
-    $("sg-num").textContent = data.num || "";
-    $("sg-brand-name").textContent = t.brand || "the Brand";
+  /* Turn a rendered element into a fillable field. Text fields become inline
+     inputs that inherit the document's own typography, so what the client
+     types looks like part of the contract rather than a form control. */
+  function makeFillable(f) {
+    var el = $(f.el);
+    if (!el) return;
+    el.classList.add("kd-fill");
+    el.innerHTML = "";
 
-    document.title = "Collaboration agreement" + (data.num ? " " + data.num : "") +
-      (t.brand ? " · " + t.brand : "");
+    var tag = document.createElement("span");
+    tag.className = "kd-fill__tag";
+    tag.textContent = f.tag;
+    el.appendChild(tag);
 
-    if (data.exec && data.exec.signedAt) {
-      showSigned(data.exec);
+    if (f.signature) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "kd-sigbtn";
+      btn.textContent = "Click to sign";
+      btn.addEventListener("click", function (e) { e.stopPropagation(); openSignature(); });
+      el.appendChild(btn);
+      el.addEventListener("click", openSignature);
+      return;
+    }
+
+    var input = document.createElement(f.multiline ? "textarea" : "input");
+    input.className = "kd-input";
+    input.placeholder = f.ph;
+    if (f.multiline) input.rows = 2;
+    input.value = values[f.key] || "";
+    input.addEventListener("input", function () {
+      values[f.key] = input.value;
+      if (f.multiline) { input.style.height = "auto"; input.style.height = input.scrollHeight + "px"; }
+      // The typed signature follows the name, so it stays consistent with it.
+      if (f.key === "signerName" && mode === "type") refreshTyped();
+      markState(f);
+      updateBar();
+    });
+    input.addEventListener("focus", function () { el.classList.add("is-active"); });
+    input.addEventListener("blur", function () { el.classList.remove("is-active"); markState(f); });
+    el.appendChild(input);
+    el.addEventListener("click", function () { input.focus(); });
+    markState(f);
+  }
+
+  function markState(f) {
+    var el = $(f.el);
+    if (!el) return;
+    el.classList.toggle("is-done", !!String(values[f.key] || "").trim());
+  }
+
+  function remaining() {
+    return FIELDS.filter(function (f) {
+      return f.required && !String(values[f.key] || "").trim();
+    });
+  }
+
+  /* ---- Guide bar ------------------------------------------------------ */
+  function updateBar() {
+    var left = remaining();
+    var bar = $("kd-bar");
+    $("kd-bar-count").textContent = left.length ? left.length : "✓";
+    bar.classList.toggle("kd-bar--ready", left.length === 0);
+
+    if (left.length) {
+      $("kd-bar-title").textContent = left.length === 1
+        ? "1 field left to complete"
+        : left.length + " fields to complete";
+      $("kd-bar-sub").textContent = "Next: " + left[0].tag.toLowerCase();
+      $("kd-bar-go-label").textContent = "Go to field";
     } else {
-      // Prefill from the drafted signatory, but they remain editable: the
-      // person actually signing may not be the person the draft named.
-      $("sg-name").value = t.brandSign || "";
-      $("sg-title").value = t.brandTitle || "";
-      $("sg").hidden = false;
-      refreshTyped();
-      updateSubmit();
-    }
-
-    $("sv-loading").hidden = true;
-    $("sv-app").hidden = false;
-    fitDoc();
-    updateJump();
-  }
-
-  function showSigned(exec) {
-    $("sv-unsigned").hidden = true;
-    $("sv-signed").hidden = false;
-    $("sg").hidden = true;
-    $("sv-jump").hidden = true;
-    $("sv-status").textContent = exec.counterSignedAt ? "Fully executed" : "Signed";
-
-    $("sv-done-title").textContent = exec.counterSignedAt ? "Fully executed" : "Signed";
-    $("sv-done-sub").textContent = exec.counterSignedAt
-      ? "Signed by both parties."
-      : "Signed by " + (exec.signerName || "you") + ". Waiting on Kunwar to countersign.";
-    if (!exec.counterSignedAt) {
-      $("sv-signed-note").textContent =
-        "Kunwar will countersign shortly. This link stays live, so you can come back for the fully executed copy.";
+      $("kd-bar-title").textContent = "Everything is filled in";
+      $("kd-bar-sub").textContent = "Review the agreement, then sign it.";
+      $("kd-bar-go-label").textContent = "Sign agreement";
     }
   }
 
-  /* ---- Signature capture ------------------------------------------- */
+  /* Scroll a field into view and hand focus to it.
+     Deliberately NOT scrollIntoView: the document is inside a CSS-scaled
+     container and sits under a fixed bar, so the browser's own centring
+     lands in the wrong place. Computing the offset from the page top is
+     exact, and it works the same whether or not smooth scrolling runs. */
+  var BAR_H = 74;
+  function focusField(f, smooth) {
+    var el = $(f.el);
+    if (!el) return;
+    var top = window.scrollY + el.getBoundingClientRect().top;
+    var target = Math.max(0, top - Math.max(BAR_H + 24, (window.innerHeight - el.offsetHeight) / 2));
+    window.scrollTo({ top: target, behavior: smooth === false ? "auto" : "smooth" });
+
+    el.classList.remove("is-target");
+    void el.offsetWidth;
+    el.classList.add("is-target");
+
+    var enter = function () {
+      if (f.signature) return openSignature();
+      var input = el.querySelector(".kd-input");
+      if (input) input.focus({ preventScroll: true });
+    };
+    // Wait for the scroll to settle before opening a popover, which is
+    // positioned from the field's on-screen rectangle.
+    setTimeout(enter, smooth === false ? 0 : 380);
+  }
+
+  function goNext() {
+    var left = remaining();
+    if (!left.length) return openConfirm();
+    focusField(left[0]);
+  }
+
+  /* ---- Popovers, anchored to the field they belong to ------------------ */
+  function placePopover(pop, anchorEl) {
+    pop.hidden = false;
+    var r = anchorEl.getBoundingClientRect();
+    var pr = pop.getBoundingClientRect();
+    var top = window.scrollY + r.bottom + 10;
+    // Flip above the field when there is no room below.
+    if (r.bottom + pr.height + 20 > window.innerHeight && r.top - pr.height - 10 > 0) {
+      top = window.scrollY + r.top - pr.height - 10;
+    }
+    var left = window.scrollX + r.left;
+    left = Math.max(12, Math.min(left, window.scrollX + window.innerWidth - pr.width - 12));
+    pop.style.top = top + "px";
+    pop.style.left = left + "px";
+  }
+
+  function openSignature() {
+    var pop = $("kd-pop");
+    placePopover(pop, $("d-sig-brand"));
+    if (mode === "type") refreshTyped();
+    if (mode === "draw" && pad) pad.resize();
+  }
+  function closeSignature() { $("kd-pop").hidden = true; }
+
+  function openConfirm() {
+    if (remaining().length) return goNext();
+    var sig = $("d-sig-brand");
+    var top = window.scrollY + sig.getBoundingClientRect().top;
+    window.scrollTo({ top: Math.max(0, top - BAR_H - 60), behavior: "smooth" });
+    // Position after the scroll settles: the popover is placed from the
+    // field's on-screen rectangle, which moves while scrolling.
+    setTimeout(function () { placePopover($("kd-confirm"), sig); }, 420);
+  }
+  function closeConfirm() { $("kd-confirm").hidden = true; }
+
+  /* ---- Signature capture ---------------------------------------------- */
   function refreshTyped() {
-    var name = $("sg-name").value.trim();
+    var name = String(values.signerName || "").trim();
     var box = $("sg-preview");
     if (!name) {
       typedUrl = null;
-      box.innerHTML = '<span class="sg-placeholder">Your signature appears here</span>';
-      updateSubmit();
+      box.innerHTML = '<span class="sg-placeholder">Enter your name on the certificate first</span>';
       return;
     }
     KD.typedSignature(name).then(function (url) {
       typedUrl = url;
-      if (url) {
-        box.innerHTML = "";
-        var img = document.createElement("img");
-        img.src = url; img.alt = "Your typed signature";
-        box.appendChild(img);
-      }
-      updateSubmit();
+      if (!url) return;
+      box.innerHTML = "";
+      var img = document.createElement("img");
+      img.src = url; img.alt = "Your typed signature";
+      box.appendChild(img);
     });
   }
 
@@ -626,9 +809,26 @@
     return typedUrl;
   }
 
-  function updateSubmit() {
-    var ok = $("sg-name").value.trim() && $("sg-consent").checked && !!currentSignature();
-    $("sg-submit").disabled = !ok;
+  function applySignature() {
+    var sig = currentSignature();
+    if (!sig) return;
+    values.signature = sig;
+
+    var el = $("d-sig-brand");
+    el.classList.remove("kd-fill");
+    el.classList.add("sign-rule", "signed");
+    el.innerHTML = "";
+    var img = document.createElement("img");
+    img.src = sig; img.alt = "Your signature";
+    el.appendChild(img);
+    // Clicking it again reopens the popover, so a signature is never final
+    // until the agreement itself is signed.
+    el.classList.add("kd-fill", "is-done");
+    el.addEventListener("click", openSignature);
+
+    closeSignature();
+    updateBar();
+    if (!remaining().length) setTimeout(openConfirm, 300);
   }
 
   function setMode(next) {
@@ -640,34 +840,59 @@
     $("sg-pane-draw").hidden = typing;
     if (!typing && !pad) pad = KD.drawPad($("sg-canvas"));
     else if (!typing && pad) pad.resize();
-    updateSubmit();
+    if (typing) refreshTyped();
   }
 
-  /* ---- Jump nudge --------------------------------------------------- */
-  function updateJump() {
-    var sg = $("sg");
-    if (sg.hidden) { $("sv-jump").hidden = true; return; }
-    var r = sg.getBoundingClientRect();
-    // Hidden once the panel is actually on screen: a button pointing at
-    // something already visible is noise.
-    $("sv-jump").hidden = r.top < window.innerHeight - 90;
+  /* ---- Render ---------------------------------------------------------- */
+  function show(data) {
+    var t = data.terms || {};
+    TERMS = t;
+
+    KD.renderDoc($("doc"), t, data.exec);
+
+    $("sv-brand").textContent = t.brand || "Your agreement";
+    $("sv-num").textContent = data.num || "";
+    $("sv-date").textContent = KD.fmtDate(t.date) || "Not dated";
+    $("sg-brand-name").textContent = t.brand || "the Brand";
+
+    document.title = "Collaboration agreement" + (data.num ? " " + data.num : "") +
+      (t.brand ? " · " + t.brand : "");
+
+    $("sv-loading").hidden = true;
+    $("sv-app").hidden = false;
+
+    if (data.exec && data.exec.signedAt) {
+      showSigned(data.exec);
+    } else {
+      FIELDS.forEach(makeFillable);
+      $("kd-bar").hidden = false;
+      document.body.classList.add("has-bar");
+      updateBar();
+    }
+
+    fitDoc();
   }
 
-  function jumpToSign() {
-    var sg = $("sg");
-    sg.scrollIntoView({ behavior: "smooth", block: "center" });
-    sg.classList.remove("is-target");
-    void sg.offsetWidth;
-    sg.classList.add("is-target");
-    setTimeout(function () { $("sg-name").focus({ preventScroll: true }); }, 420);
+  function showSigned(exec) {
+    $("sv-unsigned").hidden = true;
+    $("sv-signed").hidden = false;
+    $("kd-bar").hidden = true;
+    document.body.classList.remove("has-bar");
+    closeSignature(); closeConfirm();
+
+    var executed = !!exec.counterSignedAt;
+    $("sv-done-title").textContent = executed ? "Fully executed" : "Signed";
+    $("sv-done-sub").textContent = executed
+      ? "Signed by both parties."
+      : "Signed by " + (exec.signerName || "you") + ".";
+    $("sv-signed-note").textContent = executed
+      ? "This agreement is now in force. A copy is available from this link at any time."
+      : "Your signature has been recorded. Kunwar will countersign to complete the agreement, and the executed copy will be available from this link.";
   }
 
-  /* ---- Submit -------------------------------------------------------- */
+  /* ---- Submit ---------------------------------------------------------- */
   function submitSignature() {
-    var sig = currentSignature();
-    var name = $("sg-name").value.trim();
-    if (!sig || !name) return;
-
+    if (remaining().length) return;
     var btn = $("sg-submit");
     btn.disabled = true;
     btn.textContent = "Signing…";
@@ -678,9 +903,10 @@
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        signerName: name,
-        signerTitle: $("sg-title").value.trim(),
-        signature: sig,
+        signerName: values.signerName.trim(),
+        signerTitle: values.signerTitle.trim(),
+        signerAddress: values.signerAddress.trim(),
+        signature: values.signature,
         signatureKind: mode === "draw" ? "drawn" : "typed"
       })
     })
@@ -707,22 +933,53 @@
       });
   }
 
-  /* ---- Wiring -------------------------------------------------------- */
+  /* ---- Wiring ---------------------------------------------------------- */
+  /* Placeholders are removed from the DOM for the duration of the print and
+     restored afterwards. Hiding them with CSS is not enough: the text stays
+     in the PDF's text layer, so a downloaded unsigned copy would contain the
+     words "Full name" and "Registered address" as if they were content. */
+  window.addEventListener("beforeprint", function () {
+    document.querySelectorAll(".kd-input[placeholder]").forEach(function (el) {
+      el.dataset.ph = el.getAttribute("placeholder");
+      el.removeAttribute("placeholder");
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    document.querySelectorAll(".kd-input[data-ph]").forEach(function (el) {
+      el.setAttribute("placeholder", el.dataset.ph);
+      delete el.dataset.ph;
+    });
+  });
+
   $("sv-pdf").addEventListener("click", function () { window.print(); });
   $("sv-pdf2").addEventListener("click", function () { window.print(); });
-  $("sv-start").addEventListener("click", jumpToSign);
-  $("sv-jump").addEventListener("click", jumpToSign);
+  $("kd-bar-go").addEventListener("click", goNext);
+  $("kd-pop-close").addEventListener("click", closeSignature);
+  $("kd-pop-apply").addEventListener("click", applySignature);
+  $("kd-confirm-close").addEventListener("click", closeConfirm);
   $("sg-tab-type").addEventListener("click", function () { setMode("type"); });
   $("sg-tab-draw").addEventListener("click", function () { setMode("draw"); });
-  $("sg-clear").addEventListener("click", function () { if (pad) pad.clear(); updateSubmit(); });
-  $("sg-canvas").addEventListener("pointerup", updateSubmit);
-  $("sg-canvas").addEventListener("touchend", updateSubmit);
-  $("sg-name").addEventListener("input", function () { refreshTyped(); });
-  $("sg-title").addEventListener("input", updateSubmit);
-  $("sg-consent").addEventListener("change", updateSubmit);
+  $("sg-clear").addEventListener("click", function () { if (pad) pad.clear(); });
+  $("sg-consent").addEventListener("change", function () {
+    $("sg-submit").disabled = !$("sg-consent").checked || !!remaining().length;
+  });
   $("sg-submit").addEventListener("click", submitSignature);
-  window.addEventListener("resize", function () { fitDoc(); updateJump(); if (pad) pad.resize(); });
-  window.addEventListener("scroll", updateJump, { passive: true });
+
+  // Popovers close on outside click and on Escape, like any other overlay.
+  document.addEventListener("click", function (e) {
+    if (!$("kd-pop").hidden && !$("kd-pop").contains(e.target) && !$("d-sig-brand").contains(e.target)) closeSignature();
+    if (!$("kd-confirm").hidden && !$("kd-confirm").contains(e.target)) closeConfirm();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { closeSignature(); closeConfirm(); }
+  });
+
+  window.addEventListener("resize", function () {
+    fitDoc();
+    if (pad) pad.resize();
+    if (!$("kd-pop").hidden) placePopover($("kd-pop"), $("d-sig-brand"));
+    if (!$("kd-confirm").hidden) placePopover($("kd-confirm"), $("d-sig-brand"));
+  });
 
   TOKEN = readToken();
   if (!TOKEN) {

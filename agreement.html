@@ -206,21 +206,17 @@
     </div>
     <div class="field">
       <label for="f-brand-addr">Registered address</label>
-      <textarea id="f-brand-addr" placeholder="455 Townsend St, San Francisco, CA 94107, USA"></textarea>
+      <textarea id="f-brand-addr" placeholder="Leave blank: the brand fills this when they sign"></textarea>
     </div>
     <div class="field-row">
       <div class="field">
         <label for="f-brand-sign">Signatory name</label>
-        <input type="text" id="f-brand-sign" placeholder="Jane Doe" />
+        <input type="text" id="f-brand-sign" placeholder="Leave blank: filled at signing" />
       </div>
       <div class="field">
         <label for="f-brand-title">Signatory title</label>
-        <input type="text" id="f-brand-title" placeholder="Head of Growth" />
+        <input type="text" id="f-brand-title" placeholder="Leave blank: filled at signing" />
       </div>
-    </div>
-    <div class="field">
-      <label for="f-brand-email">Contact email</label>
-      <input type="text" id="f-brand-email" placeholder="jane@wispr.ai" />
     </div>
 
     <h2>Campaign</h2>
@@ -479,8 +475,10 @@
             <div class="p-lab">The Brand</div>
             <div class="p-name" id="d-brand-name">Brand name</div>
             <div class="p-body">
+              <!-- The registered address is filled by the Brand when they sign.
+                   Only they know the correct contracting entity address, and a
+                   guessed one weakens the document. See docs/agreement-tool.md. -->
               <div class="dim" id="d-brand-addr"></div>
-              <div class="kv" id="d-brand-contact" hidden></div>
             </div>
           </div>
         </div>
@@ -712,7 +710,6 @@
       brandAddr: $("f-brand-addr").value,
       brandSign: val("f-brand-sign"),
       brandTitle: val("f-brand-title"),
-      brandEmail: val("f-brand-email"),
       campaign: val("f-campaign"),
       deliverables: readDeliverables(),
       draftDate: val("f-draft-date"),
@@ -750,7 +747,6 @@
     $("f-brand-addr").value = a.brandAddr || "";
     $("f-brand-sign").value = a.brandSign || "";
     $("f-brand-title").value = a.brandTitle || "";
-    $("f-brand-email").value = a.brandEmail || "";
     $("f-campaign").value = a.campaign || "";
 
     dlList.innerHTML = "";
@@ -1003,7 +999,6 @@
     $("f-brand-addr").value = "";
     $("f-brand-sign").value = "";
     $("f-brand-title").value = "";
-    $("f-brand-email").value = "";
     $("f-campaign").value = "";
     $("f-draft-date").value = "";
     $("f-live-date").value = "";

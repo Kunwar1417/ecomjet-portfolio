@@ -39,6 +39,9 @@ export default async function handler(req, res) {
 
   const name = String(body.signerName || "").trim().slice(0, 120);
   const title = String(body.signerTitle || "").trim().slice(0, 120);
+  // The Brand supplies its own registered address: only they know the
+  // correct contracting entity, and a guessed one weakens the document.
+  const address = String(body.signerAddress || "").trim().slice(0, 400);
   const kind = body.signatureKind === "drawn" ? "drawn" : "typed";
   const signature = body.signature;
 
@@ -50,7 +53,7 @@ export default async function handler(req, res) {
 
     const rows = await sql`
       SELECT token, num, terms, terms_sha256, status, first_viewed_at, expires_at, events,
-             signed_at, signer_name, signer_title, signature_img, signature_kind,
+             signed_at, signer_name, signer_title, signer_address, signature_img, signature_kind,
              countersigned_at, counter_signature
       FROM agreements WHERE token = ${token}
     `;
@@ -79,6 +82,7 @@ export default async function handler(req, res) {
       t: "signed",
       name,
       title,
+      address,
       method: kind,
       ip: clientIp(req),
       ua: String(req.headers["user-agent"] || "").slice(0, 300),
@@ -91,6 +95,7 @@ export default async function handler(req, res) {
         signed_at = now(),
         signer_name = ${name},
         signer_title = ${title},
+        signer_address = ${address},
         signature_img = ${signature},
         signature_kind = ${kind},
         signer_ip = ${clientIp(req)},
@@ -112,6 +117,7 @@ export default async function handler(req, res) {
       exec: {
         signerName: name,
         signerTitle: title,
+        signerAddress: address,
         signature,
         signatureKind: kind,
         signedAt: updated[0].signed_at,
@@ -133,6 +139,7 @@ function alreadySigned(row) {
     exec: {
       signerName: row.signer_name,
       signerTitle: row.signer_title,
+      signerAddress: row.signer_address,
       signature: row.signature_img,
       signatureKind: row.signature_kind,
       signedAt: row.signed_at,
