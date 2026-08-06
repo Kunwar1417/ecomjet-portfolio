@@ -58,6 +58,13 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 .inv-doc {
   width: 210mm; min-height: 297mm;
+  /* The wrap is a flex container, so without this the page SHRINKS to fit a
+     narrow column instead of keeping its A4 width. On a phone that silently
+     reflowed the whole contract into ~345px: type looked enormous and the
+     certificate's two signature panels squeezed to 90px. The document must
+     always lay out at 210mm and be scaled down by fitDoc(), never resized,
+     or the screen view stops matching the PDF. */
+  flex-shrink: 0;
   background: var(--paper);
   color: var(--ink);
   position: relative;

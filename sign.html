@@ -38,6 +38,12 @@
   align-items: start;
 }
 @media (max-width: 1040px) { .sv-app { grid-template-columns: 1fr; gap: 20px; } }
+/* On a phone the side padding is width the scaled-down contract cannot spare:
+   every 8px here shrinks the document by the same amount at scale 1. */
+@media (max-width: 560px) {
+  .sv-app { padding: 14px 12px 56px; gap: 16px; }
+  .sv-rail { padding: 18px 16px 16px; }
+}
 
 /* ---- The rail ---------------------------------------------------- */
 .sv-rail {
@@ -337,7 +343,7 @@
      relative "agreement-doc.css" would resolve to /s/agreement-doc.css, which
      the /s/ rewrite happily answers with this HTML page instead of the
      stylesheet. The document then renders completely unstyled. -->
-<link rel="stylesheet" href="/agreement-doc.css?v=1" />
+<link rel="stylesheet" href="/agreement-doc.css?v=2" />
 </head>
 <body>
 
