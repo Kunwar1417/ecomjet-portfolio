@@ -1018,20 +1018,12 @@
     }
   }
 
-  /* Deleting is permanent and the server holds the only copy of the signature,
-     so an executed agreement has to be confirmed twice: once here, and again
-     with confirm:true, which the endpoint requires before it will touch a
-     countersigned row. */
-  async function deleteShared(token, num, executed) {
+  /* Only unsigned links reach this: signed rows render no delete button, and
+     the server refuses them regardless of what is sent. */
+  async function deleteShared(token, num) {
     if (!(await ensureUnlocked(false))) return;
-
-    const warning = executed
-      ? "Delete " + num + "?\n\nThis agreement is fully executed. This row is the only record of " +
-        "the signature, the timestamps and the audit trail. Download the PDF first if you have not.\n\n" +
-        "This cannot be undone."
-      : "Delete the shared link for " + num + "?\n\nThe link stops working immediately. " +
-        "Your local draft is not affected.";
-    if (!confirm(warning)) return;
+    if (!confirm("Delete the shared link for " + num + "?\n\nThe link stops working immediately. " +
+                 "Your local draft is not affected.")) return;
 
     setHint("Deleting…");
     try {
@@ -1039,7 +1031,7 @@
         method: "POST",
         headers: { "content-type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ confirm: Boolean(executed) })
+        body: "{}"
       });
       const body = await r.json().catch(() => ({}));
       if (!r.ok) { setHint(esc(body.error || "Could not delete."), true); return; }
@@ -1069,6 +1061,8 @@
         const [label, cls] = sentPill(row);
         // Countersign is offered only where it is actually possible.
         const canCounter = row.signed_at && !row.countersigned_at;
+        // Signed by either party. Once true, the row can never be deleted.
+        const isSigned = Boolean(row.signed_at || row.countersigned_at);
         return '<li><a class="sent-row" href="/s/' + esc(row.token) + '" target="_blank" rel="noopener">' +
           '<span class="sent-num">' + esc(row.num) + "</span>" +
           '<span class="sent-brand">' + (esc(row.brand) || "&mdash;") + "</span>" +
@@ -1080,10 +1074,12 @@
             : "") +
           '<button type="button" class="sent-copy" data-token="' + esc(row.token) +
             '" title="Copy share link">' + COPY_ICON + "</button>" +
-          '<button type="button" class="sent-del" data-token="' + esc(row.token) +
-            '" data-num="' + esc(row.num) +
-            '" data-executed="' + (row.countersigned_at ? "1" : "") +
-            '" title="Delete this shared link">&times;</button>' +
+          /* Signed agreements get no delete button at all. The server refuses
+             them anyway, so offering one would only be a button that fails. */
+          (isSigned
+            ? ""
+            : '<button type="button" class="sent-del" data-token="' + esc(row.token) +
+              '" data-num="' + esc(row.num) + '" title="Delete this shared link">&times;</button>') +
           "</li>";
       }).join("");
 
@@ -1094,7 +1090,7 @@
         btn.addEventListener("click", () => copyShareLink(btn));
       });
       ul.querySelectorAll(".sent-del").forEach(btn => {
-        btn.addEventListener("click", () => deleteShared(btn.dataset.token, btn.dataset.num, btn.dataset.executed));
+        btn.addEventListener("click", () => deleteShared(btn.dataset.token, btn.dataset.num));
       });
     } catch (e) {
       ul.innerHTML = '<li class="empty">Could not load shared links.</li>';

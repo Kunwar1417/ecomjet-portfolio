@@ -1,18 +1,20 @@
 /* POST /api/agreements/<token>/delete
  *
- * Creator-only. Removes a share link and everything stored with it.
+ * Creator-only. Deletes an UNSIGNED shared link, and nothing else.
  *
- * Why this exists: without it the only way to clear a test row is a psql
- * session, which means the tool is not actually self-contained. It is also
- * the GDPR erasure route for the one piece of personal data this system
- * holds (the signer's name, address, IP and user agent).
+ * Unsigned links are meant to be disposable: a brand often asks for revisions
+ * after reading, so the draft gets deleted and a fresh link sent. Nothing is
+ * lost, because nobody has committed to anything yet.
  *
- * THE EXECUTED-CONTRACT GUARD. A countersigned agreement is a binding
- * contract, and this row is the only record that it was signed: the
- * signature image, the timestamps and the audit trail exist nowhere else.
- * Deleting one destroys the evidence, so it requires an explicit
- * confirm=true. A stray click cannot do it, which is the whole point of
- * making the destructive case opt-in rather than merely warned about.
+ * THE RULE: once anyone has signed, the row is permanent. It holds the only
+ * copy of the signature image, the signing timestamps and the audit trail,
+ * and nothing reconstructs them. So there is no confirm flag, no force
+ * parameter and no override: a signed agreement cannot be deleted through
+ * this API at all, whatever the caller sends. A destructive path a client can
+ * unlock is not a guard.
+ *
+ * That includes the one-party case. A brand that has signed has committed; if
+ * the record vanishes, so does the proof they ever did.
  */
 import { sql, ensureSchema, requireDb, json, isCreator } from "../../_lib/db.js";
 
@@ -24,30 +26,38 @@ export default async function handler(req, res) {
   const token = String(req.query.token || "");
   if (!token || token.length < 20) return json(res, 404, { error: "Not found." });
 
-  let body = req.body;
-  if (typeof body === "string") {
-    try { body = JSON.parse(body); } catch { body = {}; }
-  }
-  const confirmed = Boolean(body && body.confirm);
-
   try {
     await ensureSchema();
 
-    const rows = await sql`SELECT num, countersigned_at FROM agreements WHERE token = ${token}`;
+    const rows = await sql`SELECT num, signed_at, countersigned_at FROM agreements WHERE token = ${token}`;
     const row = rows[0];
     /* Already gone is the outcome the caller wanted, so this succeeds rather
        than erroring. Makes the button safe to double-click. */
     if (!row) return json(res, 200, { ok: true, alreadyGone: true });
 
-    if (row.countersigned_at && !confirmed) {
+    if (row.signed_at || row.countersigned_at) {
       return json(res, 409, {
-        error: "This agreement is fully executed. Deleting it destroys the only record of the signature.",
-        needsConfirm: true,
+        error: "This agreement has been signed, so it cannot be deleted.",
+        signed: true,
         num: row.num
       });
     }
 
-    await sql`DELETE FROM agreements WHERE token = ${token}`;
+    /* The WHERE clause repeats the guard on purpose. If a signature lands
+       between the SELECT and the DELETE, the delete matches nothing and the
+       contract survives, rather than the race quietly winning. */
+    await sql`
+      DELETE FROM agreements
+      WHERE token = ${token} AND signed_at IS NULL AND countersigned_at IS NULL
+    `;
+    const still = await sql`SELECT 1 FROM agreements WHERE token = ${token}`;
+    if (still.length) {
+      return json(res, 409, {
+        error: "That agreement was signed a moment ago, so it was not deleted.",
+        signed: true, num: row.num
+      });
+    }
+
     return json(res, 200, { ok: true, num: row.num });
   } catch (e) {
     console.error("delete failed", e);
