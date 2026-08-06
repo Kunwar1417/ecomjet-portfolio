@@ -51,7 +51,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 /* ============================================================
    AGREEMENT DOCUMENT (preview + print target) A4 = 210 x 297mm
    ============================================================ */
-.inv-doc-wrap { display: flex; justify-content: center; overflow: visible; }
+/* align-items must not be the default `stretch`: fitDoc() sets an explicit
+   pixel height on this wrap, and stretch would force the page to exactly that
+   height. Since .inv-doc is overflow:hidden, the contract was being CUT OFF
+   at roughly half its length with no way to scroll to the rest. flex-start
+   lets the page take its own full height and be scaled instead. */
+.inv-doc-wrap { display: flex; justify-content: center; align-items: flex-start; overflow: visible; }
 
 /* Print-only page-margin bands (see @media print). Hidden on screen. */
 .pg-band { display: none; }
