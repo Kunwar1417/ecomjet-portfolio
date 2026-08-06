@@ -154,6 +154,21 @@
 }
 .sent-counter:hover { background: var(--blue); color: #fff; }
 
+/* Copy and delete sit on every row. Copy matters because the link is only
+   put on the clipboard once, at creation: without this the only way back to
+   it is opening the row and reading the address bar. */
+.sent-copy, .sent-del {
+  flex-shrink: 0; width: 28px; height: 28px; align-self: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  color: var(--muted); line-height: 1; padding: 0;
+}
+.sent-copy svg { width: 13px; height: 13px; }
+.sent-copy:hover { border-color: var(--blue); color: var(--blue); }
+.sent-copy.ok { border-color: #2E7D4F; color: #2E7D4F; }
+.sent-del { font-size: 15px; }
+.sent-del:hover { border-color: #B0345A; color: #B0345A; }
+
 .zoom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .zoom-row label { font-size: 12px; color: var(--muted); font-weight: 600; }
 .zoom-row input[type=range] { flex: 1; accent-color: var(--blue); }
@@ -912,7 +927,7 @@
       saveCurrent();
       renderArchive();
 
-      const url = location.origin + "/s/" + body.token;
+      const url = shareUrl(body.token);
       try {
         await navigator.clipboard.writeText(url);
         setHint('Link copied. <a href="' + url + '" target="_blank" rel="noopener">Open it</a>');
@@ -977,6 +992,64 @@
     }
   }
 
+  const COPY_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="9" y="9" width="12" height="12" rx="2"></rect>' +
+    '<path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>';
+
+  /* The share URL is rebuilt from the token rather than stored, so it always
+     matches wherever the studio is being used (localhost while testing, the
+     live domain in real use). */
+  function shareUrl(token) { return location.origin + "/s/" + token; }
+
+  async function copyShareLink(btn) {
+    const url = shareUrl(btn.dataset.token);
+    try {
+      await navigator.clipboard.writeText(url);
+      const original = btn.innerHTML;
+      btn.classList.add("ok");
+      btn.innerHTML = "&#10003;";
+      setHint("Link copied.");
+      setTimeout(() => { btn.classList.remove("ok"); btn.innerHTML = original; }, 1400);
+    } catch (e) {
+      // Clipboard needs a secure context, so fall back to showing the URL.
+      setHint('Link: <a href="' + url + '" target="_blank" rel="noopener">' + esc(url) + "</a>");
+    }
+  }
+
+  /* Deleting is permanent and the server holds the only copy of the signature,
+     so an executed agreement has to be confirmed twice: once here, and again
+     with confirm:true, which the endpoint requires before it will touch a
+     countersigned row. */
+  async function deleteShared(token, num, executed) {
+    if (!(await ensureUnlocked(false))) return;
+
+    const warning = executed
+      ? "Delete " + num + "?\n\nThis agreement is fully executed. This row is the only record of " +
+        "the signature, the timestamps and the audit trail. Download the PDF first if you have not.\n\n" +
+        "This cannot be undone."
+      : "Delete the shared link for " + num + "?\n\nThe link stops working immediately. " +
+        "Your local draft is not affected.";
+    if (!confirm(warning)) return;
+
+    setHint("Deleting…");
+    try {
+      const r = await fetch("/api/agreements/" + encodeURIComponent(token) + "/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ confirm: Boolean(executed) })
+      });
+      const body = await r.json().catch(() => ({}));
+      if (!r.ok) { setHint(esc(body.error || "Could not delete."), true); return; }
+      setHint("Deleted. That link no longer works.");
+      loadSent();
+    } catch (e) {
+      setHint("Network error. Nothing was deleted.", true);
+    }
+  }
+
   async function loadSent() {
     const ul = $("sent-list");
     try {
@@ -1005,11 +1078,23 @@
             ? '<button type="button" class="sent-counter" data-token="' + esc(row.token) +
               '" data-num="' + esc(row.num) + '" title="Apply your signature">Countersign</button>'
             : "") +
+          '<button type="button" class="sent-copy" data-token="' + esc(row.token) +
+            '" title="Copy share link">' + COPY_ICON + "</button>" +
+          '<button type="button" class="sent-del" data-token="' + esc(row.token) +
+            '" data-num="' + esc(row.num) +
+            '" data-executed="' + (row.countersigned_at ? "1" : "") +
+            '" title="Delete this shared link">&times;</button>' +
           "</li>";
       }).join("");
 
       ul.querySelectorAll(".sent-counter").forEach(btn => {
         btn.addEventListener("click", () => countersign(btn.dataset.token, btn.dataset.num));
+      });
+      ul.querySelectorAll(".sent-copy").forEach(btn => {
+        btn.addEventListener("click", () => copyShareLink(btn));
+      });
+      ul.querySelectorAll(".sent-del").forEach(btn => {
+        btn.addEventListener("click", () => deleteShared(btn.dataset.token, btn.dataset.num, btn.dataset.executed));
       });
     } catch (e) {
       ul.innerHTML = '<li class="empty">Could not load shared links.</li>';
