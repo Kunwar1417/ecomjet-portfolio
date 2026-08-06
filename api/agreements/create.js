@@ -9,23 +9,13 @@
  * fine for a page but not for a write endpoint. Without a key check anyone who
  * found this URL could mint agreements in Kunwar's name or fill the database.
  */
-import { timingSafeEqual } from "node:crypto";
-import { sql, ensureSchema, requireDb, newToken, hashTerms, appendEvent, clientIp, json } from "../_lib/db.js";
+import { sql, ensureSchema, requireDb, newToken, hashTerms, appendEvent, clientIp, json, isCreator } from "../_lib/db.js";
 
 const LINK_DAYS = 30;
 
-function authorised(req) {
-  const secret = process.env.SHARE_SECRET;
-  // Fail closed. A missing secret in the environment must never mean "allow".
-  if (!secret) return false;
-  const given = req.headers["x-kd-key"];
-  if (typeof given !== "string" || given.length !== secret.length) return false;
-  return timingSafeEqual(Buffer.from(given), Buffer.from(secret));
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") return json(res, 405, { error: "Use POST." });
-  if (!authorised(req)) return json(res, 401, { error: "Not authorised." });
+  if (!isCreator(req)) return json(res, 401, { error: "Not authorised." });
   if (!requireDb(res)) return;
 
   let body = req.body;

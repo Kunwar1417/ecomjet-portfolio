@@ -9,7 +9,7 @@
  * what makes tampering structurally impossible rather than merely unnoticed.
  */
 import { neon } from "@neondatabase/serverless";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 
 const CONNECTION =
   process.env.DATABASE_URL ||
@@ -117,4 +117,39 @@ export function appendEvent(events, entry) {
 export function json(res, status, body) {
   res.status(status).setHeader("content-type", "application/json; charset=utf-8");
   res.send(JSON.stringify(body));
+}
+
+/* Creator authentication for the write endpoints.
+ *
+ * Accepts either the x-kd-key header (scripts, curl) or the kd_admin cookie
+ * set by /api/unlock (the studio, after a one-time setup). The cookie is what
+ * stops the tool asking for a key on every agreement: the browser holds it,
+ * and because it is HttpOnly the page itself cannot read it back out.
+ *
+ * Fails closed. No SHARE_SECRET configured means every write is refused.
+ */
+export function isCreator(req) {
+  const secret = process.env.SHARE_SECRET;
+  if (!secret) return false;
+
+  const header = req.headers["x-kd-key"];
+  if (typeof header === "string" && safeEqual(header, secret)) return true;
+
+  const raw = req.headers.cookie || "";
+  for (const part of raw.split(";")) {
+    const eq = part.indexOf("=");
+    if (eq < 0) continue;
+    if (part.slice(0, eq).trim() !== "kd_admin") continue;
+    let v = part.slice(eq + 1).trim();
+    try { v = decodeURIComponent(v); } catch { /* use as-is */ }
+    if (safeEqual(v, secret)) return true;
+  }
+  return false;
+}
+
+function safeEqual(a, b) {
+  const A = Buffer.from(String(a));
+  const B = Buffer.from(String(b));
+  if (A.length !== B.length) return false;
+  return timingSafeEqual(A, B);
 }

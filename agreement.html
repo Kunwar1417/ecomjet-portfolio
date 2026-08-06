@@ -839,19 +839,41 @@
      including by editing this form afterwards. To change terms after
      sharing, create a new agreement rather than expecting the link to move.
      ============================================================ */
-  const KEY_LS = "kd_share_key";
+  /* The write endpoints need proof this is Kunwar. Rather than carrying the
+     secret around in page storage and re-typing it, the browser is unlocked
+     ONCE: /api/unlock exchanges the key for an HttpOnly cookie that lasts a
+     year. After that the studio simply works, and the secret is not readable
+     by anything running on the page. */
+  let unlockPromise = null;
 
-  // The write endpoints need a shared secret. Asked for once, then kept in
-  // this browser. It is not a password protecting the brand's copy: it only
-  // stops strangers creating agreements in Kunwar's name.
-  function shareKey(force) {
-    let k = localStorage.getItem(KEY_LS) || "";
-    if (!k || force) {
-      k = (window.prompt("Share key (set as SHARE_SECRET in Vercel):", k) || "").trim();
-      if (!k) return "";
-      localStorage.setItem(KEY_LS, k);
-    }
-    return k;
+  async function ensureUnlocked(force) {
+    if (unlockPromise && !force) return unlockPromise;
+    unlockPromise = (async () => {
+      // Already unlocked? The cheapest check is a request that needs auth.
+      if (!force) {
+        const probe = await fetch("/api/agreements", { credentials: "same-origin" });
+        if (probe.ok) return true;
+        if (probe.status === 503) { setHint("Sharing is not set up yet.", true); return false; }
+      }
+      const key = (window.prompt(
+        "One-time setup for this browser.\n\nPaste your share key (SHARE_SECRET). You will not be asked again on this device."
+      ) || "").trim();
+      if (!key) return false;
+
+      const r = await fetch("/api/unlock", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ key })
+      });
+      if (!r.ok) {
+        unlockPromise = null;
+        setHint("That key was not accepted. Click again to retry.", true);
+        return false;
+      }
+      return true;
+    })();
+    return unlockPromise;
   }
 
   function setHint(msg, isError) {
@@ -861,9 +883,6 @@
   }
 
   async function createShareLink() {
-    const key = shareKey(false);
-    if (!key) return;
-
     const a = readForm();
     if (!a.num) { setHint("Give the agreement a number first.", true); return; }
     if (!a.brand) { setHint("Add the brand name before sharing.", true); return; }
@@ -873,16 +892,18 @@
     setHint("Creating link…");
 
     try {
+      if (!(await ensureUnlocked(false))) { btn.disabled = false; return; }
       const r = await fetch("/api/agreements/create", {
         method: "POST",
-        headers: { "content-type": "application/json", "x-kd-key": key },
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ terms: a })
       });
       const body = await r.json().catch(() => ({}));
 
       if (r.status === 401) {
-        localStorage.removeItem(KEY_LS);
-        setHint("That share key was rejected. Click again to re-enter it.", true);
+        unlockPromise = null;
+        setHint("This browser is no longer unlocked. Click again to set it up.", true);
         return;
       }
       if (!r.ok) { setHint(esc(body.error || "Could not create the link."), true); return; }
@@ -935,8 +956,7 @@
   }
 
   async function countersign(token, num) {
-    const key = localStorage.getItem(KEY_LS);
-    if (!key) { setHint("Enter the share key first.", true); return; }
+    if (!(await ensureUnlocked(false))) return;
     if (!confirm("Countersign " + num + "?\n\nYour signature is applied and the agreement becomes fully executed. This cannot be undone.")) return;
 
     setHint("Countersigning…");
@@ -944,7 +964,8 @@
       const signature = await creatorSignaturePng();
       const r = await fetch("/api/agreements/" + encodeURIComponent(token) + "/countersign", {
         method: "POST",
-        headers: { "content-type": "application/json", "x-kd-key": key },
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ signature })
       });
       const body = await r.json().catch(() => ({}));
@@ -957,12 +978,13 @@
   }
 
   async function loadSent() {
-    const key = localStorage.getItem(KEY_LS);
     const ul = $("sent-list");
-    if (!key) { ul.innerHTML = '<li class="empty">Create a share link to see it here.</li>'; return; }
-
     try {
-      const r = await fetch("/api/agreements", { headers: { "x-kd-key": key } });
+      const r = await fetch("/api/agreements", { credentials: "same-origin" });
+      if (r.status === 401) {
+        ul.innerHTML = '<li class="empty">Create a share link to set this browser up.</li>';
+        return;
+      }
       if (!r.ok) { ul.innerHTML = '<li class="empty">Could not load shared links.</li>'; return; }
       const { agreements } = await r.json();
 

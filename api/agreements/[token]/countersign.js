@@ -9,22 +9,13 @@
  * liftable signature in every prospect's inbox, which is why the creator's
  * panel stays blank until the brand has committed.
  */
-import { timingSafeEqual } from "node:crypto";
-import { sql, ensureSchema, requireDb, appendEvent, clientIp, json } from "../../_lib/db.js";
+import { sql, ensureSchema, requireDb, appendEvent, clientIp, json, isCreator } from "../../_lib/db.js";
 
 const MAX_SIG_BYTES = 400 * 1024;
 
-function authorised(req) {
-  const secret = process.env.SHARE_SECRET;
-  if (!secret) return false;
-  const given = req.headers["x-kd-key"];
-  if (typeof given !== "string" || given.length !== secret.length) return false;
-  return timingSafeEqual(Buffer.from(given), Buffer.from(secret));
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") return json(res, 405, { error: "Use POST." });
-  if (!authorised(req)) return json(res, 401, { error: "Not authorised." });
+  if (!isCreator(req)) return json(res, 401, { error: "Not authorised." });
   if (!requireDb(res)) return;
 
   const token = String(req.query.token || "");

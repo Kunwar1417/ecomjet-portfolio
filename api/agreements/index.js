@@ -7,20 +7,11 @@
  * drafts, and this list only needs to answer "what did I send, and has it
  * been read". Includes the token so each row can rebuild its share link.
  */
-import { timingSafeEqual } from "node:crypto";
-import { sql, ensureSchema, requireDb, json } from "../_lib/db.js";
-
-function authorised(req) {
-  const secret = process.env.SHARE_SECRET;
-  if (!secret) return false;
-  const given = req.headers["x-kd-key"];
-  if (typeof given !== "string" || given.length !== secret.length) return false;
-  return timingSafeEqual(Buffer.from(given), Buffer.from(secret));
-}
+import { sql, ensureSchema, requireDb, json, isCreator } from "../_lib/db.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return json(res, 405, { error: "Use GET." });
-  if (!authorised(req)) return json(res, 401, { error: "Not authorised." });
+  if (!isCreator(req)) return json(res, 401, { error: "Not authorised." });
   if (!requireDb(res)) return;
 
   try {
