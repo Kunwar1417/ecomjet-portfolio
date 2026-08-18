@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/jpeg" href="photos/Kunwar.jpg" />
+<title>Proposal · {{BRAND}} × Kunwar (print)</title>
+<!--
+  ============================================================
+  REUSABLE PROPOSAL TEMPLATE (SCQA landscape system)
+  ============================================================
+  HOW TO USE: copy this file to proposal-{brand}-print.html, then
+  replace every {{PLACEHOLDER}} below. DO NOT change the design,
+  layout, CSS, page count, or component structure. Only the copy
+  inside the marked slots changes per brand.
+
+  DESIGN IS LOCKED. The offset-shadow box = emphasis only (hero,
+  packages, dark pages). Supporting content stays flat/rule-based.
+  Headings are plain and factual, never dramatic or "do X not Y".
+  No em dashes anywhere.
+
+  PLACEHOLDERS (all brand-specific copy):
+    {{BRAND}}            brand name (e.g. Cursor)
+    {{BRAND_LOGO}}       logos/{brand}.webp  (put a white pill logo on the cover)
+    {{COVER_TITLE}}      cover headline, one <em> accent
+    {{COVER_LEDE}}       cover one-line summary
+    {{SITUATION_*}}      P2: the industry/category situation (name the CATEGORY, not the brand)
+    {{CHALLENGE_*}}      P3: the problem that creates
+    {{TARGET_*}}         P4: the persona we're targeting (dark page)
+    {{PLAN_*}}           P5: the series shape (state it plainly, no fake boxes)
+    {{V1_*}}             P6: video 1 concept + the 4 storyboard beats
+    {{WHY_*}}            P7: 4 reasons this works (rule-separated, no boxes)
+    {{PRICE_SERIES/UGC/SINGLE}}  P10 package prices (USD, e.g. $X,XXX)
+
+  PAGE MAP (10 landscape Letter pages, do not add/remove):
+    01 Cover   02 Situation  03 Challenge  04 Target(dark)  05 Plan
+    06 Video 1 07 Why-works  08 Audience   09 Brands        10 Options+Process
+
+  BRAND-INDEPENDENT (leave as-is unless the numbers change):
+    P8 audience stats, P9 brand wall, the process steps, footers.
+  ============================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Self-contained LANDSCAPE print document (no styles.css).
+   Pages are 11in x 8.5in (Letter landscape, ~ 4:3 -> reads well
+   fit-to-width on desktop). Design language matches media-kit.html:
+   Bricolage + Instrument Serif, cream/ink/orange, 1.5px ink
+   borders, hard offset shadows.
+   ============================================================ */
+:root{
+  --cream:#f6f2ea; --cream-2:#efe9dc; --paper:#fdfbf6;
+  --ink:#1c1a17; --ink-2:#46433d; --ink-3:#6f6a61; --rule:#ddd6c8;
+  --orange:#E55525; --orange-deep:#C9421A;
+  --green:#2F6B4F; --blue:#2B49C4; --plum:#6E2A4E; --butter:#F2E27A;
+  --dark:#17140f; --dark-text:#f4f0e8; --dark-text-2:#c2bbac;
+  --sans:"Bricolage Grotesque",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --italic:"Instrument Serif",Georgia,serif;
+  --sh:6px 6px 0 0 var(--ink); --sh-sm:4px 4px 0 0 var(--ink); --sh-xs:3px 3px 0 0 var(--ink);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:#c9c4b7;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;}
+em{font-family:var(--italic);font-style:italic;color:var(--orange);font-weight:400;}
+
+.printbar{position:sticky;top:0;z-index:50;background:var(--ink);color:var(--dark-text);
+  display:flex;align-items:center;justify-content:center;gap:16px;padding:11px 16px;font-size:13px;}
+.printbar button{font-family:var(--sans);font-weight:700;font-size:13px;background:var(--orange);color:#fff;
+  border:none;border-radius:999px;padding:8px 18px;cursor:pointer;}
+.printbar span{color:var(--dark-text-2);}
+
+.doc{width:11in;margin:0 auto;}
+.page{
+  width:11in;height:8.5in;background:var(--cream);position:relative;overflow:hidden;
+  padding:0.5in 0.6in 0.45in;display:flex;flex-direction:column;
+  box-shadow:0 12px 40px rgba(0,0,0,0.18);margin:20px auto;
+}
+.corner{position:absolute;top:0.42in;right:0.6in;font-size:10px;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:700;}
+.foot{margin-top:auto;padding-top:12px;font-size:10.5px;color:var(--ink-3);
+  display:flex;justify-content:space-between;align-items:baseline;border-top:1.5px solid var(--ink);}
+.foot strong{color:var(--ink);font-weight:700;}
+
+/* section head: plain heading + one line */
+.head h2{font-size:36px;font-weight:800;letter-spacing:-0.03em;line-height:1.02;margin:0;}
+.head h2 em{font-size:1.05em;}
+.head p{margin:10px 0 0;font-size:15px;color:var(--ink-2);line-height:1.5;max-width:70ch;}
+.tab{display:inline-block;font-family:var(--italic);font-style:italic;color:var(--orange);
+  font-size:16px;margin-bottom:6px;}
+
+/* ---------- P1 cover (three-zone: lockup top / title centered / meta bottom) ---------- */
+.cover{justify-content:space-between;}
+.cover__mid{margin:auto 0;}
+.cover__bottom{padding-top:8px;}
+.lockup{display:inline-flex;align-items:center;gap:11px;background:var(--ink);color:var(--dark-text);
+  border:1.5px solid var(--ink);border-radius:999px;padding:8px 8px 8px 18px;box-shadow:var(--sh-sm);
+  font-size:14px;font-weight:600;}
+.lockup .me{background:var(--dark-text);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;}
+.lockup .x{opacity:0.5;}
+.lockup .br{background:var(--orange);color:#fff;border-radius:999px;padding:6px 14px 6px 12px;font-weight:700;
+  display:inline-flex;align-items:center;gap:7px;}
+.lockup .br svg{width:14px;height:14px;}
+.lockup .br--logo{background:#fdfbf6;padding:8px 18px;}
+.lockup .br--logo img{height:15px;width:auto;display:block;}
+.cover__kicker{font-size:12px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--ink);font-weight:700;display:inline-flex;align-items:center;gap:9px;}
+.cover__kicker::before{content:"";width:26px;height:1.5px;background:var(--orange);}
+.cover__title{font-size:76px;font-weight:800;letter-spacing:-0.035em;line-height:0.96;margin:18px 0 22px;max-width:17ch;}
+.cover__title em{font-size:1.04em;}
+.cover__lede{font-size:20px;line-height:1.4;color:var(--ink-2);max-width:52ch;margin:0;}
+.cover__meta{display:flex;gap:52px;margin-top:6px;}
+.cover__meta .k{font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:4px;}
+.cover__meta .v{font-size:15px;font-weight:700;color:var(--ink);}
+.cover__spark{position:absolute;top:0.5in;right:0.6in;width:72px;height:72px;transform:rotate(11deg);}
+
+/* ---------- Big-idea page: one SCQ beat, full page, lots of air ---------- */
+.bigidea{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:56ch;}
+.bigidea__mark{width:52px;height:52px;flex:none;border-radius:50%;background:var(--cream-2);border:1.5px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:26px;}
+.bigidea__eyebrow{font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:14px;}
+.bigidea__title{font-size:52px;font-weight:800;letter-spacing:-0.03em;line-height:1.06;margin:0 0 22px;}
+.bigidea__title em{font-size:1.04em;}
+.bigidea__body{font-size:18px;color:var(--ink-2);line-height:1.55;margin:0;max-width:52ch;}
+.bigidea__body strong{color:var(--ink);font-weight:700;}
+.bigidea__next{margin-top:34px;display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-3);
+  font-weight:600;letter-spacing:0.02em;}
+.bigidea__next svg{width:16px;height:16px;}
+
+.page--dark{background:var(--dark);color:var(--dark-text);}
+.page--dark .corner{color:var(--dark-text-2);}
+.page--dark .foot{border-top-color:rgba(255,255,255,0.18);}
+.page--dark .foot strong{color:var(--dark-text);}
+.page--dark .bigidea__mark{background:var(--orange);color:#fff;border-color:var(--ink);}
+.page--dark .bigidea__title{color:var(--dark-text);}
+.page--dark .bigidea__body{color:var(--dark-text-2);}
+.page--dark .bigidea__body strong{color:var(--dark-text);}
+.page--dark .bigidea__next{color:var(--dark-text-2);}
+
+/* ---------- video 1 concept page ---------- */
+.concept__tag{font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:14px;
+  display:inline-flex;align-items:center;gap:10px;}
+.concept__tag svg{width:26px;height:26px;}
+
+/* storyboard frames */
+.frames{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;flex:1;max-height:4in;}
+
+/* video 1 page: two columns (text | filmstrip) */
+.v1{flex:1;display:grid;grid-template-columns:1.15fr 0.85fr;gap:48px;align-items:center;}
+.v1__title{font-size:46px;font-weight:800;letter-spacing:-0.03em;line-height:1.02;margin:0 0 28px;}
+.v1__title em{font-size:1.04em;}
+.v1__concept{border-left:3px solid var(--orange);padding-left:22px;}
+.v1__concept h3{margin:0 0 14px;font-size:26px;font-weight:800;letter-spacing:-0.02em;line-height:1.12;}
+.v1__concept p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.6;max-width:46ch;}
+.v1__concept p + p{margin-top:12px;}
+.v1__concept p strong{color:var(--ink);font-weight:700;}
+.v1__board-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px;}
+.filmstrip{display:flex;flex-direction:column;gap:12px;}
+.filmstrip .frame{flex-direction:row;align-items:stretch;height:74px;}
+.filmstrip .frame__art{flex:none;width:64px;border-bottom:none;border-right:1.5px solid var(--ink);padding:7px;}
+.filmstrip .frame__cap{display:flex;flex-direction:column;justify-content:center;padding:0 16px;}
+.filmstrip .frame__cap .s{font-size:13px;}
+.filmstrip .frame__cap .t{font-size:13px;margin-top:2px;}
+@media screen and (max-width:820px){ .v1{grid-template-columns:1fr;gap:28px;} }
+.frame{background:var(--paper);border:1.5px solid var(--ink);border-radius:12px;box-shadow:var(--sh-xs);
+  display:flex;flex-direction:column;overflow:hidden;}
+.frame__art{flex:1;background:var(--cream-2);border-bottom:1.5px solid var(--ink);position:relative;min-height:0;
+  display:flex;align-items:center;justify-content:center;padding:12px;}
+.frame__art svg{width:100%;height:100%;}
+.frame__cap{padding:9px 10px;}
+.frame__cap .s{font-family:var(--italic);font-style:italic;color:var(--orange);font-size:14px;}
+.frame__cap .t{font-size:12px;font-weight:700;line-height:1.25;margin-top:1px;}
+.whyfit-page{flex:1;display:flex;flex-direction:column;justify-content:center;}
+/* rule-separated columns, no box/shadow (lighter than package cards above) */
+.whyfit-cards{display:grid;grid-template-columns:repeat(3,1fr);margin-top:34px;border-top:1.5px solid var(--ink);}
+.whyfit-cards--4{grid-template-columns:repeat(4,1fr);}
+.whyfit-card{padding:26px 28px 0 0;border-right:1px solid var(--rule);}
+.whyfit-cards--4 .whyfit-card:last-child,.whyfit-cards .whyfit-card:last-child{border-right:none;padding-right:0;}
+.whyfit-card:not(:first-child){padding-left:28px;}
+.whyfit-card .n{font-family:var(--italic);font-style:italic;color:var(--orange);font-size:34px;line-height:1;margin-bottom:16px;}
+.whyfit-card h4{margin:0 0 10px;font-size:19px;font-weight:800;letter-spacing:-0.015em;line-height:1.15;}
+.whyfit-card p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.55;}
+
+/* ---------- P4 audience ---------- */
+.aud-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;}
+.aud-tile{background:var(--paper);border:1.5px solid var(--ink);border-radius:16px;padding:20px 22px;box-shadow:var(--sh-sm);}
+.aud-tile .n{font-size:44px;font-weight:800;letter-spacing:-0.03em;line-height:1;}
+.aud-tile .n em{font-size:0.82em;margin-right:5px;}
+.aud-tile .l{font-size:12px;color:var(--ink-3);letter-spacing:0.02em;margin-top:9px;line-height:1.4;}
+.aud-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;align-items:stretch;}
+.aud-box{background:var(--paper);border:1.5px solid var(--ink);border-radius:16px;padding:22px 26px;box-shadow:var(--sh-xs);}
+.aud-box h4{margin:0 0 16px;font-size:11px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink);font-weight:700;}
+.brow{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:4px;}
+.brow .lab{flex:1;color:var(--ink-2);}
+.brow .val{font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
+.btrack{height:11px;background:var(--cream-2);border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;margin:2px 0 14px;}
+.bfill{height:100%;border-right:1.5px solid var(--ink);}
+.aud-mini{background:var(--paper);border:1.5px solid var(--ink);border-radius:16px;padding:22px 26px;box-shadow:var(--sh-xs);
+  display:grid;grid-template-columns:1fr 1fr;gap:18px 16px;align-content:center;}
+.aud-mini .k{font-size:10.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-3);font-weight:700;}
+.aud-mini .v{font-size:26px;font-weight:800;letter-spacing:-0.02em;margin-top:3px;}
+.aud-mini .s{font-size:11.5px;color:var(--ink-3);margin-top:1px;}
+
+/* ---------- P5 brands ---------- */
+.wall{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:24px;flex:1;align-content:start;}
+.wall .t{background:var(--paper);border:1.5px solid var(--ink);border-radius:12px;height:76px;
+  display:flex;align-items:center;justify-content:center;padding:12px 14px;box-shadow:var(--sh-xs);}
+.wall .t img{max-height:30px;max-width:100%;object-fit:contain;filter:grayscale(1) brightness(0.32) contrast(1.1);opacity:0.95;}
+
+/* ---------- P6 options + process ---------- */
+.pkgs{display:grid;grid-template-columns:1.12fr 1fr 0.9fr;gap:14px;margin-top:22px;}
+.pkg{background:var(--paper);border:1.5px solid var(--ink);border-radius:16px;padding:20px 22px 18px;
+  box-shadow:var(--sh-xs);display:flex;flex-direction:column;position:relative;}
+.pkg--f{background:var(--dark);color:var(--dark-text);box-shadow:var(--sh-sm);}
+.pkg--q{background:var(--cream-2);box-shadow:none;}
+.pkg__flag{position:absolute;top:-11px;left:18px;background:var(--orange);color:#fff;border:1.5px solid var(--ink);
+  border-radius:999px;padding:3px 13px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;}
+.pkg__name{font-size:22px;font-weight:800;letter-spacing:-0.02em;line-height:1;}
+.pkg--f .pkg__name{color:var(--dark-text);}
+.pkg__goal{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-top:7px;}
+.pkg--f .pkg__goal{color:var(--dark-text-2);}
+.pkg__rule{border:none;border-top:1px solid var(--rule);margin:14px 0;}
+.pkg--f .pkg__rule{border-top-color:rgba(255,255,255,0.16);}
+.pkg ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;flex:1;}
+.pkg li{position:relative;padding-left:16px;font-size:13px;line-height:1.45;color:var(--ink-2);}
+.pkg--f li{color:var(--dark-text-2);}
+.pkg li::before{content:"+";position:absolute;left:0;top:0;color:var(--orange);font-weight:800;}
+.pkg li strong{color:var(--ink);font-weight:700;}
+.pkg--f li strong{color:var(--dark-text);}
+.pkg__price{margin-top:15px;padding-top:13px;border-top:1px solid var(--rule);font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-0.01em;}
+.pkg--f .pkg__price{color:var(--dark-text);border-top-color:rgba(255,255,255,0.16);}
+.pkg__price .cur{font-size:12px;font-weight:700;color:var(--ink-3);letter-spacing:0.04em;}
+.pkg--f .pkg__price .cur{color:var(--dark-text-2);}
+
+/* connected timeline row, no boxes (lighter than the package cards above) */
+.proc{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:22px;position:relative;}
+.proc::before{content:"";position:absolute;top:11px;left:0;right:0;height:1.5px;background:var(--rule);z-index:0;}
+.proc-step{position:relative;z-index:1;padding-right:8px;}
+.proc-step .n{width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;border:1.5px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;font-family:var(--italic);font-style:italic;font-size:14px;
+  line-height:1;margin-bottom:12px;}
+.proc-step h4{margin:0 0 4px;font-size:14px;font-weight:800;}
+.proc-step p{margin:0;font-size:12px;color:var(--ink-2);line-height:1.45;}
+
+.fineprint{margin-top:12px;font-size:10.5px;color:var(--ink-3);font-style:italic;}
+
+@page{ size:Letter landscape; margin:0; }
+@media print{
+  body{background:var(--cream);}
+  .printbar{display:none;}
+  .doc{width:auto;}
+  .page{margin:0;box-shadow:none;page-break-after:always;break-after:page;width:11in;height:8.5in;}
+  .page:last-child{page-break-after:auto;break-after:auto;}
+  /* keep the video-1 page two-column in print (never collapse to one) */
+  .v1{grid-template-columns:1.15fr 0.85fr !important;gap:48px !important;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="printbar">
+  <button onclick="window.print()">Save as PDF</button>
+  <span>Print → Destination: Save as PDF → Layout: Landscape → enable “Background graphics” → Letter.</span>
+</div>
+
+<div class="doc">
+
+  <!-- ============ P1 · COVER ============ -->
+  <section class="page cover">
+    <div class="corner">Partnership proposal</div>
+    <svg class="cover__spark" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M50 6 L57 40 L92 47 L57 54 L50 92 L43 54 L8 47 L43 40 Z" fill="#E55525" stroke="#0F0D0B" stroke-width="2.5" stroke-linejoin="round"/>
+    </svg>
+
+    <div class="cover__top">
+      <div class="lockup">
+        <span class="me">Kunwar Deep</span>
+        <span class="x">&times;</span>
+        <span class="br br--logo"><img src="{{BRAND_LOGO}}" alt="{{BRAND}}" /></span>
+      </div>
+    </div>
+
+    <div class="cover__mid">
+      <div class="cover__kicker">A video series for {{BRAND}}</div>
+      <h1 class="cover__title">{{COVER_TITLE}}</h1>
+      <p class="cover__lede">{{COVER_LEDE}}</p>
+    </div>
+
+    <div class="cover__bottom">
+      <div class="cover__meta">
+      <div><div class="k">Prepared for</div><div class="v">{{BRAND}}</div></div>
+      <div><div class="k">By</div><div class="v">Kunwar Deep</div></div>
+      <div><div class="k">Reach</div><div class="v">340K followers</div></div>
+      <div><div class="k">Contact</div><div class="v">kunwar@thecomjet.com</div></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span><strong>@the_ecomjet</strong> · theecomjet.com</span>
+      <span>01 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P2 · SITUATION ============ -->
+  <section class="page">
+    <div class="corner">02 · The situation</div>
+    <div class="bigidea">
+      <div class="bigidea__mark">1</div>
+      <div class="bigidea__eyebrow">Where things stand</div>
+      <h2 class="bigidea__title">{{SITUATION_TITLE}}</h2>
+      <p class="bigidea__body">{{SITUATION_BODY}}</p>
+      <!-- SITUATION: describe the CATEGORY/industry situation, not a flaw in {{BRAND}}. One <em> accent in the title. -->
+
+    </div>
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>02 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P3 · CHALLENGE ============ -->
+  <section class="page">
+    <div class="corner">03 · The challenge</div>
+    <div class="bigidea">
+      <div class="bigidea__mark">2</div>
+      <div class="bigidea__eyebrow">Which leads to</div>
+      <h2 class="bigidea__title">{{CHALLENGE_TITLE}}</h2>
+      <p class="bigidea__body">{{CHALLENGE_BODY}}</p>
+      <!-- CHALLENGE: the problem the situation creates. {{BRAND}} may be named here, but as the thing that could help, never as the flaw. -->
+
+    </div>
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>03 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P4 · TARGET PERSONA (full dark page, the pivot) ============ -->
+  <section class="page page--dark">
+    <div class="corner">04 · The target</div>
+    <div class="bigidea">
+      <div class="bigidea__mark">&#9679;</div>
+      <div class="bigidea__eyebrow">Who we're targeting</div>
+      <h2 class="bigidea__title">{{TARGET_TITLE}}</h2>
+      <p class="bigidea__body">{{TARGET_BODY}}</p>
+      <!-- TARGET: state the persona plainly (this is the answer to "who is this for"). Dark page = the pivot. -->
+
+      <div class="bigidea__next">
+        <span>The plan</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+    </div>
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>04 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P5 · THE PLAN ============ -->
+  <section class="page">
+    <div class="corner">05 · The plan</div>
+
+    <div class="bigidea">
+      <div class="bigidea__eyebrow">The plan</div>
+      <h2 class="bigidea__title">{{PLAN_TITLE}}</h2>
+      <p class="bigidea__body">{{PLAN_BODY}}</p>
+      <!-- PLAN: state the series shape plainly (e.g. "3 videos, one a month"). Do NOT build fake boxes for undecided videos. Detail only video 1 on the next page. -->
+
+      <div class="bigidea__next">
+        <span>Video 1</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>05 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P6 · VIDEO 1 CONCEPT + STORYBOARD (two-column) ============ -->
+  <section class="page">
+    <div class="corner">06 · Video one</div>
+
+    <div class="v1">
+      <div class="v1__text">
+        <h2 class="v1__title">Concept for <em>Video 1</em>.</h2>
+        <div class="v1__concept">
+          <h3>{{V1_TITLE}}</h3>
+          <p>{{V1_BODY_1}}</p>
+          <p>{{V1_BODY_2}}</p>
+          <!-- VIDEO 1: the payoff is BUILDING it in {{BRAND}} (the tool is the star), not demoing the finished thing. Keep it a real, specific, fun concept. -->
+        </div>
+      </div>
+
+      <div class="v1__board">
+        <div class="v1__board-label">How it plays</div>
+        <!-- STORYBOARD: 4 beats. Redraw the SVG icons to match the new concept (these are the squat-alarm example). Keep the frame/filmstrip structure. -->
+        <div class="filmstrip">
+          <div class="frame">
+            <div class="frame__art">
+              <svg viewBox="0 0 60 90" fill="none" aria-hidden="true">
+                <rect x="8" y="8" width="44" height="74" rx="7" fill="#fdfbf6" stroke="#1c1a17" stroke-width="2.5"/>
+                <circle cx="30" cy="40" r="15" fill="#F2E27A" stroke="#1c1a17" stroke-width="2.5"/>
+                <path d="M30 32 V40 L36 44" stroke="#1c1a17" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M17 22 L12 17 M43 22 L48 17" stroke="#E55525" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M22 62 h16 M20 70 h20" stroke="#1c1a17" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="frame__cap"><div class="s">01</div><div class="t">{{V1_BEAT_1}}</div></div>
+          </div>
+          <div class="frame">
+            <div class="frame__art">
+              <svg viewBox="0 0 60 90" fill="none" aria-hidden="true">
+                <circle cx="30" cy="20" r="8" fill="#B0345A" stroke="#1c1a17" stroke-width="2.5"/>
+                <path d="M30 28 V50" stroke="#1c1a17" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M30 34 L18 40 M30 34 L42 40" stroke="#1c1a17" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M30 50 L20 66 L18 80 M30 50 L40 66 L42 80" stroke="#1c1a17" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M12 78 Q30 70 48 78" stroke="#E55525" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="frame__cap"><div class="s">02</div><div class="t">{{V1_BEAT_2}}</div></div>
+          </div>
+          <div class="frame">
+            <div class="frame__art">
+              <svg viewBox="0 0 60 90" fill="none" aria-hidden="true">
+                <rect x="8" y="8" width="44" height="74" rx="7" fill="#17140f" stroke="#1c1a17" stroke-width="2.5"/>
+                <rect x="16" y="20" width="28" height="20" rx="4" fill="none" stroke="#7BC59A" stroke-width="2" stroke-dasharray="4 3"/>
+                <text x="30" y="62" font-family="Instrument Serif, serif" font-style="italic" font-size="26" fill="#E55525" text-anchor="middle">3</text>
+                <text x="30" y="74" font-family="Bricolage Grotesque, sans-serif" font-size="7" fill="#c2bbac" text-anchor="middle" letter-spacing="1">COUNTED</text>
+              </svg>
+            </div>
+            <div class="frame__cap"><div class="s">03</div><div class="t">{{V1_BEAT_3}}</div></div>
+          </div>
+          <div class="frame">
+            <div class="frame__art">
+              <svg viewBox="0 0 60 90" fill="none" aria-hidden="true">
+                <rect x="8" y="8" width="44" height="74" rx="7" fill="#fdfbf6" stroke="#1c1a17" stroke-width="2.5"/>
+                <circle cx="30" cy="42" r="15" fill="#7BC59A" stroke="#1c1a17" stroke-width="2.5"/>
+                <path d="M23 42 L28 48 L38 36" stroke="#17140f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="30" y="72" font-family="Bricolage Grotesque, sans-serif" font-size="7" font-weight="700" fill="#1c1a17" text-anchor="middle" letter-spacing="1">ALARM OFF</text>
+              </svg>
+            </div>
+            <div class="frame__cap"><div class="s">04</div><div class="t">{{V1_BEAT_4}}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>06 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P7 · WHY THIS WORKS -->
+  <section class="page">
+    <div class="corner">07 · Why this works</div>
+    <div class="whyfit-page">
+      <div class="head">
+        <span class="tab">Why this works</span>
+        <h2>Four reasons this<br>is worth <em>trying</em>.</h2>
+      </div>
+      <!-- WHY: 4 short reasons this helps {{BRAND}} (brand-benefit terms, not creator terms). Rule-separated, no boxes. -->
+      <div class="whyfit-cards whyfit-cards--4">
+        <div class="whyfit-card">
+          <div class="n">01</div>
+          <h4>{{WHY_1_TITLE}}</h4>
+          <p>{{WHY_1_BODY}}</p>
+        </div>
+        <div class="whyfit-card">
+          <div class="n">02</div>
+          <h4>{{WHY_2_TITLE}}</h4>
+          <p>{{WHY_2_BODY}}</p>
+        </div>
+        <div class="whyfit-card">
+          <div class="n">03</div>
+          <h4>{{WHY_3_TITLE}}</h4>
+          <p>{{WHY_3_BODY}}</p>
+        </div>
+        <div class="whyfit-card">
+          <div class="n">04</div>
+          <h4>{{WHY_4_TITLE}}</h4>
+          <p>{{WHY_4_BODY}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>07 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P4 · AUDIENCE ============ -->
+  <section class="page">
+    <div class="corner">08 · The audience</div>
+
+    <div class="head">
+      <span class="tab">Who's watching</span>
+      <h2>340K founders,<br>operators and <em>makers</em>.</h2>
+      <p>People with ideas and no engineer, exactly who "I could build that" lands with. Figures from Instagram Insights.</p>
+    </div>
+
+    <div class="aud-tiles">
+      <div class="aud-tile"><div class="n">340<em>K</em></div><div class="l">Followers · +9% in 90 days</div></div>
+      <div class="aud-tile"><div class="n">200<em>K</em></div><div class="l">Avg. views per reel</div></div>
+      <div class="aud-tile"><div class="n">9.5<em>%</em></div><div class="l">Engagement · ~1.5% is average</div></div>
+      <div class="aud-tile"><div class="n">100<em>%</em></div><div class="l">Organic · no ads to grow</div></div>
+    </div>
+
+    <div class="aud-split">
+      <div class="aud-box">
+        <h4>Profession</h4>
+        <div class="brow"><span class="lab">Founders &amp; operators</span><span class="val">60%</span></div>
+        <div class="btrack"><div class="bfill" style="width:60%;background:var(--orange);"></div></div>
+        <div class="brow"><span class="lab">Marketers</span><span class="val">20%</span></div>
+        <div class="btrack"><div class="bfill" style="width:20%;background:var(--green);"></div></div>
+        <div class="brow"><span class="lab">Other creators</span><span class="val">5%</span></div>
+        <div class="btrack"><div class="bfill" style="width:5%;background:var(--blue);"></div></div>
+        <div class="brow"><span class="lab">Other</span><span class="val">15%</span></div>
+        <div class="btrack" style="margin-bottom:0;"><div class="bfill" style="width:15%;background:var(--plum);"></div></div>
+      </div>
+      <div class="aud-mini">
+        <div><div class="k">Age band</div><div class="v">18 to 45</div><div class="s">95% of the audience</div></div>
+        <div><div class="k">Gender</div><div class="v">80 / 20</div><div class="s">M / F</div></div>
+        <div><div class="k">Avg. partnership</div><div class="v">~2 yrs</div><div class="s">Brands stay and rebook</div></div>
+        <div><div class="k">Partnerships</div><div class="v">70+</div><div class="s">Mostly AI &amp; software</div></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>08 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P5 · BRANDS ============ -->
+  <section class="page">
+    <div class="corner">09 · The brands</div>
+
+    <div class="head">
+      <span class="tab">The company I keep</span>
+      <h2>Brands I've <em>worked with</em>.</h2>
+      <p>70+ partnerships shipped, mostly the AI and software tools my audience actually buys.</p>
+    </div>
+
+    <div class="wall">
+      <div class="t"><img src="logos/chatgpt.png" alt="ChatGPT"></div>
+      <div class="t"><img src="logos/replit.png" alt="Replit"></div>
+      <div class="t"><img src="logos/lindy-ai.svg" alt="Lindy AI"></div>
+      <div class="t"><img src="logos/heygen.svg" alt="HeyGen"></div>
+      <div class="t"><img src="logos/emergent.svg" alt="Emergent"></div>
+      <div class="t"><img src="logos/particl-ai.svg" alt="Particl AI"></div>
+      <div class="t"><img src="logos/gamma.svg" alt="Gamma"></div>
+      <div class="t"><img src="logos/luma-ai.svg" alt="Luma AI"></div>
+      <div class="t"><img src="logos/intercom.svg" alt="Intercom"></div>
+      <div class="t"><img src="logos/supernormal.svg" alt="Supernormal"></div>
+      <div class="t"><img src="logos/wispr-flow.png" alt="Wispr Flow"></div>
+      <div class="t"><img src="logos/adcreative-ai.svg" alt="AdCreative AI"></div>
+      <div class="t"><img src="logos/gohighlevel.svg" alt="GoHighLevel"></div>
+      <div class="t"><img src="logos/invideo-ai.svg" alt="InVideo AI"></div>
+      <div class="t"><img src="logos/meshy.svg" alt="Meshy"></div>
+      <div class="t"><img src="logos/LTXstudio.png" alt="LTX Studio"></div>
+      <div class="t"><img src="logos/creatify.svg" alt="Creatify"></div>
+      <div class="t"><img src="logos/omnisend.svg" alt="Omnisend"></div>
+      <div class="t"><img src="logos/kittl.svg" alt="Kittl"></div>
+      <div class="t"><img src="logos/Higgsfield.png" alt="Higgsfield"></div>
+      <div class="t"><img src="logos/alibabadotcom.svg" alt="Alibaba"></div>
+    </div>
+
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet</span>
+      <span>09 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ P6 · OPTIONS + PROCESS ============ -->
+  <section class="page">
+    <div class="corner">10 · Working together</div>
+
+    <div class="head">
+      <span class="tab">The options</span>
+      <h2>Three ways to work <em>together</em>.</h2>
+      <p>Each is a fixed scope. The series is built for the concept above.</p>
+    </div>
+
+    <div class="pkgs">
+      <div class="pkg pkg--f">
+        <span class="pkg__flag">Recommended</span>
+        <div class="pkg__name">The Series</div>
+        <div class="pkg__goal">3 videos · 3 months</div>
+        <hr class="pkg__rule">
+        <ul>
+          <li><strong>3 videos</strong>, one a month</li>
+          <li><strong>3 story sets</strong>, one per launch</li>
+          <li><strong>Bio link</strong> for the full partnership</li>
+          <li><strong>30-day paid usage rights</strong> per video</li>
+        </ul>
+        <div class="pkg__price">${{PRICE_SERIES}} <span class="cur">USD</span></div>
+      </div>
+
+      <div class="pkg">
+        <div class="pkg__name">UGC</div>
+        <div class="pkg__goal">For your channels</div>
+        <hr class="pkg__rule">
+        <ul>
+          <li><strong>3 videos</strong> for your feed and ads</li>
+          <li><strong>Full rights</strong> to run them</li>
+          <li>Built to upload, same hooks</li>
+          <li>Not posted to my page</li>
+        </ul>
+        <div class="pkg__price">${{PRICE_UGC}} <span class="cur">USD</span></div>
+      </div>
+
+      <div class="pkg pkg--q">
+        <div class="pkg__name">Single</div>
+        <div class="pkg__goal">Test it once</div>
+        <hr class="pkg__rule">
+        <ul>
+          <li><strong>1 video</strong> on @the_ecomjet</li>
+          <li><strong>1 story set</strong> + bio link</li>
+          <li>Usage rights on request</li>
+        </ul>
+        <div class="pkg__price">${{PRICE_SINGLE}} <span class="cur">USD</span></div>
+      </div>
+    </div>
+
+    <div class="head" style="margin-top:24px;">
+      <h2 style="font-size:24px;">The partnership process.</h2>
+    </div>
+    <div class="proc">
+      <div class="proc-step"><span class="n">1</span><h4>Pick a scope</h4><p>Reply with the option that fits. For the series, we lock dates up front.</p></div>
+      <div class="proc-step"><span class="n">2</span><h4>Sign off</h4><p>I send each concept before shooting, so you know what's going out.</p></div>
+      <div class="proc-step"><span class="n">3</span><h4>Build &amp; ship</h4><p>I handle making, filming and editing. You review, then it goes live.</p></div>
+      <div class="proc-step"><span class="n">4</span><h4>Performance report</h4><p>Real views, saves and engagement after each video.</p></div>
+    </div>
+
+    <div class="foot">
+      <span><strong>Kunwar Deep</strong> · @the_ecomjet · kunwar@thecomjet.com</span>
+      <span>10 / 10</span>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
