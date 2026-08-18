@@ -280,6 +280,137 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .sign-terms { font-size: 10.5px; color: var(--ink); margin-top: 5mm; line-height: 1.5; }
 .sign-terms .k { color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-size: 9px; font-weight: 700; display: block; margin-bottom: 1mm; }
 
+
+/* ============================================================
+   TIMELINE VIEW (screen only) — due dates & follow-ups.
+   Same statement palette; overdue uses a muted terracotta,
+   never an alarm red. Blue stays the accent.
+   ============================================================ */
+:root {
+  --over:   #A84A32;   /* muted terracotta, overdue */
+  --over-b: #EFE0D8;
+  --soon:   #8A6D1F;   /* dim ochre, due within 7 days */
+  --soon-b: #F0E9D5;
+  --calm:   #4E6B57;   /* settled green-slate */
+}
+
+/* View switch in the top bar */
+.view-seg { display: flex; border: 1px solid var(--ink); border-radius: 999px; padding: 3px; gap: 3px; background: var(--panel); }
+.view-seg button { padding: 7px 18px; font-size: 13px; font-weight: 700; border-radius: 999px; color: var(--ink); }
+.view-seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Which pane shows */
+.inv-app.view-timeline .inv-form,
+.inv-app.view-timeline .inv-doc-wrap { display: none; }
+.inv-app.view-invoice .inv-tl { display: none; }
+.inv-app.view-timeline { grid-template-columns: 1fr; }
+
+.inv-tl { grid-column: 1 / -1; }
+
+/* --- Stat tiles --- */
+.tl-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+@media (max-width: 720px) { .tl-stats { grid-template-columns: 1fr; } }
+.tl-stat {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+  padding: 16px 18px 15px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 18px 40px -30px rgba(20,20,40,.3);
+}
+.tl-stat .k { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--muted); }
+.tl-stat .v { font-family: var(--serif); font-style: italic; font-size: 34px; line-height: 1.15; margin-top: 6px; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.tl-stat .sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.tl-stat--over .v { color: var(--over); }
+.tl-stat--out .v { color: var(--ink); }
+.tl-stat--next .v { color: var(--blue); font-size: 27px; }
+
+/* --- Group headings --- */
+.tl-group { margin-bottom: 26px; }
+.tl-group > h3 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700;
+  color: var(--muted); margin: 0 0 10px; display: flex; align-items: center; gap: 9px;
+}
+.tl-group > h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.tl-group > h3 .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* --- One invoice row --- */
+.tl-row {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 13px;
+  padding: 14px 18px 15px; margin-bottom: 9px;
+  display: grid; grid-template-columns: 168px 1fr 132px; gap: 18px; align-items: center;
+  transition: border-color .12s, box-shadow .12s;
+}
+.tl-row:hover { border-color: var(--line-2); box-shadow: 0 10px 26px -22px rgba(20,20,40,.5); }
+@media (max-width: 860px) { .tl-row { grid-template-columns: 1fr; gap: 12px; } }
+
+.tl-id { min-width: 0; }
+.tl-id .num { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.tl-id .brand { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tl-id .amt { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 3px; }
+
+/* The rail: issue date ────●──── due date, dot = today */
+.tl-rail-wrap { min-width: 0; }
+.tl-rail-meta { position: relative; font-size: 10.5px; color: var(--muted); margin-bottom: 6px; font-variant-numeric: tabular-nums; height: 14px; }
+.tl-rail-meta .iss { position: absolute; left: 0; }
+.tl-rail-meta .due { position: absolute; left: 72%; transform: translateX(-50%); font-weight: 700; color: var(--ink); white-space: nowrap; }
+.tl-row--over .tl-rail-meta .due { color: var(--over); }
+.tl-rail-meta .due { font-weight: 700; color: var(--ink); }
+.tl-rail {
+  position: relative; height: 4px; border-radius: 999px;
+  background: var(--line); overflow: visible; margin-right: 8px;
+}
+.tl-rail .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--blue); }
+/* The due date as a fixed notch: the rail is read against it, not against its own end */
+.tl-rail .duemark { position: absolute; top: 50%; width: 2px; height: 10px; transform: translate(-50%, -50%); background: var(--line-2); border-radius: 1px; }
+.tl-row--over .tl-rail .duemark { background: var(--over); opacity: .55; }
+.tl-rail .today {
+  position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%;
+  transform: translate(-50%, -50%); background: var(--blue);
+  border: 2.5px solid var(--paper); box-shadow: 0 0 0 1px var(--blue);
+}
+/* Follow-up tick sits under the rail so it never fights the today dot */
+.tl-rail .nudge {
+  position: absolute; top: 50%; width: 2px; height: 13px; transform: translate(-50%, -50%);
+  background: var(--muted); opacity: .85; border-radius: 1px;
+}
+.tl-row--over .tl-rail .fill, .tl-row--over .tl-rail .today { background: var(--over); }
+.tl-row--over .tl-rail .today { box-shadow: 0 0 0 1px var(--over); }
+.tl-row--over .tl-rail { background: var(--over-b); }
+.tl-row--soon .tl-rail .fill, .tl-row--soon .tl-rail .today { background: var(--soon); }
+.tl-row--soon .tl-rail .today { box-shadow: 0 0 0 1px var(--soon); }
+.tl-row--soon .tl-rail { background: var(--soon-b); }
+
+.tl-status { font-size: 12.5px; margin-top: 7px; color: var(--muted); }
+.tl-status b { font-weight: 700; }
+.tl-row--over .tl-status b { color: var(--over); }
+.tl-row--soon .tl-status b { color: var(--soon); }
+.tl-status .chased { color: var(--muted); }
+.tl-status .never { color: var(--over); font-weight: 600; }
+
+/* Row actions */
+.tl-acts { display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 860px) { .tl-acts { flex-direction: row; flex-wrap: wrap; } }
+.tl-btn {
+  font-size: 12px; font-weight: 700; padding: 7px 10px; border-radius: 999px;
+  border: 1px solid var(--line-2); background: #fff; color: var(--ink); text-align: center;
+  transition: border-color .12s, background .12s, color .12s;
+}
+.tl-btn:hover { border-color: var(--ink); }
+.tl-btn--paid { border-color: var(--blue); color: var(--blue); }
+.tl-btn--paid:hover { background: var(--blue); color: #fff; }
+.tl-btn--quiet { border-color: var(--line); color: var(--muted); font-weight: 600; }
+.tl-btn--quiet:hover { border-color: var(--muted); color: var(--ink); }
+
+/* Settled section, deliberately recessive */
+.tl-group--paid .tl-row { background: transparent; border-color: var(--line); opacity: .72; padding: 10px 18px; grid-template-columns: 168px 1fr 132px; }
+.tl-group--paid .tl-row:hover { opacity: 1; }
+.tl-group--paid .tl-id .brand { font-size: 14px; }
+.tl-paid-line { font-size: 12.5px; color: var(--calm); font-weight: 600; }
+
+.tl-empty {
+  background: var(--paper); border: 1px dashed var(--line-2); border-radius: 14px;
+  padding: 30px 24px; text-align: center; color: var(--muted); font-size: 14px;
+}
+.tl-empty em { font-family: var(--serif); font-style: italic; color: var(--ink); }
+
 /* ============================================================
    PRINT
    ============================================================ */
@@ -287,7 +418,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   @page { size: A4; margin: 0; }
   html, body { background: #fff; }
   .inv-app { display: block; padding: 0; margin: 0; max-width: none; }
-  .inv-top, .inv-form, .no-print { display: none !important; }
+  .inv-top, .inv-form, .inv-tl, .no-print { display: none !important; }
+  .inv-app.view-timeline .inv-doc-wrap { display: block !important; }
   .inv-doc-wrap { display: block; }
   .inv-doc {
     transform: none !important;
@@ -301,11 +433,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 </head>
 <body>
 
-<div class="inv-app is-intl" id="app">
+<div class="inv-app is-intl view-invoice" id="app">
 
   <div class="inv-top no-print">
     <h1>Invoice <em>studio</em></h1>
-    <div class="inv-hint">Private. Fill the form, then Download PDF (Save as PDF, A4).</div>
+    <div class="view-seg" role="group" aria-label="View">
+      <button type="button" data-view="invoice" aria-pressed="true">Invoice</button>
+      <button type="button" data-view="timeline" aria-pressed="false">Timeline<span id="view-badge"></span></button>
+    </div>
+    <div class="inv-hint" id="top-hint">Private. Fill the form, then Download PDF (Save as PDF, A4).</div>
   </div>
 
   <!-- ============ FORM ============ -->
@@ -333,6 +469,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
         <label for="f-date">Date</label>
         <input type="date" id="f-date" />
       </div>
+    </div>
+    <div class="field">
+      <label for="f-due">Due date</label>
+      <input type="date" id="f-due" />
+      <div class="hint-sm">Filled in from the date and payment terms. Edit it if you agreed something else. Drives the timeline only, it is not printed.</div>
     </div>
 
     <h2>Billed to</h2>
@@ -417,6 +558,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       <ul id="hist-list"><li class="empty">No saved invoices yet.</li></ul>
     </div>
   </form>
+
+  <!-- ============ TIMELINE (screen only) ============ -->
+  <section class="inv-tl no-print" id="timeline" aria-label="Invoice timeline">
+    <div class="tl-stats" id="tl-stats"></div>
+    <div id="tl-groups"></div>
+  </section>
 
   <!-- ============ LIVE PREVIEW / PRINT TARGET ============ -->
   <div class="inv-doc-wrap">
@@ -551,6 +698,30 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     if (type === "india") return new Intl.NumberFormat("en-IN", Object.assign({ currency: "INR" }, opts)).format(amount);
     return new Intl.NumberFormat("en-US", Object.assign({ currency: "USD" }, opts)).format(amount);
   }
+  function todayIso() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  // Whole-day difference between two ISO dates (b - a). Parsed at noon so a DST
+  // shift can never round a day boundary the wrong way.
+  function daysBetween(aIso, bIso) {
+    const a = new Date(aIso + "T12:00:00"), b = new Date(bIso + "T12:00:00");
+    if (isNaN(a) || isNaN(b)) return 0;
+    return Math.round((b - a) / 86400000);
+  }
+  function addDays(iso, n) {
+    const d = new Date(iso + "T12:00:00");
+    if (isNaN(d)) return iso;
+    d.setDate(d.getDate() + n);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function fmtDateShort(iso) {
+    if (!iso) return "";
+    const d = new Date(iso + "T12:00:00");
+    if (isNaN(d)) return iso;
+    const m = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return d.getDate() + " " + m[d.getMonth()];
+  }
   function fmtDate(iso) {
     if (!iso) return "";
     const d = new Date(iso + "T00:00:00");
@@ -563,6 +734,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   const app = document.getElementById("app");
   const elNum = document.getElementById("f-num");
   const elDate = document.getElementById("f-date");
+  const elDue = document.getElementById("f-due");
   const btGst = document.getElementById("f-bt-gst");
   const liList = document.getElementById("li-list");
   const termsSel = document.getElementById("f-terms-sel");
@@ -630,6 +802,33 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     }
     return t;
   }
+  // Net days implied by the selected payment terms. The invoice already states the
+  // terms in words; this reads the same choice as a number so the timeline can place it.
+  function termsNetDays() {
+    const v = termsSel.value;
+    if (v === "__custom__") {
+      // Best effort on free text: "net 45", "within 45 days" -> 45. No match, fall back to 7.
+      const m = String(termsCustom.value).match(/(\d{1,3})\s*day/i) || String(termsCustom.value).match(/net\s*(\d{1,3})/i);
+      return m ? parseInt(m[1], 10) : 7;
+    }
+    if (v === "__split__") return 7;          // balance runs 7 days from posting
+    const m = String(v).match(/(\d{1,3})\s*day/i);
+    if (m) return parseInt(m[1], 10);
+    if (/advance/i.test(v)) return 0;         // 100% advance: due on issue
+    return 7;
+  }
+
+  // Fill the due-date field from date + terms. force=true overwrites whatever is
+  // there; otherwise a due date you typed by hand is left alone.
+  function syncDue(force) {
+    if (!elDate.value) return;
+    const derived = addDays(elDate.value, termsNetDays());
+    if (force || !elDue.value || elDue.dataset.derived === "1") {
+      elDue.value = derived;
+      elDue.dataset.derived = "1";
+    }
+  }
+
   function splitLabelSuffix() {
     if (termsSel.value !== "__split__") return "";
     return SPLIT === "advance" ? " — 50% advance" : " — final 50%";
@@ -778,6 +977,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     return {
       num: elNum.value.trim(),
       date: elDate.value,
+      due: elDue.value,
       type: TYPE,
       brand: document.getElementById("f-bt-name").value,
       addr: document.getElementById("f-bt-addr").value,
@@ -795,6 +995,20 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     };
   }
 
+  // Payment state (paid / follow-ups) is owned by the timeline, not the form, so a
+  // re-download must carry it over rather than reset it.
+  function carryPaymentState(inv) {
+    const prev = getInvoices().find(x => x.num === inv.num);
+    if (prev) {
+      inv.paid = !!prev.paid;
+      inv.paidDate = prev.paidDate || "";
+      inv.nudges = Array.isArray(prev.nudges) ? prev.nudges : [];
+    } else {
+      inv.paid = false; inv.paidDate = ""; inv.nudges = [];
+    }
+    return inv;
+  }
+
   // ---- Load a saved invoice object back into the form ----
   function loadForm(inv) {
     TYPE = inv.type || "intl";
@@ -806,6 +1020,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
     elNum.value = inv.num || "";
     elDate.value = inv.date || "";
+    elDue.value = inv.due || "";
+    elDue.dataset.derived = inv.due ? "0" : "1";
+    if (!elDue.value) syncDue(true);
     document.getElementById("f-bt-name").value = inv.brand || "";
     document.getElementById("f-bt-addr").value = inv.addr || "";
     btGst.value = inv.gst || "";
@@ -834,7 +1051,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
   // ---- Save (or update) the current invoice into the archive ----
   function saveCurrentInvoice() {
-    const inv = readForm();
+    const inv = carryPaymentState(readForm());
     if (!inv.num) return;
     const list = getInvoices();
     const idx = list.findIndex(x => x.num === inv.num);
@@ -842,11 +1059,13 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     else list.push(inv);
     saveInvoices(list);
     renderArchive();
+    renderTimeline();
   }
 
   function deleteInvoice(num) {
     saveInvoices(getInvoices().filter(x => x.num !== num));
     renderArchive();
+    renderTimeline();
     // if the deleted one was on screen, suggest a fresh number
     if (elNum.value.trim() === num) suggestNumber();
     render();
@@ -883,6 +1102,226 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     });
   }
 
+
+  /* ============================================================
+     TIMELINE — due dates and follow-ups, for Kunwar's eyes only.
+     Reads the same kd_invoices archive; nothing is ever sent anywhere.
+     ============================================================ */
+
+  // Due date for a saved invoice: what was stored, else derived from its own terms.
+  function dueOf(inv) {
+    if (inv.due) return inv.due;
+    if (!inv.date) return "";
+    let n = 7;
+    const v = inv.termsSel || "";
+    if (v === "__split__") n = 7;
+    else if (v === "__custom__") {
+      const m = String(inv.termsCustom || "").match(/(\d{1,3})\s*day/i);
+      n = m ? parseInt(m[1], 10) : 7;
+    } else {
+      const m = String(v).match(/(\d{1,3})\s*day/i);
+      if (m) n = parseInt(m[1], 10);
+      else if (/advance/i.test(v)) n = 0;
+    }
+    return addDays(inv.date, n);
+  }
+
+  function lastNudge(inv) {
+    const n = Array.isArray(inv.nudges) ? inv.nudges : [];
+    return n.length ? n[n.length - 1] : "";
+  }
+
+  // One invoice -> everything the row needs to draw itself.
+  function tlModel(inv) {
+    const today = todayIso();
+    const due = dueOf(inv);
+    const days = due ? daysBetween(today, due) : null;   // >0 upcoming, <0 overdue
+    let bucket = "upcoming";
+    if (inv.paid) bucket = "paid";
+    else if (days === null) bucket = "upcoming";
+    else if (days < 0) bucket = "over";
+    else if (days <= 7) bucket = "soon";
+    return { inv: inv, due: due, days: days, bucket: bucket, today: today };
+  }
+
+  // The rail is the point of this view, so it has to keep saying something after the
+  // due date passes. The due date is pinned at DUE_MARK% of the track and the last
+  // slice is reserved for overdue time; an overdue invoice therefore reads as a rail
+  // that has run past its marker, and 12 days over looks worse than 5 days over.
+  const DUE_MARK = 72;
+  function railHtml(m) {
+    const start = m.inv.date, end = m.due;
+    if (!start || !end) return '<div class="tl-rail"><span class="fill" style="width:0"></span></div>';
+    const span = Math.max(1, daysBetween(start, end));
+    // Overdue time is drawn against a 21-day tail, so the run-past grows but never escapes.
+    const OVER_SPAN = 21;
+    const pos = function (iso) {
+      const off = daysBetween(start, iso);
+      if (off <= span) return Math.max(0, (off / span) * DUE_MARK);
+      const over = Math.min(OVER_SPAN, off - span);
+      return DUE_MARK + (over / OVER_SPAN) * (100 - DUE_MARK);
+    };
+    const pct = m.inv.paid && m.inv.paidDate ? pos(m.inv.paidDate) : pos(m.today);
+    let out = '<div class="tl-rail">' +
+      '<span class="fill" style="width:' + pct.toFixed(1) + '%"></span>' +
+      '<span class="duemark" style="left:' + DUE_MARK + '%"></span>';
+    (m.inv.nudges || []).forEach(function (d) {
+      out += '<span class="nudge" style="left:' + pos(d).toFixed(1) + '%" title="Followed up ' + esc(fmtDateShort(d)) + '"></span>';
+    });
+    out += '<span class="today" style="left:' + pct.toFixed(1) + '%"></span></div>';
+    return out;
+  }
+
+  function statusHtml(m) {
+    if (m.inv.paid) {
+      return '<div class="tl-paid-line">Paid' + (m.inv.paidDate ? " " + esc(fmtDateShort(m.inv.paidDate)) : "") + "</div>";
+    }
+    let txt;
+    if (m.days === null) txt = "<b>No due date</b>";
+    else if (m.days < 0) txt = "<b>" + Math.abs(m.days) + " day" + (Math.abs(m.days) === 1 ? "" : "s") + " past due</b>";
+    else if (m.days === 0) txt = "<b>Due today</b>";
+    else txt = "Due in <b>" + m.days + " day" + (m.days === 1 ? "" : "s") + "</b>";
+
+    const last = lastNudge(m.inv);
+    let chase;
+    if (last) {
+      const ago = daysBetween(last, m.today);
+      chase = '<span class="chased">Last followed up ' + (ago === 0 ? "today" : ago + " day" + (ago === 1 ? "" : "s") + " ago") + "</span>";
+    } else if (m.days !== null && m.days < 0) {
+      chase = '<span class="never">Never followed up</span>';
+    } else {
+      chase = '<span class="chased">Not followed up yet</span>';
+    }
+    return '<div class="tl-status">' + txt + ' &nbsp;·&nbsp; ' + chase + "</div>";
+  }
+
+  function rowHtml(m) {
+    const inv = m.inv;
+    const money = fmtMoney(inv.total || 0, inv.type || "intl");
+    const acts = inv.paid
+      ? '<button type="button" class="tl-btn tl-btn--quiet" data-act="unpay">Mark unpaid</button>'
+      : '<button type="button" class="tl-btn tl-btn--paid" data-act="pay">Mark paid</button>' +
+        '<button type="button" class="tl-btn tl-btn--quiet" data-act="nudge">Followed up</button>';
+    return '<div class="tl-row tl-row--' + m.bucket + '" data-num="' + esc(inv.num) + '">' +
+      '<div class="tl-id">' +
+        '<div class="num">' + esc(inv.num) + "</div>" +
+        '<div class="brand">' + (esc(inv.brand) || "&mdash;") + "</div>" +
+        '<div class="amt">' + money + "</div>" +
+      "</div>" +
+      '<div class="tl-rail-wrap">' +
+        '<div class="tl-rail-meta"><span class="iss">Issued ' + esc(fmtDateShort(inv.date)) + "</span>" +
+          '<span class="due">' + (m.due ? "Due " + esc(fmtDateShort(m.due)) : "No due date") + "</span></div>" +
+        railHtml(m) + statusHtml(m) +
+      "</div>" +
+      '<div class="tl-acts">' + acts +
+        '<button type="button" class="tl-btn tl-btn--quiet" data-act="open">Open</button>' +
+      "</div>" +
+    "</div>";
+  }
+
+  function groupHtml(title, models, extraClass) {
+    if (!models.length) return "";
+    return '<div class="tl-group ' + (extraClass || "") + '"><h3>' + title +
+      ' <span class="n">' + models.length + "</span></h3>" +
+      models.map(rowHtml).join("") + "</div>";
+  }
+
+  function renderTimeline() {
+    const models = getInvoices().map(tlModel);
+    const statsEl = document.getElementById("tl-stats");
+    const groupsEl = document.getElementById("tl-groups");
+    const badge = document.getElementById("view-badge");
+
+    const unpaid = models.filter(m => !m.inv.paid);
+    const over   = unpaid.filter(m => m.bucket === "over").sort((a, b) => a.days - b.days);
+    const soon   = unpaid.filter(m => m.bucket === "soon").sort((a, b) => a.days - b.days);
+    const later  = unpaid.filter(m => m.bucket === "upcoming").sort((a, b) => (a.days === null) - (b.days === null) || a.days - b.days);
+    const paid   = models.filter(m => m.inv.paid).sort((a, b) => (a.inv.paidDate < b.inv.paidDate ? 1 : -1));
+
+    // Totals are per currency: rupees and dollars must never be added together.
+    function sumBy(list, type) { return list.filter(m => (m.inv.type || "intl") === type).reduce((t, m) => t + (m.inv.total || 0), 0); }
+    function moneyPair(list) {
+      const usd = sumBy(list, "intl"), inr = sumBy(list, "india");
+      const parts = [];
+      if (usd || !inr) parts.push(fmtMoney(usd, "intl"));
+      if (inr) parts.push(fmtMoney(inr, "india"));
+      return parts.join("  +  ");
+    }
+
+    const nextDue = soon.concat(later).filter(m => m.due)[0];
+    statsEl.innerHTML =
+      '<div class="tl-stat tl-stat--out"><div class="k">Outstanding</div><div class="v">' + moneyPair(unpaid) +
+        '</div><div class="sub">' + unpaid.length + " invoice" + (unpaid.length === 1 ? "" : "s") + " unpaid</div></div>" +
+      '<div class="tl-stat tl-stat--over"><div class="k">Overdue</div><div class="v">' + moneyPair(over) +
+        '</div><div class="sub">' + (over.length ? over.length + " past its due date" : "Nothing past due") + "</div></div>" +
+      '<div class="tl-stat tl-stat--next"><div class="k">Next due</div><div class="v">' +
+        (nextDue ? esc(fmtDateShort(nextDue.due)) : "&mdash;") + '</div><div class="sub">' +
+        (nextDue ? esc(nextDue.inv.brand || nextDue.inv.num) + " · " + (nextDue.days === 0 ? "today" : "in " + nextDue.days + " day" + (nextDue.days === 1 ? "" : "s")) : "Nothing scheduled") +
+        "</div></div>";
+
+    if (!models.length) {
+      groupsEl.innerHTML = '<div class="tl-empty">Nothing here yet. Download an invoice PDF and it will <em>appear on this timeline</em> with its due date.</div>';
+    } else if (!unpaid.length) {
+      groupsEl.innerHTML = '<div class="tl-empty">Every invoice is settled. <em>Nothing to chase.</em></div>' +
+        groupHtml("Settled", paid, "tl-group--paid");
+    } else {
+      groupsEl.innerHTML =
+        groupHtml("Overdue", over) +
+        groupHtml("Due soon", soon) +
+        groupHtml("Upcoming", later) +
+        groupHtml("Settled", paid, "tl-group--paid");
+    }
+
+    // Badge on the view switch so an overdue invoice is visible from the invoice pane.
+    if (badge) badge.textContent = over.length ? " · " + over.length : "";
+  }
+
+  function updateInvoice(num, fn) {
+    const list = getInvoices();
+    const inv = list.find(x => x.num === num);
+    if (!inv) return;
+    fn(inv);
+    saveInvoices(list);
+    renderTimeline();
+    renderArchive();
+  }
+
+  document.getElementById("tl-groups").addEventListener("click", function (e) {
+    const btn = e.target.closest("[data-act]");
+    if (!btn) return;
+    const num = btn.closest(".tl-row").dataset.num;
+    const act = btn.dataset.act;
+    if (act === "pay") updateInvoice(num, inv => { inv.paid = true; inv.paidDate = todayIso(); });
+    else if (act === "unpay") updateInvoice(num, inv => { inv.paid = false; inv.paidDate = ""; });
+    else if (act === "nudge") updateInvoice(num, inv => {
+      inv.nudges = Array.isArray(inv.nudges) ? inv.nudges : [];
+      const t = todayIso();
+      if (inv.nudges[inv.nudges.length - 1] !== t) inv.nudges.push(t);
+    });
+    else if (act === "open") {
+      const inv = getInvoices().find(x => x.num === num);
+      if (inv) { loadForm(inv); setView("invoice"); }
+    }
+  });
+
+  function setView(v) {
+    app.classList.toggle("view-timeline", v === "timeline");
+    app.classList.toggle("view-invoice", v !== "timeline");
+    document.querySelectorAll(".view-seg button[data-view]").forEach(b =>
+      b.setAttribute("aria-pressed", String(b.dataset.view === v)));
+    document.getElementById("top-hint").textContent = v === "timeline"
+      ? "Your view only. Nothing is sent to any brand."
+      : "Private. Fill the form, then Download PDF (Save as PDF, A4).";
+    if (v === "timeline") renderTimeline(); else fitDoc();
+  }
+  document.querySelectorAll(".view-seg button[data-view]").forEach(btn => {
+    btn.addEventListener("click", () => setView(btn.dataset.view));
+  });
+
+  // Keep the due date in step with the two inputs that imply it.
+  elDate.addEventListener("change", () => { syncDue(false); render(); });
+  elDue.addEventListener("input", () => { elDue.dataset.derived = "0"; });
+
   function suggestNumber() { elNum.value = nextNumber().text; }
 
   function isCurrentSaved() {
@@ -897,6 +1336,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     document.getElementById("f-supply").value = "";
     pcodeOn.checked = false; pcodeWrap.hidden = true; pcodeInput.value = "";
     liList.innerHTML = ""; makeLineRow();
+    elDate.value = todayIso();
+    elDue.dataset.derived = "1"; syncDue(true);
     suggestNumber(); render();
   }
 
@@ -929,6 +1370,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   termsSel.addEventListener("change", () => {
     termsCustomWrap.hidden = termsSel.value !== "__custom__";
     splitWrap.hidden = termsSel.value !== "__split__";
+    // Changing the terms is an explicit re-statement of when payment is due,
+    // so it overrides a previously derived date (but not one typed by hand).
+    if (elDue.dataset.derived !== "0") syncDue(true);
     render();
   });
   pcodeOn.addEventListener("change", () => { pcodeWrap.hidden = !pcodeOn.checked; render(); });
@@ -972,14 +1416,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   window.addEventListener("resize", fitDoc);
 
   // ---- Init ----
-  function todayIso() {
-    try { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
-    catch (e) { return "2026-07-09"; }
-  }
   elDate.value = todayIso();
+  syncDue(true);
   makeLineRow();
   suggestNumber();
   renderArchive();
+  renderTimeline();
   render();
 
 })();

@@ -26,9 +26,9 @@
 | File | Purpose |
 |---|---|
 | `private.html` | **The index of every private page.** Live at `/private`. Start here when you need to know what is unlisted. Add a row to it whenever you make a new private page. |
-| `invoice.html` | Invoice generator. See docs/invoice-tool.md. |
+| `invoice.html` | Invoice generator, plus a private **Timeline** view for tracking due dates and follow-ups (sends nothing to brands). See docs/invoice-tool.md. |
 | `agreement.html` | Brand collaboration agreement generator at `/agreement`. Multi-page A4 contract PDF, plus **shareable links**. See docs/agreement-tool.md. |
-| `sign.html` | The brand's read-only view of a shared agreement, served at `/s/<token>`. **Deliberately NOT in `robots.txt`** (a `Disallow: /s/` would advertise the path); privacy comes from the `noindex` meta tag + the `X-Robots-Tag` header in `vercel.json`. |
+| `sign.html` | The brand's view of a shared agreement, served at `/s/<token>`. They fill their fields and **sign** here. **Deliberately NOT in `robots.txt`** (a `Disallow: /s/` would advertise the path); privacy comes from the `noindex` meta tag + the `X-Robots-Tag` header in `vercel.json`. |
 | `rates.html` | Rate card at `/rates`, sent for cold/early pricing questions. Carries the site nav + footer (outbound links only, which does not make it discoverable). Warm inquiries get a full proposal instead. See docs/proposals.md. |
 | `proposal-{brand}-print.html` | Per-brand pitch pages (landscape PDF). Built from `proposal-template-print.html`. Usually exported to PDF and emailed, **not deployed**. See docs/proposals.md. |
 | `media-kit.html` | Source for the downloadable `media-kit.pdf`. 6-page Letter layout. The "Get the media kit" buttons link to the **PDF**, never to this page. To update the kit: edit here, then re-print (see below). |
@@ -71,7 +71,7 @@ reels/    per-reel cover JPGs: lindy-1..4, heygen-1..2, particl-1..5, emergent-1
 - **No build step** for pages. Open HTML directly, or run a dev server: `python3 -m http.server 3000` from project root → http://localhost:3000
 - **Exception: `/api`.** The shareable agreement links are serverless functions with one npm dependency and two env vars (`DATABASE_URL`, `SHARE_SECRET`). They need `npx vercel dev`, not the Python server. Everything else, including the agreement form and its PDF, works without them. See docs/deployment.md.
 - Test mobile on a real phone via `http://<mac-ip>:3000` (same Wi-Fi). Get IP: `ipconfig getifaddr en0`.
-- **CSS cache busting:** editing `styles.css` or `case-study.css` requires bumping its `?v=N` query across all pages (mobile Safari caches hard). Details in docs/design-system.md.
+- **CSS cache busting:** editing `styles.css`, `case-study.css` or `agreement-doc.css` requires bumping its `?v=N` query across all pages that link it (mobile Safari caches hard). `agreement-doc.css` is linked by **both** `agreement.html` and `sign.html`, and is print-critical. Details in docs/design-system.md.
 
 ## ⚠️ Deploying — READ docs/deployment.md FIRST
 Deploying is **not** as simple as `git push`. Two critical facts:
