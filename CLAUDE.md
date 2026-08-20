@@ -26,7 +26,7 @@
 | File | Purpose |
 |---|---|
 | `private.html` | **The index of every private page.** Live at `/private`. Start here when you need to know what is unlisted. Add a row to it whenever you make a new private page. |
-| `invoice.html` | Invoice generator, plus a private **Timeline** view for tracking due dates and follow-ups (sends nothing to brands). See docs/invoice-tool.md. |
+| `invoice.html` | Invoice generator, plus a private **Register** view for tracking due dates and follow-ups (sends nothing to brands). See docs/invoice-tool.md. |
 | `agreement.html` | Brand collaboration agreement generator at `/agreement`. Multi-page A4 contract PDF, plus **shareable links**. See docs/agreement-tool.md. |
 | `sign.html` | The brand's view of a shared agreement, served at `/s/<token>`. They fill their fields and **sign** here. **Deliberately NOT in `robots.txt`** (a `Disallow: /s/` would advertise the path); privacy comes from the `noindex` meta tag + the `X-Robots-Tag` header in `vercel.json`. |
 | `rates.html` | Rate card at `/rates`, sent for cold/early pricing questions. Carries the site nav + footer (outbound links only, which does not make it discoverable). Warm inquiries get a full proposal instead. See docs/proposals.md. |
@@ -51,7 +51,9 @@ python3 -m http.server 8899          # serve root, so fonts + images load
 
 **Auditing:** `grep -L 'name="robots"' *.html` lists pages with no noindex tag. Search `site:theecomjet.com` to see what Google actually has. If a private page is already indexed, `robots.txt` will not remove it (blocking the crawl prevents Google from seeing the noindex); use Search Console removal.
 
-**Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice and rates tools live.
+**Current status:** all pages complete and live on https://theecomjet.com. 5 case studies live (Lindy, HeyGen, Particl, Emergent, LTX Studio). Invoice, rates and agreement tools live.
+
+The invoice tool has a second **Register** view (private, screen-only) for tracking due dates and follow-ups: derived due dates, mark-paid, and a follow-up marker, all in `localStorage`. It sends nothing to brands. Code identifiers still say `timeline`; only the label is "Register". Designed as the reverse side of the invoice document: a paper sheet with the same spine and bands, where **each row's bottom rule is that invoice's clock**. Money is always tabular sans, never the serif italic; the two currencies are two pots and are never summed or converted. See docs/invoice-tool.md.
 
 **Shareable agreement links with in-browser signing are live** (Neon database `neon-bisque-queen`, `SHARE_SECRET` set). Share `/s/<token>` → the brand reads and signs in the browser → countersign from the studio → both parties download the executed PDF. No emailed attachments. See `docs/agreement-tool.md`.
 
