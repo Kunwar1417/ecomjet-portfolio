@@ -1898,16 +1898,40 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       .sort((a, b) => (a.inv.date < b.inv.date ? -1 : a.inv.date > b.inv.date ? 1 : (a.inv.num < b.inv.num ? -1 : 1)));
     if (!models.length) return;
 
-    const head = ["Invoice", "Invoice date", "Due date", "Brand", "Place", "Currency",
-                  "Subtotal", "Tax (IGST)", "Total", "Status", "Paid on"];
+    // Column names borrow GSTR-1's own vocabulary, so the CA can map them
+    // without asking what anything means. Figures stay raw numbers (no symbols,
+    // no grouping) so a spreadsheet can sum them; Currency says which unit.
+    //
+    // USD rows are exported in USD on purpose. GST values an exported service
+    // at the rate on the date of the time of supply, not at whatever the
+    // remittance actually converted at, so the conversion is the CA's lookup
+    // against their own rate convention. A rate invented here would only
+    // disagree with their books. Invoice date + Currency is all they need.
+    const head = ["Invoice", "Invoice date", "Due date", "Client", "Client GSTIN",
+                  "Place of supply", "Supply type", "SAC", "Currency",
+                  "Taxable value", "Tax type", "Tax rate %", "Tax amount",
+                  "Invoice total", "Status", "Paid on"];
     const rows = models.map(function (m) {
-      const isIndia = (m.inv.type || "intl") === "india";
+      const inv = m.inv;
+      const isIndia = (inv.type || "intl") === "india";
+      const gstin = isIndia ? String(inv.gst || "").trim() : "";
+      // Which GSTR-1 table the line belongs in, decided the way the CA would.
+      const supply = !isIndia ? "Export of services" : (gstin ? "B2B" : "B2C");
+      // One SAC per invoice in practice, but a line-item list can hold more.
+      const sac = Array.from(new Set((inv.items || [])
+        .map(it => String(it.sac || "").trim()).filter(Boolean))).join(" ");
       return [
-        m.inv.num, m.inv.date, m.due, m.inv.brand,
-        isIndia ? "India" : "International", isIndia ? "INR" : "USD",
-        m.split.sub, m.split.tax, m.split.total,
-        m.inv.paid ? "Paid" : (m.days !== null && m.days < 0 ? "Overdue" : "Open"),
-        m.inv.paid ? (m.inv.paidDate || "") : ""
+        inv.num, inv.date, m.due, inv.brand, gstin,
+        // Place of supply is a state, so it is left empty on exports rather
+        // than filled with a guess.
+        isIndia ? String(inv.supply || "").trim() : "",
+        supply, sac, isIndia ? "INR" : "USD",
+        m.split.sub,
+        isIndia ? "IGST" : "Zero-rated export",
+        isIndia ? 18 : 0,
+        m.split.tax, m.split.total,
+        inv.paid ? "Paid" : (m.days !== null && m.days < 0 ? "Overdue" : "Open"),
+        inv.paid ? (inv.paidDate || "") : ""
       ].map(csvCell).join(",");
     });
     // The BOM is what makes Excel read the rupee sign and the brand names right.

@@ -71,7 +71,18 @@ The page closes on a **panel summary bar** (`--panel` ground, one top hairline) 
 
 ### Export for the CA (`Export CSV`)
 
-The band's one control. It exports **exactly the period on screen** (`KD-register-2026-08.csv`, `KD-register-FY2026-27.csv`, `KD-register-all-time.csv`), in issue order, columns: Invoice, Invoice date, Due date, Brand, Place, Currency, Subtotal, Tax (IGST), Total, Status, Paid on. A **UTF-8 BOM** is prepended, which is what makes Excel read `₹` and the brand names correctly. Disabled when the period is empty. Kept pure data (no total rows) so it imports cleanly.
+The band's one control. It exports **exactly the period on screen** (`KD-register-2026-08.csv`, `KD-register-FY2026-27.csv`, `KD-register-all-time.csv`), in issue order. A **UTF-8 BOM** is prepended, which is what makes Excel read `₹` and the client names correctly. Disabled when the period is empty. Kept pure data (no total rows, no symbols, no digit grouping) so a spreadsheet can sum it.
+
+Columns borrow **GSTR-1's own vocabulary**, so the CA can map them without asking what anything means:
+
+`Invoice · Invoice date · Due date · Client · Client GSTIN · Place of supply · Supply type · SAC · Currency · Taxable value · Tax type · Tax rate % · Tax amount · Invoice total · Status · Paid on`
+
+- **`Supply type`** is derived the way the CA would decide it, and tells them which GSTR-1 table the row belongs in: `Export of services` for any international invoice, else `B2B` when a client GSTIN is present and `B2C` when it is not.
+- **`Client GSTIN` and `Place of supply` come straight off the form** (`f-bt-gst`, `f-supply`) and are blank if they were never filled. A missing GSTIN silently reclassifies a registered client as B2C, which costs them their input credit, and a ₹2.5L+ inter-state B2C line still needs a place of supply. **Both fields being optional in the form is the weak link in this export.**
+- **Place of supply is left empty on exports** rather than filled with a guess: it is a state, and Table 6A does not take one.
+- **USD rows stay in USD, deliberately.** GST values an exported service at the rate on the date of the time of supply, not at whatever the remittance actually converted at, so the conversion is the CA's lookup against their own rate convention (RBI reference, bank TT buying). A rate invented here would only disagree with their books. `Invoice date` + `Currency` is everything they need. This is the same principle that stops the register summing or converting currencies anywhere.
+- **`Tax type` / `Tax rate %` are `IGST` / `18` on every India invoice**, because that is what the document itself charges. If an intra-state (Delhi place of supply) case is ever handled, it splits into CGST + SGST and these two columns are where it lands.
+- **`Status` and `Paid on` are for Kunwar's own books, not for GST.** Liability attaches to the invoice, not the receipt; an overdue invoice is still tax payable in its own month.
 
 ### Rules that still hold
 
