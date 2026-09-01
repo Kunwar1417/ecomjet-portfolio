@@ -63,7 +63,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   gap: 16px; margin-bottom: 2px;
 }
 /* On the register the header shares the sheet's measure, so nothing floats free */
-.inv-app.view-timeline .inv-top { max-width: 968px; margin-left: auto; margin-right: auto; width: 100%; }
+.inv-app.view-timeline .inv-top { max-width: 1400px; margin-left: auto; margin-right: auto; width: 100%; }
 .inv-top h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
 .inv-top h1 em { font-family: var(--serif); font-style: italic; color: var(--blue); font-weight: 400; }
 .inv-top .inv-hint { color: var(--muted); font-size: 13px; text-align: right; }
@@ -288,22 +288,42 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 
 /* ============================================================
-   TIMELINE (screen only) — the ledger half of the studio.
-   The invoice document is a statement; this is the register it
-   is entered into. Ruled rows, a fixed column measure, figures
-   that align digit over digit. Not a dashboard.
+   THE REGISTER (screen only) — the book side of the studio.
+
+   The invoice is a document you send. This is the book you keep,
+   and at year end it is the book you hand your CA. So it is laid
+   out as a ledger page rather than a dashboard: one sheet, a blue
+   spine, a ruled margin column on the left for the state of the
+   account, and the account itself ruled in fixed columns to its
+   right. Both halves live inside one page frame, so nothing floats.
+
+   Signature: BILLED BY MONTH in the margin. Each month prints its
+   own total with a hairline bar, and clicking one turns the ledger
+   into that month's page. The period filter, the year's shape and
+   the navigation are one object.
+
+   Money is always Bricolage with tabular lining figures. Instrument
+   Serif italic is for sentences here, never for figures: a currency
+   column has to align digit over digit, and Indian grouping
+   (Rs 3,54,000) has an irregular rhythm a display italic worsens.
    ============================================================ */
 :root {
   --over:   #A8442B;   /* overdue: burnt sienna, grave not alarming */
   --soon:   #8A6A1C;   /* due soon: dim ochre */
   --calm:   #55705C;   /* settled: green-slate */
-  --rule:   #D8D5CA;
+  --rule:   #D8D5CA;   /* the ledger's ruling */
+  --rail:   #F5F3EC;   /* the margin column, a half step off the paper */
+
+  /* One column measure, shared by the ledger head and every row. */
+  --led-cols: 88px minmax(0,1fr) 96px 128px 120px 164px;
+  --led-gap: 14px;
+  --led-pad: 26px;
 }
 
-/* View switch */
-.view-seg { display: flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; background: var(--paper); }
+/* ---- View switch in the top bar ---- */
+.view-seg { display: flex; border: 1px solid var(--line-2); border-radius: 9px; overflow: hidden; background: var(--paper); }
 .view-seg button {
-  padding: 7px 16px; font-size: 12.5px; font-weight: 600; color: var(--muted);
+  padding: 7px 17px; font-size: 12.5px; font-weight: 600; color: var(--muted);
   border-right: 1px solid var(--line-2); transition: background .12s, color .12s;
 }
 .view-seg button:last-child { border-right: none; }
@@ -316,220 +336,387 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .inv-app.view-invoice .inv-tl { display: none; }
 .inv-app.view-timeline { grid-template-columns: 1fr; }
 
-/* ============================================================
-   THE REGISTER  (the timeline view; class names stay .view-timeline)
-   Not a dashboard, and not a list floating on a desk: this is the
-   reverse side of the invoice itself. Same paper, same navy, same blue
-   spine, same header and footer bands as .inv-doc, so the two views
-   read as two faces of one document.
-
-   Signature: rows are ruled like a statement, and each row's rule IS
-   that invoice's clock. The ledger's lines and its meters are one
-   object, so nothing extra floats in the margin.
-
-   Money is set in tabular lining sans, always, at Bricolage's display
-   optical size. The serif italic is for sentences here, never figures:
-   a currency column has to align digit over digit, and Indian grouping
-   (Rs 3,54,000) has an irregular rhythm a display italic only worsens.
-   ============================================================ */
+/* ---- The sheet ---- */
 .inv-tl {
   grid-column: 1 / -1;
-  width: 100%; max-width: 968px; margin: 0 auto;
+  width: 100%; max-width: 1400px; margin: 0 auto;
   background: var(--paper);
   border: 1px solid var(--line);
   border-left: 5px solid var(--blue);
-  box-shadow: 0 2px 4px rgba(0,0,0,.035), 0 30px 60px -34px rgba(20,20,40,.42);
+  box-shadow: 0 2px 4px rgba(0,0,0,.035), 0 34px 66px -38px rgba(20,20,40,.44);
   overflow: hidden;
 }
-.tl-band, .tl-sum, .tl-foot { padding-left: 44px; padding-right: 44px; }
 
-/* ---- Header band, rhyming with the invoice's own ---- */
+/* ---- Head band: the page's masthead ---- */
 .tl-band {
   background: var(--panel); border-bottom: 1px solid var(--line);
-  padding-top: 17px; padding-bottom: 17px;
-  display: flex; align-items: baseline; justify-content: space-between; gap: 18px;
+  padding: 15px var(--led-pad) 15px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
 }
 .tl-band .title { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+.tl-band .right { display: flex; align-items: center; gap: 16px; }
 .tl-band .asof { font-size: 11px; color: var(--muted); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
 
-/* ---- Summary: two pots of money, never one blended number ----
-   The figure lane here is the same 152px lane the row figures use, so
-   the totals sit directly above their own column. That alignment is
-   what makes a statement read as one column of money. */
-.tl-sum { padding-top: 26px; }
-.tl-sum:empty { display: none; }
+.tl-export {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .01em;
+  padding: 7px 13px; border-radius: 8px;
+  border: 1px solid var(--line-2); background: var(--paper); color: var(--ink);
+  transition: background .13s, border-color .13s, color .13s;
+}
+.tl-export:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.tl-export:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.tl-export[disabled] { opacity: .38; cursor: default; }
+.tl-export[disabled]:hover { background: var(--paper); border-color: var(--line-2); color: var(--ink); }
+
+/* ---- The page body: ruled margin column + the account ---- */
+.tl-work { display: grid; grid-template-columns: 288px minmax(0,1fr); align-items: start; }
+
+/* ============================================================
+   MARGIN COLUMN — what the account is worth right now, and the
+   year it was billed over. Ruled off the ledger with one hairline.
+   ============================================================ */
+.tl-rail {
+  background: var(--rail); border-right: 1px solid var(--line);
+  padding: 22px 22px 26px;
+  position: sticky; top: 0;
+  max-height: 100vh; overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
+}
+.tl-rail::-webkit-scrollbar { width: 7px; }
+.tl-rail::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
 .tl-eyebrow {
-  font-size: 10px; text-transform: uppercase; letter-spacing: .14em;
-  font-weight: 700; color: var(--muted); margin-bottom: 10px;
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .15em;
+  font-weight: 700; color: var(--muted); margin-bottom: 12px;
 }
-.tl-pot {
-  display: grid; grid-template-columns: minmax(0,1fr) 152px; gap: 18px;
-  align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--rule);
+/* A block with nothing to say leaves no rule behind (everything settled empties
+   the facts; a fresh register empties both). */
+.tl-sum:empty, .tl-facts:empty { display: none; }
+/* Nothing on file yet: there is no margin to rule and no columns to head, so
+   the page carries one invitation and nothing else. */
+.inv-tl.is-blank .tl-rail, .inv-tl.is-blank .tl-head { display: none; }
+.inv-tl.is-blank .tl-work { grid-template-columns: minmax(0, 1fr); }
+.inv-tl.is-blank .tl-period { display: none; }
+.inv-tl.is-blank .tl-empty { padding-top: 52px; }
+
+/* Two currencies are two accounts. Never summed, never converted:
+   an FX rate invented here would make a private book lie about what
+   is actually arriving. Both pots print at one size, so neither
+   reads as a footnote to the other. */
+.tl-pot { padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.tl-pot:last-of-type { border-bottom: none; }
+.tl-pot .who {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  font-size: 11.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px;
 }
-.tl-pot .who { font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--ink); }
-.tl-pot .who .n {
-  font-weight: 500; color: var(--muted); letter-spacing: 0;
-  margin-left: 9px; font-variant-numeric: tabular-nums;
-}
-/* Both pots at one size, on purpose: two accounts, not a headline and a
-   footnote. Bricolage's opsz axis gives the figure display presence
-   without leaving the family the rest of the numbers are set in. */
+.tl-pot .who .n { font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
 .tl-pot .fig {
-  text-align: right; font-size: 36px; line-height: 1.05; font-weight: 700;
-  letter-spacing: -0.03em; color: var(--ink);
-  font-variant-numeric: tabular-nums lining;
+  font-size: 31px; line-height: 1.04; font-weight: 700; letter-spacing: -0.035em;
+  color: var(--ink); font-variant-numeric: tabular-nums lining;
   font-variation-settings: "opsz" 72;
 }
-.tl-clear {
-  font-size: 14px; color: var(--muted); padding: 2px 0 12px;
-  border-bottom: 1px solid var(--rule);
-}
-.tl-clear em { font-family: var(--serif); font-style: italic; color: var(--ink); font-size: 19px; }
-.tl-under {
-  padding-top: 11px; display: flex; gap: 22px; flex-wrap: wrap;
-  font-size: 12.5px; color: var(--muted);
-}
-.tl-under b { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
-.tl-under .is-over, .tl-under .is-over b { color: var(--over); }
+.tl-clear { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.tl-clear em { font-family: var(--serif); font-style: italic; color: var(--ink); font-size: 17px; }
 
-/* ---- Groups: ruled bands, like the periods of a statement ---- */
-.tl-body { padding: 38px 0 26px; }
-.tl-group { margin-bottom: 26px; }
-.tl-group:last-child { margin-bottom: 0; }
-.tl-group > h3 {
-  display: grid; grid-template-columns: minmax(0,1fr) 132px 152px; gap: 18px;
-  align-items: baseline; margin: 0 44px; padding-bottom: 8px;
-  border-bottom: 1.5px solid var(--ink);
-  font-size: 10px; text-transform: uppercase; letter-spacing: .14em;
+/* Three plain facts, ruled like a statement's foot. */
+.tl-facts { margin-top: 16px; border-top: 1px solid var(--rule); padding-top: 4px; }
+.tl-facts .f {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid var(--rule);
+  font-size: 12px; color: var(--muted);
+}
+.tl-facts .f:last-child { border-bottom: none; }
+.tl-facts .v { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+.tl-facts .f.is-over .v { color: var(--over); }
+.tl-facts .f .v .sm { font-weight: 500; color: var(--muted); }
+
+/* ---- THE SIGNATURE: billed by month ----
+   A year read down the margin. The bar is a rhythm, not a readout
+   (the figure beside it is the readout), and each currency is scaled
+   to its own biggest month so neither is flattened by the other. */
+.tl-spine { margin-top: 24px; }
+.tl-spine .tl-eyebrow { margin-bottom: 9px; }
+.tl-years { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tl-yr {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 4px 9px;
+  border-radius: 6px; border: 1px solid var(--line-2); color: var(--muted);
+  background: transparent; transition: background .12s, color .12s, border-color .12s;
+}
+.tl-yr:hover { border-color: var(--ink); color: var(--ink); }
+.tl-yr[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.tl-yr:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.tl-months { display: block; }
+.tl-mo {
+  display: block; width: 100%; text-align: left;
+  padding: 6px 8px 7px; border-radius: 7px 7px 0 0; border: 1px solid transparent;
+  border-bottom: 1px solid var(--rule);
+  transition: background .12s, border-color .12s;
+}
+.tl-mo:hover { background: rgba(20,33,58,.045); }
+.tl-mo:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.tl-mo[aria-pressed="true"] { background: var(--paper); border-color: var(--line-2); box-shadow: inset 3px 0 0 var(--blue); }
+.tl-mo .row1 {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  font-size: 11.5px;
+}
+.tl-mo .mo { font-weight: 700; color: var(--ink); letter-spacing: .01em; }
+.tl-mo[aria-pressed="false"].is-empty .mo { color: var(--muted); font-weight: 500; }
+.tl-mo .amt {
+  font-variant-numeric: tabular-nums lining; font-weight: 600; color: var(--ink);
+  white-space: nowrap; font-size: 11.5px;
+}
+.tl-mo .amt .two { display: block; color: var(--muted); font-weight: 500; }
+.tl-mo.is-empty .amt { color: var(--muted); opacity: .5; font-weight: 500; }
+.tl-bars { margin-top: 5px; display: block; }
+.tl-bars .bar { display: block; height: 2px; margin-top: 2px; }
+.tl-bars .bar > i {
+  display: block; height: 100%; background: var(--ink); opacity: .55;
+  transform-origin: left center; transform: scaleX(1);
+}
+.tl-bars .bar.usd > i { background: var(--blue); opacity: .55; }
+.tl-mo[aria-pressed="true"] .tl-bars .bar > i { opacity: .9; }
+
+.tl-scope {
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule);
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+}
+
+/* ============================================================
+   THE ACCOUNT — fixed columns, ruled rows, money in its own column.
+   ============================================================ */
+.tl-ledger { min-width: 0; }
+
+/* Period head: which page of the book you are on, and what it adds up to. */
+.tl-period { padding: 22px var(--led-pad) 16px; border-bottom: 1px solid var(--rule); }
+.tl-period .ph {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.tl-period h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.025em; }
+.tl-period h2 .qual { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--muted); font-size: 20px; margin-left: 7px; }
+.tl-reset {
+  font-size: 11.5px; font-weight: 600; color: var(--blue);
+  border-bottom: 1px solid rgba(43,73,196,.35); padding-bottom: 1px;
+}
+.tl-reset:hover { border-bottom-color: var(--blue); }
+.tl-reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+.tl-period .sub {
+  margin-top: 5px; font-size: 11.5px; color: var(--muted);
+  font-variant-numeric: tabular-nums; letter-spacing: .01em;
+}
+/* A page of a book closes on a double rule and what it comes to. The period's
+   money lives here rather than in the heading: the heading says which page you
+   are on, the foot says what the page adds up to. */
+.tl-close {
+  display: flex; align-items: baseline; gap: 12px 30px; flex-wrap: wrap;
+  padding: 16px var(--led-pad) 22px;
+  border-top: 4px double var(--ink);
+}
+.tl-close .cl {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .15em;
+  font-weight: 700; color: var(--ink); flex-shrink: 0;
+}
+.tl-tally { display: flex; flex-direction: column; gap: 8px; }
+.tl-tally .acct {
+  display: flex; align-items: baseline; gap: 0 26px; flex-wrap: wrap;
+}
+.tl-tally .who {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
+  color: var(--muted); width: 92px; flex-shrink: 0;
+}
+.tl-tally .m { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.tl-tally .m b {
+  font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums lining;
+  font-size: 13.5px; margin-left: 6px;
+}
+.tl-tally .m.is-open b { color: var(--over); }
+.tl-tally .m.is-paid b { color: var(--calm); }
+
+/* Column heads, printed once and pinned while you scroll a long page. */
+.tl-head {
+  display: grid; grid-template-columns: var(--led-cols); gap: var(--led-gap);
+  padding: 9px var(--led-pad) 8px;
+  position: sticky; top: 0; z-index: 3;
+  background: var(--panel); border-bottom: 1px solid var(--ink);
+  font-size: 9px; text-transform: uppercase; letter-spacing: .15em;
   font-weight: 700; color: var(--muted);
 }
-.tl-group > h3 .n { color: var(--muted); font-weight: 600; letter-spacing: .04em; margin-left: 7px; }
-.tl-group > h3 .lab { text-align: right; font-size: 9px; letter-spacing: .16em; font-weight: 600; opacity: .55; }
-.tl-group--over > h3 { color: var(--over); border-bottom-color: var(--over); }
-.tl-group--paid > h3 { color: var(--muted); border-bottom-color: var(--line-2); }
+.tl-head .r { text-align: right; }
 
-/* ---- A row: two lines and a charged rule ---- */
-.tl-row { position: relative; padding: 15px 44px 16px; transition: background .12s; }
-.tl-row:hover { background: rgba(20,33,58,.028); }
-.tl-row--over { background: rgba(168,68,43,.03); }
-.tl-row--over:hover { background: rgba(168,68,43,.06); }
+/* Group bands: the account's sections. */
+.tl-group + .tl-group { margin-top: 22px; }
+.tl-group > h3 {
+  display: flex; align-items: baseline; gap: 9px;
+  margin: 0; padding: 14px var(--led-pad) 7px;
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .15em;
+  font-weight: 700; color: var(--muted);
+}
+.tl-group > h3::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+.tl-group > h3 .n { color: var(--muted); font-weight: 600; letter-spacing: .04em; opacity: .7; }
+.tl-group--over > h3 { color: var(--over); }
+.tl-group--over > h3::after { background: rgba(168,68,43,.3); }
 
-.tl-line1 { display: grid; grid-template-columns: minmax(0,1fr) 132px 152px; gap: 18px; align-items: baseline; }
-.tl-brand {
-  font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink);
+/* ---- A line of the account ---- */
+.tl-row {
+  display: grid; grid-template-columns: var(--led-cols); gap: var(--led-gap);
+  align-items: center; min-height: 52px;
+  padding: 8px var(--led-pad); border-bottom: 1px solid var(--rule);
+  transition: background .12s;
+}
+.tl-row:hover { background: rgba(20,33,58,.032); }
+.tl-row--over { background: rgba(168,68,43,.035); box-shadow: inset 3px 0 0 var(--over); }
+.tl-row--over:hover { background: rgba(168,68,43,.07); }
+
+.tl-num {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  font-variant-numeric: tabular-nums; letter-spacing: .01em; white-space: nowrap;
+}
+.tl-open {
+  min-width: 0; text-align: left; display: block;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border-bottom: 1px solid transparent; padding-bottom: 1px;
 }
-.tl-when {
-  text-align: right; font-size: 12.5px; font-weight: 700; color: var(--ink);
+.tl-open:hover { border-bottom-color: var(--line-2); }
+.tl-open:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
+.tl-open .tag {
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin-left: 8px; vertical-align: 1px;
+}
+
+.tl-dates {
+  font-size: 11.5px; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tl-dates .to { color: var(--muted); margin: 0 4px; }
+.tl-dates .d2 { color: var(--muted); }
+
+.tl-status { min-width: 0; }
+.tl-status .s {
+  font-size: 12px; font-weight: 700; color: var(--ink);
   font-variant-numeric: tabular-nums; white-space: nowrap;
+  display: flex; align-items: baseline; gap: 5px;
 }
-.tl-when .tick { margin-right: 5px; }
-.tl-row--over .tl-when { color: var(--over); }
-.tl-row--soon .tl-when { color: var(--soon); }
-.tl-row--paid .tl-when { color: var(--calm); font-weight: 600; }
+.tl-status .s::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: var(--muted); opacity: .5; align-self: center;
+}
+.tl-row--over .tl-status .s { color: var(--over); }
+.tl-row--over .tl-status .s::before { background: var(--over); opacity: 1; }
+.tl-row--soon .tl-status .s { color: var(--soon); }
+.tl-row--soon .tl-status .s::before { background: var(--soon); opacity: 1; }
+.tl-row--paid .tl-status .s { color: var(--calm); font-weight: 600; }
+.tl-row--paid .tl-status .s::before { background: var(--calm); opacity: .85; }
+.tl-status .chase { font-size: 10.5px; color: var(--muted); margin-top: 2px; padding-left: 11px; white-space: nowrap; }
+.tl-status .chase.never { color: var(--over); font-weight: 600; }
+
 .tl-amt {
-  text-align: right; font-size: 20px; font-weight: 700; letter-spacing: -0.025em;
+  text-align: right; font-size: 17px; font-weight: 700; letter-spacing: -0.025em;
   color: var(--ink); font-variant-numeric: tabular-nums lining; white-space: nowrap;
 }
+.tl-row--paid .tl-amt { color: var(--muted); font-weight: 600; }
 
-.tl-line2 {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; margin-top: 6px; min-height: 27px;   /* reserve the button height, so hover never shifts the row */
-}
-.tl-meta {
-  min-width: 0; display: flex; gap: 8px; flex-wrap: wrap;
-  font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums;
-}
-.tl-meta .num { font-weight: 600; letter-spacing: .01em; color: var(--ink); opacity: .72; }
-.tl-meta .sep { opacity: .4; }
-.tl-meta .never { color: var(--over); font-weight: 600; }
-
-/* ---- The rule IS the meter ----
-   Track is a hairline; the fill is 3px laid on top, so an untouched row
-   still reads as a ruled line and a running one has ink on it. */
-.tl-rule { position: absolute; left: 44px; right: 44px; bottom: 0; height: 1px; background: var(--rule); }
-.tl-rule .fill {
-  position: absolute; left: 0; top: -1px; height: 3px; background: var(--muted); opacity: .55;
-  transform-origin: left center;
-  animation: tl-charge .52s cubic-bezier(.22,.61,.36,1) both; animation-delay: var(--d, 0s);
-}
-.tl-rule .notch { position: absolute; top: -4px; height: 9px; width: 1px; background: var(--ink); opacity: .45; }
-.tl-rule .tick { position: absolute; top: -3px; height: 7px; width: 1px; background: var(--ink); opacity: .32; transform: translateX(-50%); }
-.tl-rule .now {
-  position: absolute; top: 50%; width: 7px; height: 7px; border-radius: 50%;
-  transform: translate(-50%, -50%); background: var(--ink);
-  box-shadow: 0 0 0 2.5px var(--paper);
-  animation: tl-pop .28s ease-out both; animation-delay: calc(var(--d, 0s) + .40s);
-}
-.tl-row--over .tl-rule .fill  { background: var(--over); opacity: .9; }
-.tl-row--over .tl-rule .now   { background: var(--over); }
-.tl-row--over .tl-rule .notch { background: var(--over); opacity: .85; }
-.tl-row--soon .tl-rule .fill  { background: var(--soon); opacity: .82; }
-.tl-row--soon .tl-rule .now   { background: var(--soon); }
-.tl-row--paid .tl-rule .fill  { background: var(--calm); opacity: .75; }
-.tl-row--paid .tl-rule .now   { background: var(--calm); }
-@keyframes tl-charge { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes tl-pop {
-  from { opacity: 0; transform: translate(-50%,-50%) scale(.3); }
-  to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-}
-/* The sweep is a once-per-entry moment. Acting on a row re-renders without it. */
-.tl-body.no-anim .tl-rule .fill, .tl-body.no-anim .tl-rule .now { animation: none; }
-@media (prefers-reduced-motion: reduce) {
-  .tl-rule .fill, .tl-rule .now { animation: none; }
-}
-
-/* ---- Actions: quiet until the row is hovered ---- */
-.tl-acts { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+/* Actions live in a reserved lane, so revealing them never moves a line. */
+.tl-acts { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
 .tl-btn {
-  font-size: 11.5px; font-weight: 600; padding: 6px 11px; border-radius: 7px;
-  border: 1px solid var(--line-2); background: #fff; color: var(--muted);
-  white-space: nowrap;
+  font-size: 10.5px; font-weight: 600; padding: 5px 8px; border-radius: 7px;
+  border: 1px solid var(--line-2); background: var(--paper); color: var(--muted);
+  white-space: nowrap; opacity: 0;
   transition: border-color .12s, color .12s, background .12s, opacity .14s;
 }
+.tl-row:hover .tl-btn, .tl-btn:focus-visible { opacity: 1; }
 .tl-btn:hover { border-color: var(--ink); color: var(--ink); }
 .tl-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .tl-btn--paid { color: var(--ink); font-weight: 700; }
 .tl-btn--paid:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.tl-btn--sec { opacity: 0; }
-.tl-row:hover .tl-btn--sec, .tl-btn--sec:focus-visible { opacity: 1; }
-@media (hover: none) { .tl-btn--sec { opacity: 1; } }
+@media (hover: none) { .tl-btn { opacity: 1; } }
 
-/* ---- Settled: still on the page, but spent ---- */
-.tl-group--paid .tl-row { padding-top: 11px; padding-bottom: 12px; opacity: .62; }
+/* Settled lines are spent, but still on the page. */
+.tl-group--paid .tl-row { opacity: .6; min-height: 44px; }
 .tl-group--paid .tl-row:hover { opacity: 1; }
-.tl-group--paid .tl-brand { font-size: 14px; font-weight: 600; }
-.tl-group--paid .tl-amt { font-size: 16px; font-weight: 600; color: var(--muted); }
+.tl-group--paid .tl-open { font-size: 13.5px; font-weight: 600; }
+.tl-group--paid .tl-amt { font-size: 15px; }
 
-.tl-empty { padding: 4px 44px 18px; color: var(--muted); font-size: 14px; max-width: 46ch; line-height: 1.6; }
-.tl-empty em { font-family: var(--serif); font-style: italic; color: var(--ink); font-size: 17px; }
+.tl-empty { padding: 40px var(--led-pad) 44px; color: var(--muted); font-size: 14px; max-width: 48ch; line-height: 1.65; }
+.tl-empty em { font-family: var(--serif); font-style: italic; color: var(--ink); font-size: 18px; }
+.tl-empty .tl-reset { margin-top: 10px; display: inline-block; }
 
-/* ---- Footer band: the page has a bottom edge ---- */
+.tl-body { padding-bottom: 24px; }
+
+/* One orchestrated moment on entering the view: the account fills in
+   from the top, and the year's bars grow. Acting on a row re-renders
+   without it, so marking three invoices paid does not replay a show. */
+@keyframes tl-line { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes tl-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.tl-body:not(.no-anim) .tl-row { animation: tl-line .34s cubic-bezier(.22,.61,.36,1) both; animation-delay: var(--d, 0s); }
+.tl-body:not(.no-anim) .tl-group--paid .tl-row { animation-name: tl-line; }
+.tl-anim .tl-bars .bar > i { animation: tl-grow .5s cubic-bezier(.22,.61,.36,1) both; animation-delay: var(--d, 0s); }
+@media (prefers-reduced-motion: reduce) {
+  .tl-body:not(.no-anim) .tl-row, .tl-anim .tl-bars .bar > i { animation: none; }
+}
+
+/* ---- Foot band ---- */
 .tl-foot {
   background: var(--panel); border-top: 1px solid var(--line);
-  padding-top: 13px; padding-bottom: 13px;
+  padding: 12px var(--led-pad) 12px 24px;
   display: flex; justify-content: space-between; gap: 14px;
   font-size: 11px; color: var(--muted);
 }
 .tl-foot .r { font-variant-numeric: tabular-nums; }
 
-@media (max-width: 720px) {
+/* ---- Narrower desktops: the margin column becomes a header strip ---- */
+@media (max-width: 1240px) {
+  :root { --led-cols: 82px minmax(0,1fr) 94px 122px 114px 156px; --led-gap: 12px; --led-pad: 20px; }
+  .tl-work { grid-template-columns: minmax(0, 1fr); }
+  .tl-rail {
+    position: static; max-height: none; overflow: visible;
+    border-right: none; border-bottom: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 48px;
+    padding: 20px 20px 22px;
+  }
+  /* Side by side, so the two pots stop making the strip tall. */
+  .tl-sum { display: flex; flex-wrap: wrap; gap: 0 40px; min-width: 0; }
+  .tl-sum .tl-eyebrow { flex-basis: 100%; }
+  .tl-pot { border-bottom: none; padding-bottom: 0; margin-bottom: 0; min-width: 160px; }
+  .tl-facts { width: 280px; max-width: 100%; margin-top: 0; border-top: none; padding-top: 0; }
+  /* min-width:0 lets the scrolling month strip stop widening the whole sheet. */
+  .tl-spine { flex-basis: 100%; min-width: 0; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  /* The year reads across instead of down. */
+  .tl-months { display: flex; gap: 6px; max-width: 100%; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+  .tl-mo {
+    width: 132px; flex: 0 0 132px; border: 1px solid var(--line); background: var(--paper);
+    border-radius: 8px; padding-bottom: 8px;
+  }
+  .tl-mo .row1 { display: block; }
+  .tl-mo .amt { display: block; margin-top: 3px; }
+  .tl-scope { flex-basis: 100%; }
+}
+
+@media (max-width: 860px) {
   .inv-tl { border-left-width: 4px; }
-  .tl-band, .tl-sum, .tl-foot { padding-left: 20px; padding-right: 20px; }
-  /* Stacked rows are no longer columnar, so column heads stop meaning anything */
-  .tl-group > h3 { margin-left: 20px; margin-right: 20px; grid-template-columns: 1fr; }
-  .tl-group > h3 .lab { display: none; }
-  .tl-row { padding-left: 20px; padding-right: 20px; }
-  .tl-rule { left: 20px; right: 20px; }
-  .tl-pot { grid-template-columns: minmax(0,1fr) auto; }
-  .tl-pot .fig { font-size: 30px; }
-  .tl-line1 { grid-template-columns: minmax(0,1fr) auto; grid-template-areas: "b b" "w a"; row-gap: 4px; }
-  .tl-brand { grid-area: b; white-space: normal; }
-  .tl-when { grid-area: w; text-align: left; }
-  .tl-amt { grid-area: a; }
-  .tl-line2 { flex-direction: column; align-items: flex-start; gap: 9px; }
-  .tl-btn--sec { opacity: 1; }
+  :root { --led-pad: 16px; }
+  .tl-head { display: none; }
+  .tl-row {
+    grid-template-columns: minmax(0,1fr) auto;
+    grid-template-areas: "num amt" "brand amt" "dates status" "acts acts";
+    row-gap: 3px; align-items: baseline; padding: 12px var(--led-pad) 13px;
+  }
+  .tl-num { grid-area: num; }
+  .tl-open { grid-area: brand; white-space: normal; font-size: 15px; }
+  .tl-dates { grid-area: dates; }
+  .tl-status { grid-area: status; text-align: right; }
+  .tl-status .s { justify-content: flex-end; }
+  .tl-status .chase { padding-left: 0; text-align: right; }
+  .tl-amt { grid-area: amt; align-self: start; }
+  .tl-acts { grid-area: acts; justify-content: flex-start; margin-top: 8px; }
+  .tl-btn { opacity: 1; }
+  /* Stacked again, so the two pots need their own rule back. */
+  .tl-sum { display: block; }
+  .tl-pot { border-bottom: 1px solid var(--rule); padding-bottom: 11px; margin-bottom: 11px; }
+  .tl-pot:last-of-type { border-bottom: none; margin-bottom: 0; }
+  .tl-period h2 { font-size: 18px; }
+  .tl-tally .who { width: auto; }
   .tl-foot { flex-direction: column; gap: 4px; }
+  .tl-band { flex-wrap: wrap; gap: 10px; }
 }
 
 /* ============================================================
@@ -675,7 +862,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
     <div class="inv-history">
       <h2>Saved invoices</h2>
-      <div class="hint-sm" style="margin:-4px 0 10px">Click any invoice to reopen and re-download it. Saved when you Download PDF.</div>
+      <div class="hint-sm" style="margin:-4px 0 10px">Click any invoice to reopen and re-download it. Saved when you Download PDF. For a month or year of invoices, and the CSV your CA wants, open the Register.</div>
       <ul id="hist-list"><li class="empty">No saved invoices yet.</li></ul>
     </div>
   </form>
@@ -684,10 +871,41 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   <section class="inv-tl no-print" id="timeline" aria-label="Register">
     <div class="tl-band">
       <div class="title">Register</div>
-      <div class="asof" id="tl-asof"></div>
+      <div class="right">
+        <span class="asof" id="tl-asof"></span>
+        <button type="button" class="tl-export" id="tl-csv">Export CSV</button>
+      </div>
     </div>
-    <div class="tl-sum" id="tl-head"></div>
-    <div class="tl-body" id="tl-groups"></div>
+
+    <div class="tl-work">
+      <!-- The ruled margin: what the account is worth, and the year it was billed over -->
+      <aside class="tl-rail">
+        <div class="tl-sum" id="tl-sum"></div>
+        <div class="tl-facts" id="tl-facts"></div>
+
+        <div class="tl-spine" id="tl-spine">
+          <div class="tl-eyebrow">Billed by month</div>
+          <div class="tl-years" id="tl-years" role="group" aria-label="Period"></div>
+          <div class="tl-months" id="tl-months" role="group" aria-label="Month"></div>
+          <div class="tl-scope" id="tl-scope"></div>
+        </div>
+      </aside>
+
+      <!-- The account itself -->
+      <div class="tl-ledger">
+        <div class="tl-period" id="tl-period"></div>
+        <div class="tl-head" aria-hidden="true">
+          <span>Invoice</span>
+          <span>Brand</span>
+          <span>Issued &rarr; due</span>
+          <span>Status</span>
+          <span class="r">Amount</span>
+          <span></span>
+        </div>
+        <div class="tl-body" id="tl-groups"></div>
+      </div>
+    </div>
+
     <div class="tl-foot">
       <span>Your view only. Nothing here is sent to any brand.</span>
       <span class="r" id="tl-count"></span>
@@ -1233,9 +1451,22 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 
   /* ============================================================
-     TIMELINE — due dates and follow-ups, for Kunwar's eyes only.
+     THE REGISTER — the book Kunwar keeps, and the book his CA gets.
      Reads the same kd_invoices archive; nothing is ever sent anywhere.
+
+     Two lenses on one book, and the lens is the only thing that changes:
+       - All time  -> grouped by urgency. "Who owes me, and how late?"
+       - A period  -> that month/year/FY as a page of the book, in order
+                      of issue. "What did I bill, and what tax is on it?"
+     Periods are always cut by INVOICE DATE, never by due date, because
+     that is the date the books are kept on.
      ============================================================ */
+
+  // {kind:'all'} | {kind:'year',y} | {kind:'fy',y} | {kind:'month',y,m}   (m is 0-11)
+  let PERIOD = { kind: "all" };
+
+  const MON_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const MON_LONG  = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
   // Due date for a saved invoice: what was stored, else derived from its own terms.
   function dueOf(inv) {
@@ -1260,7 +1491,20 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     return n.length ? n[n.length - 1] : "";
   }
 
-  // One invoice -> everything the row needs to draw itself.
+  // Subtotal / tax / total for one saved invoice. Line items are the source;
+  // the stored total wins on any disagreement, since that is what was sent.
+  function invSplit(inv) {
+    const items = Array.isArray(inv.items) ? inv.items : [];
+    const isIndia = (inv.type || "intl") === "india";
+    const total = Number(inv.total) || 0;
+    let sub = 0;
+    items.forEach(it => { sub += (Number(it.qty) || 0) * (Number(it.price) || 0); });
+    if (!sub) sub = isIndia ? Math.round(total / 1.18) : total;
+    const tax = isIndia ? Math.max(0, total - sub) : 0;
+    return { sub: sub, tax: tax, total: total || sub + tax };
+  }
+
+  // One invoice -> everything a line needs to draw itself.
   function tlModel(inv) {
     const today = todayIso();
     const due = dueOf(inv);
@@ -1270,123 +1514,59 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     else if (days === null) bucket = "upcoming";
     else if (days < 0) bucket = "over";
     else if (days <= 7) bucket = "soon";
-    return { inv: inv, due: due, days: days, bucket: bucket, today: today };
+    return { inv: inv, due: due, days: days, bucket: bucket, today: today, split: invSplit(inv) };
   }
 
-  // The row's bottom rule IS the meter. It runs from the issue date to a FIXED
-  // due notch at DUE_MARK, and the remaining slice is a 21-day overdue tail. A
-  // rail that simply ran 0-100% between issue and due would draw every late
-  // invoice as the same full bar, i.e. it would stop carrying information
-  // exactly when it matters. With the notch pinned, 12 days late visibly
-  // outruns 5 days late.
-  const DUE_MARK = 68;
-  function ruleHtml(m) {
-    const start = m.inv.date, end = m.due;
-    if (!start || !end) return '<div class="tl-rule"></div>';
-    const span = Math.max(1, daysBetween(start, end));
-    const OVER_SPAN = 21;
-    const pos = function (iso) {
-      const off = daysBetween(start, iso);
-      if (off <= span) return Math.max(0, (off / span) * DUE_MARK);
-      return DUE_MARK + (Math.min(OVER_SPAN, off - span) / OVER_SPAN) * (100 - DUE_MARK);
-    };
-    const pct = m.inv.paid && m.inv.paidDate ? pos(m.inv.paidDate) : pos(m.today);
-    let out = '<div class="tl-rule"><span class="fill" style="width:' + pct.toFixed(1) + '%"></span>' +
-      '<span class="notch" style="left:' + DUE_MARK + '%" title="Due ' + esc(fmtDateShort(end)) + '"></span>';
-    (m.inv.nudges || []).forEach(function (d) {
-      out += '<span class="tick" style="left:' + pos(d).toFixed(1) + '%" title="Followed up ' + esc(fmtDateShort(d)) + '"></span>';
-    });
-    return out + '<span class="now" style="left:' + pct.toFixed(1) + '%"></span></div>';
-  }
+  /* ---- Periods ------------------------------------------------------- */
 
-  // The headline for a row: how late, or how long left.
-  function whenText(m) {
-    if (m.days === null) return "No due date";
-    if (m.days < 0) return Math.abs(m.days) + " day" + (Math.abs(m.days) === 1 ? "" : "s") + " late";
-    if (m.days === 0) return "Due today";
-    return "Due in " + m.days + " day" + (m.days === 1 ? "" : "s");
-  }
-
-  function chaseText(m) {
-    const last = lastNudge(m.inv);
-    if (last) {
-      const ago = daysBetween(last, m.today);
-      return "<span>Followed up " + (ago === 0 ? "today" : ago === 1 ? "yesterday" : ago + " days ago") + "</span>";
+  // Indian books close on 31 March, so the financial year is offered alongside
+  // the calendar one. Both are just ranges over the invoice date.
+  function periodRange(p) {
+    if (!p || p.kind === "all") return null;
+    if (p.kind === "month") {
+      const last = new Date(p.y, p.m + 1, 0).getDate();
+      const mm = String(p.m + 1).padStart(2, "0");
+      return { from: p.y + "-" + mm + "-01", to: p.y + "-" + mm + "-" + String(last).padStart(2, "0") };
     }
-    if (m.days !== null && m.days < 0) return '<span class="never">Not followed up</span>';
-    return "";
+    if (p.kind === "fy") return { from: p.y + "-04-01", to: (p.y + 1) + "-03-31" };
+    return { from: p.y + "-01-01", to: p.y + "-12-31" };
+  }
+  function inPeriod(inv, p) {
+    const r = periodRange(p);
+    if (!r) return true;
+    const d = inv.date || "";
+    return d >= r.from && d <= r.to;
+  }
+  function periodLabel(p) {
+    if (!p || p.kind === "all") return "All time";
+    if (p.kind === "month") return MON_LONG[p.m] + " " + p.y;
+    if (p.kind === "fy") return "FY " + p.y + "–" + String((p.y + 1) % 100).padStart(2, "0");
+    return String(p.y);
+  }
+  function periodSlug(p) {
+    if (!p || p.kind === "all") return "all-time";
+    if (p.kind === "month") return p.y + "-" + String(p.m + 1).padStart(2, "0");
+    if (p.kind === "fy") return "FY" + p.y + "-" + String((p.y + 1) % 100).padStart(2, "0");
+    return String(p.y);
+  }
+  function yearOf(iso) {
+    const y = parseInt(String(iso || "").slice(0, 4), 10);
+    return isNaN(y) ? null : y;
+  }
+  // Which year the month spine is showing. A month or year selection pins it;
+  // otherwise it opens on the most recent year that has invoices in it.
+  function spineYear(all) {
+    if (PERIOD.kind === "month" || PERIOD.kind === "year") return PERIOD.y;
+    if (PERIOD.kind === "fy") return PERIOD.y;
+    const years = all.map(inv => yearOf(inv.date)).filter(Boolean);
+    return years.length ? Math.max.apply(null, years) : new Date().getFullYear();
   }
 
-  // Two lines: who and how much on the first, the paperwork and the actions on
-  // the second. The figure sits in a fixed right lane so a mixed-currency
-  // register still scans as one column of money.
-  function rowHtml(m, i) {
-    const inv = m.inv;
-    const acts = inv.paid
-      ? '<button type="button" class="tl-btn tl-btn--sec" data-act="open">Open</button>' +
-        '<button type="button" class="tl-btn tl-btn--sec" data-act="unpay">Reopen</button>'
-      : '<button type="button" class="tl-btn tl-btn--sec" data-act="open">Open</button>' +
-        '<button type="button" class="tl-btn tl-btn--sec" data-act="nudge">Followed up</button>' +
-        '<button type="button" class="tl-btn tl-btn--paid" data-act="pay">Mark paid</button>';
+  /* ---- The margin: outstanding, the three facts, and the year -------- */
 
-    const when = inv.paid
-      ? '<span class="tick">&#10003;</span>Paid ' + esc(fmtDateShort(inv.paidDate))
-      : esc(whenText(m));
-
-    const meta = ['<span class="num">' + esc(inv.num) + "</span>",
-                  "<span>Issued " + esc(fmtDateShort(inv.date)) + "</span>"];
-    if (!inv.paid) {
-      if (m.due) meta.push("<span>Due " + esc(fmtDateShort(m.due)) + "</span>");
-      const c = chaseText(m);
-      if (c) meta.push(c);
-    }
-
-    return '<div class="tl-row tl-row--' + m.bucket + '" data-num="' + esc(inv.num) +
-      '" style="--d:' + (i * 0.045).toFixed(3) + 's">' +
-      '<div class="tl-line1">' +
-        '<div class="tl-brand">' + (esc(inv.brand) || "Untitled") + "</div>" +
-        '<div class="tl-when">' + when + "</div>" +
-        '<div class="tl-amt">' + fmtMoney(inv.total || 0, inv.type || "intl") + "</div>" +
-      "</div>" +
-      '<div class="tl-line2">' +
-        '<div class="tl-meta">' + meta.join('<span class="sep">&middot;</span>') + "</div>" +
-        '<div class="tl-acts">' + acts + "</div>" +
-      "</div>" +
-      ruleHtml(m) +
-    "</div>";
-  }
-
-  // Column labels are printed once, over the first band, like a statement head.
-  function groupHtml(spec, labels, ctr) {
-    const cols = '<span class="lab c1">' + (labels ? labels[0] : "") + "</span>" +
-                 '<span class="lab c2">' + (labels ? labels[1] : "") + "</span>";
-    return '<div class="tl-group ' + spec.cls + '">' +
-      "<h3><span>" + spec.t + '<span class="n">' + spec.list.length + "</span></span>" + cols + "</h3>" +
-      spec.list.map(function (m) { return rowHtml(m, ctr.i++); }).join("") + "</div>";
-  }
-
-  function renderTimeline(animate) {
-    const models = getInvoices().map(tlModel);
-    const sumEl = document.getElementById("tl-head");
-    const groupsEl = document.getElementById("tl-groups");
-    const badge = document.getElementById("view-badge");
-
-    const unpaid = models.filter(m => !m.inv.paid);
-    const over   = unpaid.filter(m => m.bucket === "over").sort((a, b) => a.days - b.days);
-    const soon   = unpaid.filter(m => m.bucket === "soon").sort((a, b) => a.days - b.days);
-    const later  = unpaid.filter(m => m.bucket === "upcoming").sort((a, b) => (a.days === null) - (b.days === null) || a.days - b.days);
-    const paid   = models.filter(m => m.inv.paid).sort((a, b) => (a.inv.paidDate < b.inv.paidDate ? 1 : -1));
-
-    document.getElementById("tl-asof").textContent = "As of " + fmtDate(todayIso());
-    document.getElementById("tl-count").textContent = models.length
-      ? models.length + (models.length === 1 ? " invoice" : " invoices") + " on file" : "";
-
-    // Two currencies are two accounts, not one total. They are never summed and
-    // never converted: an exchange rate invented here would make a private
-    // ledger lie about what is actually arriving. Both pots print at the same
-    // size, so neither reads as a footnote to the other. The labels match the
-    // form's own India / International toggle, and the money lands in the same
-    // lane as the row figures underneath it.
+  function renderRail(all, unpaid, over, nextDue, animate) {
+    // Two currencies are two accounts. Never summed, never converted: an FX rate
+    // invented here would make a private book lie about what is arriving.
     const pots = [{ label: "India", type: "india" }, { label: "International", type: "intl" }]
       .map(function (p) {
         const list = unpaid.filter(m => ((m.inv.type || "intl") === "india") === (p.type === "india"));
@@ -1394,49 +1574,318 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
                  total: list.reduce((t, m) => t + (m.inv.total || 0), 0) };
       }).filter(p => p.n);
 
-    // An empty register says its one thing in the body, so the summary stays out
-    // of the way entirely rather than repeating the sentence underneath it.
     let sum = "";
-    if (models.length) {
-      sum = '<div class="tl-eyebrow">Owed to you</div>';
-      if (pots.length) {
-        sum += pots.map(p =>
-          '<div class="tl-pot"><div class="who">' + p.label +
-            '<span class="n">' + p.n + " invoice" + (p.n === 1 ? "" : "s") + "</span></div>" +
-            '<div class="fig">' + fmtMoney(p.total, p.type) + "</div></div>").join("");
-      } else {
-        sum += '<div class="tl-clear">Every invoice is settled. <em>Nothing to chase.</em></div>';
+    if (!all.length) {
+      sum = "";
+    } else if (pots.length) {
+      sum = '<div class="tl-eyebrow">Outstanding</div>' + pots.map(p =>
+        '<div class="tl-pot"><div class="who"><span>' + p.label + "</span>" +
+          '<span class="n">' + p.n + " invoice" + (p.n === 1 ? "" : "s") + "</span></div>" +
+          '<div class="fig">' + fmtMoney(p.total, p.type) + "</div></div>").join("");
+    } else {
+      sum = '<div class="tl-eyebrow">Outstanding</div>' +
+        '<div class="tl-clear">Every invoice is settled. <em>Nothing to chase.</em></div>';
+    }
+    document.getElementById("tl-sum").innerHTML = sum;
+
+    let facts = "";
+    if (unpaid.length) {
+      facts += '<div class="f"><span>Open</span><span class="v">' + unpaid.length + "</span></div>";
+      facts += '<div class="f' + (over.length ? " is-over" : "") + '"><span>Past due</span>' +
+               '<span class="v">' + (over.length || "None") + "</span></div>";
+      if (nextDue) {
+        facts += '<div class="f"><span>Next due</span><span class="v">' +
+          esc(nextDue.inv.brand || nextDue.inv.num) +
+          '<span class="sm"> &middot; ' + (nextDue.days === 0 ? "today" : "in " + nextDue.days + "d") +
+          "</span></span></div>";
       }
     }
-    // The under-line only reports on open money. With nothing open it would be
-    // padding, and the settled line above has already said so.
-    if (unpaid.length) {
-      const bits = ["<span><b>" + unpaid.length + "</b> open</span>"];
-      bits.push(over.length
-        ? '<span class="is-over"><b>' + over.length + "</b> past due</span>"
-        : "<span>Nothing past due</span>");
-      const nextDue = soon.concat(later).filter(m => m.due)[0];
-      if (nextDue) bits.push("<span>Next: <b>" + esc(nextDue.inv.brand || nextDue.inv.num) + "</b>, " +
-        (nextDue.days === 0 ? "today" : "in " + nextDue.days + " day" + (nextDue.days === 1 ? "" : "s")) + "</span>");
-      sum += '<div class="tl-under">' + bits.join("") + "</div>";
-    }
-    sumEl.innerHTML = sum;
+    document.getElementById("tl-facts").innerHTML = facts;
 
-    const specs = [
-      { t: "Past due", list: over,  cls: "tl-group--over", labels: ["Due", "Amount"] },
-      { t: "Due soon", list: soon,  cls: "",               labels: ["Due", "Amount"] },
-      { t: "Upcoming", list: later, cls: "",               labels: ["Due", "Amount"] },
-      { t: "Settled",  list: paid,  cls: "tl-group--paid", labels: ["Paid", "Amount"] }
-    ].filter(s => s.list.length);
+    renderSpine(all, animate);
+  }
+
+  // THE SIGNATURE. The year read down the margin: every month prints what was
+  // billed in it, and clicking one turns the ledger into that month's page.
+  // The bar is the year's rhythm; the figure beside it is the readout. Each
+  // currency is scaled to its own biggest month, so neither flattens the other.
+  function renderSpine(all, animate) {
+    const yearsEl = document.getElementById("tl-years");
+    const monthsEl = document.getElementById("tl-months");
+    const spineEl = document.getElementById("tl-spine");
+
+    const years = Array.from(new Set(all.map(inv => yearOf(inv.date)).filter(Boolean))).sort((a, b) => b - a);
+    if (!years.length) years.push(new Date().getFullYear());
+
+    let chips = '<button type="button" class="tl-yr" data-p="all" aria-pressed="' +
+                (PERIOD.kind === "all") + '">All time</button>';
+    years.forEach(function (y) {
+      chips += '<button type="button" class="tl-yr" data-p="year" data-y="' + y + '" aria-pressed="' +
+        (PERIOD.kind === "year" && PERIOD.y === y) + '">' + y + "</button>";
+      chips += '<button type="button" class="tl-yr" data-p="fy" data-y="' + y + '" aria-pressed="' +
+        (PERIOD.kind === "fy" && PERIOD.y === y) + '" title="Financial year, 1 April ' + y +
+        " to 31 March " + (y + 1) + '">FY ' + String(y % 100) + "–" + String((y + 1) % 100) + "</button>";
+    });
+    yearsEl.innerHTML = chips;
+
+    // A calendar year runs Jan-Dec; a financial year runs Apr-Mar and crosses
+    // into the next one, so the spine is built as an explicit list of months.
+    const base = spineYear(all);
+    const cells = [];
+    if (PERIOD.kind === "fy") {
+      for (let i = 0; i < 12; i++) {
+        const m = (3 + i) % 12, y = base + (3 + i > 11 ? 1 : 0);
+        cells.push({ y: y, m: m, label: MON_SHORT[m] + (y !== base ? " " + String(y % 100) : "") });
+      }
+    } else {
+      for (let m = 0; m < 12; m++) cells.push({ y: base, m: m, label: MON_SHORT[m] });
+    }
+
+    cells.forEach(function (c) {
+      const list = all.filter(inv => inPeriod(inv, { kind: "month", y: c.y, m: c.m }));
+      c.inr = list.filter(inv => (inv.type || "intl") === "india").reduce((t, inv) => t + (inv.total || 0), 0);
+      c.usd = list.filter(inv => (inv.type || "intl") !== "india").reduce((t, inv) => t + (inv.total || 0), 0);
+      c.n = list.length;
+    });
+    const maxInr = Math.max.apply(null, cells.map(c => c.inr).concat([0]));
+    const maxUsd = Math.max.apply(null, cells.map(c => c.usd).concat([0]));
+
+    monthsEl.innerHTML = cells.map(function (c, i) {
+      const on = PERIOD.kind === "month" && PERIOD.y === c.y && PERIOD.m === c.m;
+      let amt = "";
+      if (!c.n) amt = "&ndash;";
+      else {
+        const parts = [];
+        if (c.inr) parts.push(fmtMoney(c.inr, "india"));
+        if (c.usd) parts.push(fmtMoney(c.usd, "intl"));
+        amt = parts[0] + (parts[1] ? '<span class="two">' + parts[1] + "</span>" : "");
+      }
+      // A bar is drawn only for a currency that actually has money in this
+      // month, so a quiet month stays a single ruled line.
+      let bars = "";
+      if (c.inr && maxInr) bars += '<span class="bar"><i style="width:' + (c.inr / maxInr * 100).toFixed(1) +
+        '%;--d:' + (i * 0.026).toFixed(3) + 's"></i></span>';
+      if (c.usd && maxUsd) bars += '<span class="bar usd"><i style="width:' + (c.usd / maxUsd * 100).toFixed(1) +
+        '%;--d:' + (i * 0.026 + 0.06).toFixed(3) + 's"></i></span>';
+
+      return '<button type="button" class="tl-mo' + (c.n ? "" : " is-empty") + '" aria-pressed="' + on +
+        '" data-y="' + c.y + '" data-m="' + c.m + '">' +
+        '<span class="row1"><span class="mo">' + c.label + '</span><span class="amt">' + amt + "</span></span>" +
+        (bars ? '<span class="tl-bars">' + bars + "</span>" : "") +
+        "</button>";
+    }).join("");
+
+    const legend = maxInr && maxUsd
+      ? "<b>Ink</b> is India, <b>blue</b> is international. Each is scaled to its own biggest month."
+      : "Bars are scaled to the biggest month.";
+    document.getElementById("tl-scope").innerHTML =
+      "Cut by invoice date, not due date. " + legend +
+      " Outstanding above covers every open invoice, in any period.";
+
+    spineEl.classList.toggle("tl-anim", !!animate);
+
+    // When the spine lays out as a horizontal strip, a month chosen off-screen
+    // has to be brought back into view or the selection looks like nothing.
+    const sel = monthsEl.querySelector('.tl-mo[aria-pressed="true"]');
+    if (sel && monthsEl.scrollWidth > monthsEl.clientWidth + 4) {
+      monthsEl.scrollLeft = Math.max(0, sel.offsetLeft - monthsEl.clientWidth / 2 + sel.offsetWidth / 2);
+    }
+  }
+
+  /* ---- The account -------------------------------------------------- */
+
+  function statusText(m) {
+    if (m.inv.paid) return "Paid " + fmtDateShort(m.inv.paidDate);
+    if (m.days === null) return "No due date";
+    if (m.days < 0) return Math.abs(m.days) + " day" + (Math.abs(m.days) === 1 ? "" : "s") + " late";
+    if (m.days === 0) return "Due today";
+    return "Due in " + m.days + " day" + (m.days === 1 ? "" : "s");
+  }
+
+  function chaseText(m) {
+    if (m.inv.paid) return "";
+    const last = lastNudge(m.inv);
+    if (last) {
+      const ago = daysBetween(last, m.today);
+      return '<span class="chase">Followed up ' +
+        (ago === 0 ? "today" : ago === 1 ? "yesterday" : ago + " days ago") + "</span>";
+    }
+    if (m.days !== null && m.days < 0) return '<span class="chase never">Not followed up</span>';
+    return "";
+  }
+
+  // One line of the account. Fixed columns, so the money stays a column.
+  function rowHtml(m, i) {
+    const inv = m.inv;
+    const acts = inv.paid
+      ? '<button type="button" class="tl-btn" data-act="unpay">Reopen</button>'
+      : '<button type="button" class="tl-btn" data-act="nudge">Followed up</button>' +
+        '<button type="button" class="tl-btn tl-btn--paid" data-act="pay">Mark paid</button>';
+
+    return '<div class="tl-row tl-row--' + m.bucket + '" data-num="' + esc(inv.num) +
+      '" style="--d:' + Math.min(i, 14) * 0.028 + 's">' +
+      '<div class="tl-num">' + esc(inv.num) + "</div>" +
+      '<button type="button" class="tl-open" data-act="open" title="Open this invoice">' +
+        (esc(inv.brand) || "Untitled") +
+        ((inv.type || "intl") === "india" ? '<span class="tag">IN</span>' : "") +
+      "</button>" +
+      '<div class="tl-dates">' + esc(fmtDateShort(inv.date)) +
+        '<span class="to">&rarr;</span><span class="d2">' + esc(fmtDateShort(m.due)) + "</span></div>" +
+      '<div class="tl-status"><span class="s">' + esc(statusText(m)) + "</span>" + chaseText(m) + "</div>" +
+      '<div class="tl-amt">' + fmtMoney(inv.total || 0, inv.type || "intl") + "</div>" +
+      '<div class="tl-acts">' + acts + "</div>" +
+    "</div>";
+  }
+
+  function groupHtml(spec, ctr) {
+    const head = spec.t
+      ? "<h3>" + spec.t + '<span class="n">' + spec.list.length + "</span></h3>"
+      : "";
+    return '<div class="tl-group ' + spec.cls + '">' + head +
+      spec.list.map(function (m) { return rowHtml(m, ctr.i++); }).join("") + "</div>";
+  }
+
+  // What a period adds up to, one account per currency, never blended.
+  function tallyHtml(models) {
+    const rows = [{ label: "India", type: "india" }, { label: "International", type: "intl" }]
+      .map(function (p) {
+        const list = models.filter(m => ((m.inv.type || "intl") === "india") === (p.type === "india"));
+        const billed = list.reduce((t, m) => t + m.split.total, 0);
+        const tax = list.reduce((t, m) => t + m.split.tax, 0);
+        const paid = list.filter(m => m.inv.paid).reduce((t, m) => t + m.split.total, 0);
+        return { label: p.label, type: p.type, n: list.length, billed: billed, tax: tax, paid: paid };
+      }).filter(p => p.n);
+
+    if (!rows.length) return "";
+    return '<div class="tl-tally">' + rows.map(function (r) {
+      let m = '<span class="m">Billed<b>' + fmtMoney(r.billed, r.type) + "</b></span>";
+      if (r.tax) m += '<span class="m">IGST<b>' + fmtMoney(r.tax, r.type) + "</b></span>";
+      m += '<span class="m is-paid">Paid<b>' + fmtMoney(r.paid, r.type) + "</b></span>";
+      if (r.billed - r.paid > 0) m += '<span class="m is-open">Unpaid<b>' + fmtMoney(r.billed - r.paid, r.type) + "</b></span>";
+      return '<div class="acct"><span class="who">' + r.label + "</span>" + m + "</div>";
+    }).join("") + "</div>";
+  }
+
+  function renderTimeline(animate) {
+    const all = getInvoices();
+    const allModels = all.map(tlModel);
+    const groupsEl = document.getElementById("tl-groups");
+    const badge = document.getElementById("view-badge");
+
+    // The margin always reports the whole book: what you are owed is not a
+    // question about a period.
+    const unpaidAll = allModels.filter(m => !m.inv.paid);
+    const overAll = unpaidAll.filter(m => m.bucket === "over").sort((a, b) => a.days - b.days);
+    const nextDue = unpaidAll.filter(m => m.bucket !== "over" && m.due)
+      .sort((a, b) => a.days - b.days)[0];
+
+    document.getElementById("tl-asof").textContent = "As of " + fmtDate(todayIso());
+    document.getElementById("tl-count").textContent = all.length
+      ? all.length + (all.length === 1 ? " invoice" : " invoices") + " on file" : "";
+    if (badge) badge.textContent = overAll.length ? " " + overAll.length : "";
+
+    document.getElementById("timeline").classList.toggle("is-blank", !all.length);
+    renderRail(all, unpaidAll, overAll, nextDue, animate);
+
+    // The ledger reports the period you are reading.
+    const models = allModels.filter(m => inPeriod(m.inv, PERIOD));
+    const isAll = PERIOD.kind === "all";
+
+    let head = "<h2>" + esc(periodLabel(PERIOD)) + "</h2>";
+    if (!isAll) head += '<button type="button" class="tl-reset" data-reset="1">Show all time</button>';
+    let sub = "";
+    if (models.length) {
+      const nums = models.map(m => m.inv.num).filter(Boolean).sort();
+      sub = models.length + (models.length === 1 ? " invoice" : " invoices");
+      if (nums.length > 1) sub += " · " + esc(nums[0]) + " to " + esc(nums[nums.length - 1]);
+      else if (nums.length) sub += " · " + esc(nums[0]);
+    }
+    document.getElementById("tl-period").innerHTML =
+      '<div class="ph">' + head + "</div>" +
+      (sub ? '<div class="sub">' + sub + "</div>" : "");
+
+    let specs;
+    if (isAll) {
+      const unpaid = models.filter(m => !m.inv.paid);
+      specs = [
+        { t: "Past due", list: unpaid.filter(m => m.bucket === "over").sort((a, b) => a.days - b.days), cls: "tl-group--over" },
+        { t: "Due soon", list: unpaid.filter(m => m.bucket === "soon").sort((a, b) => a.days - b.days), cls: "" },
+        { t: "Upcoming", list: unpaid.filter(m => m.bucket === "upcoming").sort((a, b) => (a.days === null) - (b.days === null) || a.days - b.days), cls: "" },
+        { t: "Settled",  list: models.filter(m => m.inv.paid).sort((a, b) => (a.inv.paidDate < b.inv.paidDate ? 1 : -1)), cls: "tl-group--paid" }
+      ].filter(s => s.list.length);
+    } else {
+      // A page of the book runs forward, the way it was written.
+      specs = [{ t: "", cls: "", list: models.slice().sort((a, b) =>
+        (a.inv.date < b.inv.date ? -1 : a.inv.date > b.inv.date ? 1 : (a.inv.num < b.inv.num ? -1 : 1))) }];
+    }
 
     const ctr = { i: 0 };
     groupsEl.classList.toggle("no-anim", !animate);
-    groupsEl.innerHTML = models.length
-      ? specs.map((s, k) => groupHtml(s, k === 0 ? s.labels : null, ctr)).join("")
-      : '<div class="tl-empty">Nothing in the register yet. Download an invoice and it lands here with its due date, so you can see <em>who owes you, and how late they are.</em></div>';
+    if (models.length) {
+      groupsEl.innerHTML = specs.map(s => groupHtml(s, ctr)).join("") +
+        '<div class="tl-close"><div class="cl">Total, ' + esc(periodLabel(PERIOD).toLowerCase()) + "</div>" +
+        tallyHtml(models) + "</div>";
+    } else if (!all.length) {
+      groupsEl.innerHTML = '<div class="tl-empty">Nothing in the register yet. Download an invoice and it lands here with its due date, so you can see <em>who owes you, and how late they are.</em></div>';
+    } else {
+      groupsEl.innerHTML = '<div class="tl-empty">Nothing was invoiced in ' + esc(periodLabel(PERIOD)) + '.<br>' +
+        '<button type="button" class="tl-reset" data-reset="1">Show all time</button></div>';
+    }
 
-    if (badge) badge.textContent = over.length ? " " + over.length : "";
+    const csv = document.getElementById("tl-csv");
+    csv.disabled = !models.length;
+    csv.title = models.length
+      ? "Download " + periodLabel(PERIOD) + " as a spreadsheet"
+      : "Nothing to export in " + periodLabel(PERIOD);
   }
+
+  function setPeriod(p, focus) {
+    PERIOD = p;
+    renderTimeline(false);
+    if (focus) {
+      const el = document.querySelector(".tl-ledger");
+      if (el && window.innerWidth <= 1240) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  /* ---- Export: the period, as a sheet the CA can open ---------------- */
+
+  function csvCell(v) {
+    const s = String(v == null ? "" : v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function exportCsv() {
+    const models = getInvoices().map(tlModel)
+      .filter(m => inPeriod(m.inv, PERIOD))
+      .sort((a, b) => (a.inv.date < b.inv.date ? -1 : a.inv.date > b.inv.date ? 1 : (a.inv.num < b.inv.num ? -1 : 1)));
+    if (!models.length) return;
+
+    const head = ["Invoice", "Invoice date", "Due date", "Brand", "Place", "Currency",
+                  "Subtotal", "Tax (IGST)", "Total", "Status", "Paid on"];
+    const rows = models.map(function (m) {
+      const isIndia = (m.inv.type || "intl") === "india";
+      return [
+        m.inv.num, m.inv.date, m.due, m.inv.brand,
+        isIndia ? "India" : "International", isIndia ? "INR" : "USD",
+        m.split.sub, m.split.tax, m.split.total,
+        m.inv.paid ? "Paid" : (m.days !== null && m.days < 0 ? "Overdue" : "Open"),
+        m.inv.paid ? (m.inv.paidDate || "") : ""
+      ].map(csvCell).join(",");
+    });
+    // The BOM is what makes Excel read the rupee sign and the brand names right.
+    const blob = new Blob(["﻿" + [head.map(csvCell).join(",")].concat(rows).join("\r\n") + "\r\n"],
+      { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "KD-register-" + periodSlug(PERIOD) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  /* ---- Wiring -------------------------------------------------------- */
 
   function updateInvoice(num, fn) {
     const list = getInvoices();
@@ -1448,7 +1897,22 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     renderArchive();
   }
 
-  document.getElementById("tl-groups").addEventListener("click", function (e) {
+  document.getElementById("timeline").addEventListener("click", function (e) {
+    const yr = e.target.closest(".tl-yr");
+    if (yr) {
+      setPeriod(yr.dataset.p === "all" ? { kind: "all" }
+        : { kind: yr.dataset.p, y: parseInt(yr.dataset.y, 10) });
+      return;
+    }
+    const mo = e.target.closest(".tl-mo");
+    if (mo) {
+      const y = parseInt(mo.dataset.y, 10), m = parseInt(mo.dataset.m, 10);
+      const on = PERIOD.kind === "month" && PERIOD.y === y && PERIOD.m === m;
+      setPeriod(on ? { kind: "all" } : { kind: "month", y: y, m: m }, true);
+      return;
+    }
+    if (e.target.closest("[data-reset]")) { setPeriod({ kind: "all" }); return; }
+
     const btn = e.target.closest("[data-act]");
     if (!btn) return;
     const num = btn.closest(".tl-row").dataset.num;
@@ -1465,6 +1929,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       if (inv) { loadForm(inv); setView("invoice"); }
     }
   });
+
+  document.getElementById("tl-csv").addEventListener("click", exportCsv);
 
   function setView(v) {
     app.classList.toggle("view-timeline", v === "timeline");
