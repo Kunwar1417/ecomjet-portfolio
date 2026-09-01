@@ -39,25 +39,35 @@ A second screen-only view in the same file, toggled by the **Invoice / Register*
 
 **Periods are always cut by INVOICE DATE, never by due date.** That is the date the books are kept on, and it is what the CA asks for. `PERIOD` is `{kind:'all'} | {kind:'year',y} | {kind:'fy',y} | {kind:'month',y,m}` (`m` is 0-11); `periodRange()` turns it into an inclusive ISO `from`/`to` and `inPeriod()` tests `inv.date` against it. The FY chip is the **Indian financial year, 1 April → 31 March**, which is why it exists at all.
 
-### Layout: one sheet, a ruled margin, and the account
+### Hierarchy is the whole job here
 
-Earlier builds got this wrong twice: first as SaaS dashboard grammar (three equal stat tiles), then as a narrow 968px "reverse of the invoice" sheet that read as a receipt stranded on a wide desktop. The current build is **one page frame at `max-width: 1400px`** with the blue spine and the header/footer bands kept from the invoice, split inside into:
+Read this before changing any type size or adding any rule. The build before this one had the right layout and was still rejected as *"clunky… so many lines… every text is of the same size, so I have to really focus to find out which is the past due section."* Section headings, column labels and the closing label were all 9.5px muted caps, and there was a hairline under every row, every month, every group head and a double rule at the foot. Three rules fix it and must hold:
+
+1. **Four type levels, and nothing shares a level with a different job.** Period title 24 / section heading 15 bold ink / row name 15 and the figure 16.5 / meta and column labels 11.5 muted. **A heading must never be set like a label.**
+2. **Air separates, lines do not.** A section is told apart by 34px of space above its heading, not by a rule. The only hairlines left in the table are between rows *inside* a group, at 6% ink (`--hair`).
+3. **Status is a pill, not coloured text.** One tinted chip per row (`.pill--over/soon/upcoming/paid`) is the only colour in the table, so the eye lands on it first.
+
+Supporting these: a **monogram** (`.tl-mono`) gives every row an entry point, tinted from a hash of the brand name so a brand keeps its mark, and **all four tints are cool** so a monogram can never be misread as a status. The year chips are a **real segmented control**, the selected month is a **solid ink chip**, and the period total is a **panel summary bar**, not another rule. The per-row `IN` badge was removed: the amount column's currency already says India or international.
+
+### Layout: one sheet, a quiet margin, and the account
+
+Earlier builds got this wrong twice before that: first as SaaS dashboard grammar (three equal stat tiles), then as a narrow 968px "reverse of the invoice" sheet that read as a receipt stranded on a wide desktop. The current build is **one page frame at `max-width: 1400px`** with the blue spine and the header/footer bands kept from the invoice, split inside into:
 
 - **`.tl-rail`, the ruled margin (288px, sticky, its own `--rail` ground).** Outstanding (one pot per currency), then three plain facts (Open / Past due / Next due), then the month spine. It always reports the **whole book**, never the selected period: what you are owed is not a period question. Below 1240px it unsticks and becomes a horizontal strip above the ledger.
 - **`.tl-ledger`, the account.** A period heading (name, count, folio range, and a "Show all time" escape when a period is on), a **sticky column head**, ruled single-line rows, and a closing block.
 
-**One column measure, `--led-cols`, is shared by the head and every row**: `invoice / brand / issued→due / status / amount / actions`. That is what keeps the money a column. The action lane is reserved width, so revealing the buttons on hover never moves a line.
+**One column measure, `--led-cols`, is shared by the head and every row**: `brand / issued→due / status / amount / actions`. That is what keeps the money a column. The invoice number and the follow-up state live in a second line *inside* the brand cell, which is one fewer column to scan. The action lane is reserved width, so revealing the buttons on hover never moves a line, and it is sized so the buttons never crowd the figure.
 
 ### The signature: `BILLED BY MONTH`
 
 The year read down the margin. Every month prints what was billed in it and clicking one turns the ledger into that month's page, so **the period filter, the year's shape and the navigation are one object**. Clicking the selected month again returns to All time.
 
 - The **bar is the year's rhythm; the figure beside it is the readout.** Each currency is scaled to its own biggest month (`maxInr`, `maxUsd`) and drawn in its own colour (ink = India, blue = international), because one shared scale would need an exchange rate. A bar is drawn only for a currency that actually has money in that month, so a quiet month stays a single ruled line.
-- The spine shows the months of the **focused year**; an FY selection makes it run Apr → Mar and crossing months carry a 2-digit year. Each cell owns its own `y`, so the crossing works.
+- **No rule under any month**: the bar is the only ink a month needs, and empty months sit at `.42` opacity. The spine shows the months of the **focused year**; an FY selection makes it run Apr → Mar and crossing months carry a 2-digit year. Each cell owns its own `y`, so the crossing works.
 
 ### The closing block (`.tl-close`)
 
-A page of a book closes on a **double rule** (`border-top: 4px double`) and what it comes to: `Total, august 2026` then one account per currency with **Billed / IGST / Paid / Unpaid**. The heading says which page you are on; the foot says what the page adds up to, so neither does the other's job. IGST only prints where there is tax (India). Sub/tax/total come from `invSplit()`: line items are the source, but the **stored total wins** on any disagreement, since that is what was actually sent.
+The page closes on a **panel summary bar** (`--panel` ground, one top hairline) rather than another rule in the table: `Total, august 2026` then one account per currency with **Billed / IGST / Paid / Unpaid**. The heading says which page you are on; the foot says what the page adds up to, so neither does the other's job. IGST only prints where there is tax (India). Sub/tax/total come from `invSplit()`: line items are the source, but the **stored total wins** on any disagreement, since that is what was actually sent.
 
 ### Export for the CA (`Export CSV`)
 
@@ -67,7 +77,7 @@ The band's one control. It exports **exactly the period on screen** (`KD-registe
 
 - **Two currencies are two accounts.** Never summed, never converted, anywhere: an FX rate invented here would make a private book lie about what is arriving. Both pots print at the same size so neither reads as a footnote.
 - **Money is always Bricolage with `tabular-nums lining`.** The two Outstanding figures add `font-variation-settings: "opsz" 72`. **Instrument Serif italic is for sentences here, never for figures** (the empty-state line). A currency column has to align digit over digit, and Indian grouping (`₹3,54,000`) has an irregular rhythm a display italic only worsens.
-- **One status mark per row.** Past due gets the warm band tint plus a terracotta margin tick, because that is the row you came for; every other state is told by the dot and the wording in the Status column. Settled sits at `opacity: .6` and lifts on hover.
+- **One status mark per row**, and it is the pill. Past due additionally gets a warm band tint, because that is the row you came for. Settled rows keep their pill and go quiet by muting the name, the figure and the monogram, never by dropping the whole row's opacity.
 - **Motion is one orchestrated moment on view entry**: rows fade and rise on a capped 28ms stagger, the spine's bars grow. `renderTimeline(true)` from `setView`, `renderTimeline(false)` from every action, so marking three invoices paid does not replay a show. `prefers-reduced-motion` kills it.
 - **Due date** is a form field (`f-due`) under Date, **derived not asked for**: `date + termsNetDays()`. `elDue.dataset.derived` tracks provenance (`"1"` auto, `"0"` hand-typed). **It is deliberately NOT printed on the invoice**, which states the terms in words; the due date exists to drive this view.
 - **Payment state** rides on the same `kd_invoices` objects: `paid`, `paidDate`, `nudges`. Old invoices lack all three and still render (`dueOf()` re-derives from `termsSel`). `carryPaymentState()` guards the real hazard: `readForm()` only knows form fields, so a re-download would otherwise reset an invoice to unpaid.

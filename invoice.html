@@ -290,33 +290,43 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 /* ============================================================
    THE REGISTER (screen only) — the book side of the studio.
 
-   The invoice is a document you send. This is the book you keep,
-   and at year end it is the book you hand your CA. So it is laid
-   out as a ledger page rather than a dashboard: one sheet, a blue
-   spine, a ruled margin column on the left for the state of the
-   account, and the account itself ruled in fixed columns to its
-   right. Both halves live inside one page frame, so nothing floats.
+   The invoice is a document you send. This is the book you keep, and at
+   year end it is the book you hand your CA. Layout: one sheet, a blue
+   spine, a quiet margin column on the left for the state of the account,
+   the account itself on the right.
 
-   Signature: BILLED BY MONTH in the margin. Each month prints its
-   own total with a hairline bar, and clicking one turns the ledger
-   into that month's page. The period filter, the year's shape and
-   the navigation are one object.
+   HIERARCHY IS THE WHOLE JOB HERE. An earlier build set section headings
+   ("Past due"), column labels and the closing label all at 9.5px muted
+   caps and ruled every row, every month and every group. It read as one
+   flat grey mesh: you had to hunt for where a section started. The rules
+   are the fix, and they are these three:
 
-   Money is always Bricolage with tabular lining figures. Instrument
-   Serif italic is for sentences here, never for figures: a currency
-   column has to align digit over digit, and Indian grouping
-   (Rs 3,54,000) has an irregular rhythm a display italic worsens.
+     1. FOUR TYPE LEVELS, and nothing shares a level with a different job.
+        Period title 24 / section heading 15 bold ink / row name 15 and
+        the figure 16 / meta and column labels 11.5 muted. A heading must
+        never be set like a label.
+     2. AIR SEPARATES, LINES DO NOT. Sections are told apart by 34px of
+        space above the heading, not by a rule. The only hairlines left
+        are between rows inside a group, and they are 6% ink.
+     3. STATUS IS A PILL, NOT COLOURED TEXT. One tinted chip per row is
+        the only colour in the table, so the eye lands on it first.
+
+   A monogram gives every row an entry point (cool tints only, so nothing
+   competes with the warm status colours). Money is always Bricolage with
+   tabular lining figures; Instrument Serif italic is for sentences here,
+   never for figures.
    ============================================================ */
 :root {
   --over:   #A8442B;   /* overdue: burnt sienna, grave not alarming */
   --soon:   #8A6A1C;   /* due soon: dim ochre */
   --calm:   #55705C;   /* settled: green-slate */
-  --rule:   #D8D5CA;   /* the ledger's ruling */
+  --rule:   #E2DFD5;   /* the one hairline weight left in the table */
   --rail:   #F5F3EC;   /* the margin column, a half step off the paper */
+  --hair:   rgba(20,33,58,.065);
 
   /* One column measure, shared by the ledger head and every row. */
-  --led-cols: 88px minmax(0,1fr) 96px 128px 120px 164px;
-  --led-gap: 14px;
+  --led-cols: minmax(0,1fr) 130px 132px 128px 168px;
+  --led-gap: 16px;
   --led-pad: 26px;
 }
 
@@ -347,37 +357,37 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   overflow: hidden;
 }
 
-/* ---- Head band: the page's masthead ---- */
+/* ---- Head band ---- */
 .tl-band {
   background: var(--panel); border-bottom: 1px solid var(--line);
-  padding: 15px var(--led-pad) 15px 24px;
+  padding: 16px var(--led-pad) 16px 24px;
   display: flex; align-items: center; justify-content: space-between; gap: 18px;
 }
 .tl-band .title { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
 .tl-band .right { display: flex; align-items: center; gap: 16px; }
-.tl-band .asof { font-size: 11px; color: var(--muted); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.tl-band .asof { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .tl-export {
-  font-size: 11.5px; font-weight: 700; letter-spacing: .01em;
-  padding: 7px 13px; border-radius: 8px;
+  font-size: 12px; font-weight: 700;
+  padding: 8px 14px; border-radius: 9px;
   border: 1px solid var(--line-2); background: var(--paper); color: var(--ink);
   transition: background .13s, border-color .13s, color .13s;
 }
 .tl-export:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .tl-export:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-.tl-export[disabled] { opacity: .38; cursor: default; }
+.tl-export[disabled] { opacity: .35; cursor: default; }
 .tl-export[disabled]:hover { background: var(--paper); border-color: var(--line-2); color: var(--ink); }
 
-/* ---- The page body: ruled margin column + the account ---- */
-.tl-work { display: grid; grid-template-columns: 288px minmax(0,1fr); align-items: start; }
+.tl-work { display: grid; grid-template-columns: 292px minmax(0,1fr); align-items: start; }
 
 /* ============================================================
-   MARGIN COLUMN — what the account is worth right now, and the
-   year it was billed over. Ruled off the ledger with one hairline.
+   MARGIN COLUMN — the state of the account, and the year it was
+   billed over. Separated from the account by one hairline, and
+   internally by space alone.
    ============================================================ */
 .tl-rail {
   background: var(--rail); border-right: 1px solid var(--line);
-  padding: 22px 22px 26px;
+  padding: 26px 24px 30px;
   position: sticky; top: 0;
   max-height: 100vh; overflow-y: auto; overscroll-behavior: contain;
   scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
@@ -385,232 +395,205 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .tl-rail::-webkit-scrollbar { width: 7px; }
 .tl-rail::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 4px; }
 .tl-eyebrow {
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: .15em;
-  font-weight: 700; color: var(--muted); margin-bottom: 12px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: .13em;
+  font-weight: 700; color: var(--muted); margin-bottom: 14px;
 }
-/* A block with nothing to say leaves no rule behind (everything settled empties
-   the facts; a fresh register empties both). */
+/* A block with nothing to say leaves no space behind it. */
 .tl-sum:empty, .tl-facts:empty { display: none; }
-/* Nothing on file yet: there is no margin to rule and no columns to head, so
-   the page carries one invitation and nothing else. */
-.inv-tl.is-blank .tl-rail, .inv-tl.is-blank .tl-head { display: none; }
-.inv-tl.is-blank .tl-work { grid-template-columns: minmax(0, 1fr); }
-.inv-tl.is-blank .tl-period { display: none; }
-.inv-tl.is-blank .tl-empty { padding-top: 52px; }
 
-/* Two currencies are two accounts. Never summed, never converted:
-   an FX rate invented here would make a private book lie about what
-   is actually arriving. Both pots print at one size, so neither
-   reads as a footnote to the other. */
-.tl-pot { padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--rule); }
-.tl-pot:last-of-type { border-bottom: none; }
+/* Two currencies are two accounts. Never summed, never converted: an FX
+   rate invented here would make a private book lie about what is
+   arriving. Both pots print at one size, so neither reads as a footnote. */
+.tl-pot + .tl-pot { margin-top: 20px; }
 .tl-pot .who {
   display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
-  font-size: 11.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px;
+  font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 4px;
 }
-.tl-pot .who .n { font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tl-pot .who .lbl { font-weight: 700; color: var(--ink); }
 .tl-pot .fig {
-  font-size: 31px; line-height: 1.04; font-weight: 700; letter-spacing: -0.035em;
+  font-size: 30px; line-height: 1.05; font-weight: 700; letter-spacing: -0.035em;
   color: var(--ink); font-variant-numeric: tabular-nums lining;
   font-variation-settings: "opsz" 72;
 }
 .tl-clear { font-size: 13px; color: var(--muted); line-height: 1.55; }
 .tl-clear em { font-family: var(--serif); font-style: italic; color: var(--ink); font-size: 17px; }
 
-/* Three plain facts, ruled like a statement's foot. */
-.tl-facts { margin-top: 16px; border-top: 1px solid var(--rule); padding-top: 4px; }
+/* Three facts, told by space rather than by rules. */
+.tl-facts { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule); }
 .tl-facts .f {
   display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  padding: 7px 0; border-bottom: 1px solid var(--rule);
-  font-size: 12px; color: var(--muted);
+  padding: 5px 0; font-size: 12.5px; color: var(--muted);
 }
-.tl-facts .f:last-child { border-bottom: none; }
 .tl-facts .v { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
 .tl-facts .f.is-over .v { color: var(--over); }
 .tl-facts .f .v .sm { font-weight: 500; color: var(--muted); }
 
 /* ---- THE SIGNATURE: billed by month ----
-   A year read down the margin. The bar is a rhythm, not a readout
-   (the figure beside it is the readout), and each currency is scaled
-   to its own biggest month so neither is flattened by the other. */
-.tl-spine { margin-top: 24px; }
-.tl-spine .tl-eyebrow { margin-bottom: 9px; }
-.tl-years { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.tl-yr {
-  font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 4px 9px;
-  border-radius: 6px; border: 1px solid var(--line-2); color: var(--muted);
-  background: transparent; transition: background .12s, color .12s, border-color .12s;
+   The year read down the margin. Every month prints what was billed in
+   it, and clicking one turns the ledger into that month's page, so the
+   period filter, the year's shape and the navigation are one object.
+   No rule under any month: the bar is the only ink a month needs. */
+.tl-spine { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--rule); }
+
+/* A real segmented control, not three loose pills. */
+.tl-years {
+  display: flex; margin-bottom: 12px; padding: 3px; gap: 3px;
+  background: rgba(20,33,58,.05); border-radius: 10px;
 }
-.tl-yr:hover { border-color: var(--ink); color: var(--ink); }
-.tl-yr[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-.tl-yr:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.tl-yr {
+  flex: 1; font-size: 11px; font-weight: 700; padding: 6px 4px; border-radius: 7px;
+  color: var(--muted); white-space: nowrap; transition: background .12s, color .12s;
+}
+.tl-yr:hover { color: var(--ink); }
+.tl-yr[aria-pressed="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(20,20,40,.1); }
+.tl-yr:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
 
 .tl-months { display: block; }
 .tl-mo {
   display: block; width: 100%; text-align: left;
-  padding: 6px 8px 7px; border-radius: 7px 7px 0 0; border: 1px solid transparent;
-  border-bottom: 1px solid var(--rule);
-  transition: background .12s, border-color .12s;
+  padding: 7px 10px 8px; border-radius: 8px;
+  transition: background .12s;
 }
-.tl-mo:hover { background: rgba(20,33,58,.045); }
+.tl-mo:hover { background: rgba(20,33,58,.05); }
 .tl-mo:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
-.tl-mo[aria-pressed="true"] { background: var(--paper); border-color: var(--line-2); box-shadow: inset 3px 0 0 var(--blue); }
+.tl-mo[aria-pressed="true"] { background: var(--ink); }
 .tl-mo .row1 {
   display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  font-size: 11.5px;
+  font-size: 12px;
 }
-.tl-mo .mo { font-weight: 700; color: var(--ink); letter-spacing: .01em; }
-.tl-mo[aria-pressed="false"].is-empty .mo { color: var(--muted); font-weight: 500; }
+.tl-mo .mo { font-weight: 700; color: var(--ink); }
 .tl-mo .amt {
   font-variant-numeric: tabular-nums lining; font-weight: 600; color: var(--ink);
-  white-space: nowrap; font-size: 11.5px;
+  white-space: nowrap; text-align: right;
 }
 .tl-mo .amt .two { display: block; color: var(--muted); font-weight: 500; }
-.tl-mo.is-empty .amt { color: var(--muted); opacity: .5; font-weight: 500; }
-.tl-bars { margin-top: 5px; display: block; }
-.tl-bars .bar { display: block; height: 2px; margin-top: 2px; }
+.tl-mo.is-empty { opacity: .42; }
+.tl-mo.is-empty .mo { font-weight: 500; }
+.tl-mo[aria-pressed="true"] { opacity: 1; }
+.tl-mo[aria-pressed="true"] .mo, .tl-mo[aria-pressed="true"] .amt { color: var(--paper); }
+.tl-mo[aria-pressed="true"] .amt .two { color: rgba(251,250,246,.62); }
+
+.tl-bars { display: block; margin-top: 6px; }
+.tl-bars .bar { display: block; height: 3px; border-radius: 2px; margin-top: 3px; }
 .tl-bars .bar > i {
-  display: block; height: 100%; background: var(--ink); opacity: .55;
-  transform-origin: left center; transform: scaleX(1);
+  display: block; height: 100%; border-radius: 2px; background: var(--ink); opacity: .5;
+  transform-origin: left center;
 }
 .tl-bars .bar.usd > i { background: var(--blue); opacity: .55; }
-.tl-mo[aria-pressed="true"] .tl-bars .bar > i { opacity: .9; }
+.tl-mo[aria-pressed="true"] .tl-bars .bar > i { background: var(--paper); opacity: .85; }
+.tl-mo[aria-pressed="true"] .tl-bars .bar.usd > i { background: #93A6F2; opacity: 1; }
 
 .tl-scope {
-  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule);
-  font-size: 11px; color: var(--muted); line-height: 1.5;
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule);
+  font-size: 11px; color: var(--muted); line-height: 1.55;
 }
 
 /* ============================================================
-   THE ACCOUNT — fixed columns, ruled rows, money in its own column.
+   THE ACCOUNT
    ============================================================ */
 .tl-ledger { min-width: 0; }
 
-/* Period head: which page of the book you are on, and what it adds up to. */
-.tl-period { padding: 22px var(--led-pad) 16px; border-bottom: 1px solid var(--rule); }
+/* Period head: which page of the book you are on. */
+.tl-period { padding: 26px var(--led-pad) 20px; }
 .tl-period .ph {
   display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
-.tl-period h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.025em; }
-.tl-period h2 .qual { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--muted); font-size: 20px; margin-left: 7px; }
+.tl-period h2 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.03em; }
+.tl-period .sub {
+  margin-top: 6px; font-size: 12px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
 .tl-reset {
-  font-size: 11.5px; font-weight: 600; color: var(--blue);
+  font-size: 12px; font-weight: 600; color: var(--blue);
   border-bottom: 1px solid rgba(43,73,196,.35); padding-bottom: 1px;
 }
 .tl-reset:hover { border-bottom-color: var(--blue); }
 .tl-reset:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-.tl-period .sub {
-  margin-top: 5px; font-size: 11.5px; color: var(--muted);
-  font-variant-numeric: tabular-nums; letter-spacing: .01em;
-}
-/* A page of a book closes on a double rule and what it comes to. The period's
-   money lives here rather than in the heading: the heading says which page you
-   are on, the foot says what the page adds up to. */
-.tl-close {
-  display: flex; align-items: baseline; gap: 12px 30px; flex-wrap: wrap;
-  padding: 16px var(--led-pad) 22px;
-  border-top: 4px double var(--ink);
-}
-.tl-close .cl {
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: .15em;
-  font-weight: 700; color: var(--ink); flex-shrink: 0;
-}
-.tl-tally { display: flex; flex-direction: column; gap: 8px; }
-.tl-tally .acct {
-  display: flex; align-items: baseline; gap: 0 26px; flex-wrap: wrap;
-}
-.tl-tally .who {
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
-  color: var(--muted); width: 92px; flex-shrink: 0;
-}
-.tl-tally .m { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.tl-tally .m b {
-  font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums lining;
-  font-size: 13.5px; margin-left: 6px;
-}
-.tl-tally .m.is-open b { color: var(--over); }
-.tl-tally .m.is-paid b { color: var(--calm); }
-
-/* Column heads, printed once and pinned while you scroll a long page. */
+/* Column labels are the quietest thing on the page. */
 .tl-head {
   display: grid; grid-template-columns: var(--led-cols); gap: var(--led-gap);
-  padding: 9px var(--led-pad) 8px;
+  padding: 12px var(--led-pad) 10px;
   position: sticky; top: 0; z-index: 3;
-  background: var(--panel); border-bottom: 1px solid var(--ink);
-  font-size: 9px; text-transform: uppercase; letter-spacing: .15em;
-  font-weight: 700; color: var(--muted);
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+  font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .01em;
 }
 .tl-head .r { text-align: right; }
 
-/* Group bands: the account's sections. */
-.tl-group + .tl-group { margin-top: 22px; }
-.tl-group > h3 {
-  display: flex; align-items: baseline; gap: 9px;
-  margin: 0; padding: 14px var(--led-pad) 7px;
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: .15em;
-  font-weight: 700; color: var(--muted);
+/* ---- Sections: told apart by air and by size, never by a rule ---- */
+.tl-sec {
+  display: flex; align-items: center; gap: 9px;
+  padding: 34px var(--led-pad) 13px;
 }
-.tl-group > h3::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
-.tl-group > h3 .n { color: var(--muted); font-weight: 600; letter-spacing: .04em; opacity: .7; }
-.tl-group--over > h3 { color: var(--over); }
-.tl-group--over > h3::after { background: rgba(168,68,43,.3); }
+.tl-group:first-child .tl-sec { padding-top: 22px; }
+.tl-sec h3 { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+.tl-sec .cnt {
+  font-size: 11.5px; font-weight: 700; color: var(--muted);
+  background: rgba(20,33,58,.07); border-radius: 999px; padding: 2px 8px;
+  font-variant-numeric: tabular-nums;
+}
+.tl-group--over .tl-sec h3 { color: var(--over); }
+.tl-group--over .tl-sec .cnt { background: rgba(168,68,43,.1); color: var(--over); }
 
 /* ---- A line of the account ---- */
 .tl-row {
   display: grid; grid-template-columns: var(--led-cols); gap: var(--led-gap);
-  align-items: center; min-height: 52px;
-  padding: 8px var(--led-pad); border-bottom: 1px solid var(--rule);
+  align-items: center; min-height: 64px;
+  padding: 12px var(--led-pad);
   transition: background .12s;
 }
-.tl-row:hover { background: rgba(20,33,58,.032); }
-.tl-row--over { background: rgba(168,68,43,.035); box-shadow: inset 3px 0 0 var(--over); }
-.tl-row--over:hover { background: rgba(168,68,43,.07); }
+.tl-row + .tl-row { border-top: 1px solid var(--hair); }
+.tl-row:hover { background: rgba(20,33,58,.03); }
+.tl-row--over { background: rgba(168,68,43,.035); }
+.tl-row--over:hover { background: rgba(168,68,43,.065); }
 
-.tl-num {
-  font-size: 11px; font-weight: 600; color: var(--muted);
-  font-variant-numeric: tabular-nums; letter-spacing: .01em; white-space: nowrap;
+/* The monogram is the row's entry point. Cool tints only, so it can
+   never be mistaken for a status. */
+.tl-who { display: flex; align-items: center; gap: 13px; min-width: 0; }
+.tl-mono {
+  width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px;
+  display: grid; place-items: center;
+  font-size: 12px; font-weight: 700; letter-spacing: .02em;
 }
-.tl-open {
-  min-width: 0; text-align: left; display: block;
-  font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink);
+.tl-mono--0 { background: rgba(61,76,107,.12);  color: #3D4C6B; }
+.tl-mono--1 { background: rgba(43,73,196,.11);  color: #2B49C4; }
+.tl-mono--2 { background: rgba(91,84,112,.13);  color: #5B5470; }
+.tl-mono--3 { background: rgba(74,96,112,.13);  color: #40596B; }
+
+.tl-open { min-width: 0; text-align: left; display: block; }
+.tl-open .nm {
+  display: block; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  border-bottom: 1px solid transparent; padding-bottom: 1px;
 }
-.tl-open:hover { border-bottom-color: var(--line-2); }
-.tl-open:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
-.tl-open .tag {
-  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--muted); margin-left: 8px; vertical-align: 1px;
+.tl-open:hover .nm { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+.tl-open:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 3px; }
+.tl-open .meta {
+  display: block; margin-top: 3px; font-size: 11.5px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.tl-open .meta .never { color: var(--over); font-weight: 600; }
+.tl-open .meta .sep { opacity: .45; margin: 0 5px; }
 
 .tl-dates {
-  font-size: 11.5px; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap;
+  font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.tl-dates .to { color: var(--muted); margin: 0 4px; }
+.tl-dates .to { color: var(--muted); margin: 0 5px; }
 .tl-dates .d2 { color: var(--muted); }
 
-.tl-status { min-width: 0; }
-.tl-status .s {
-  font-size: 12px; font-weight: 700; color: var(--ink);
-  font-variant-numeric: tabular-nums; white-space: nowrap;
-  display: flex; align-items: baseline; gap: 5px;
+/* ---- Status is one tinted pill, the only colour in the table ---- */
+.pill {
+  display: inline-block; padding: 5px 11px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .01em; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
-.tl-status .s::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-  background: var(--muted); opacity: .5; align-self: center;
-}
-.tl-row--over .tl-status .s { color: var(--over); }
-.tl-row--over .tl-status .s::before { background: var(--over); opacity: 1; }
-.tl-row--soon .tl-status .s { color: var(--soon); }
-.tl-row--soon .tl-status .s::before { background: var(--soon); opacity: 1; }
-.tl-row--paid .tl-status .s { color: var(--calm); font-weight: 600; }
-.tl-row--paid .tl-status .s::before { background: var(--calm); opacity: .85; }
-.tl-status .chase { font-size: 10.5px; color: var(--muted); margin-top: 2px; padding-left: 11px; white-space: nowrap; }
-.tl-status .chase.never { color: var(--over); font-weight: 600; }
+.pill--over { background: rgba(168,68,43,.12);  color: var(--over); }
+.pill--soon { background: rgba(138,106,28,.14);  color: var(--soon); }
+.pill--upcoming { background: rgba(20,33,58,.06); color: var(--muted); }
+.pill--paid { background: rgba(85,112,92,.14);   color: var(--calm); }
 
 .tl-amt {
-  text-align: right; font-size: 17px; font-weight: 700; letter-spacing: -0.025em;
+  text-align: right; font-size: 16.5px; font-weight: 700; letter-spacing: -0.025em;
   color: var(--ink); font-variant-numeric: tabular-nums lining; white-space: nowrap;
 }
 .tl-row--paid .tl-amt { color: var(--muted); font-weight: 600; }
@@ -618,7 +601,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 /* Actions live in a reserved lane, so revealing them never moves a line. */
 .tl-acts { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
 .tl-btn {
-  font-size: 10.5px; font-weight: 600; padding: 5px 8px; border-radius: 7px;
+  font-size: 10.5px; font-weight: 600; padding: 6px 9px; border-radius: 8px;
   border: 1px solid var(--line-2); background: var(--paper); color: var(--muted);
   white-space: nowrap; opacity: 0;
   transition: border-color .12s, color .12s, background .12s, opacity .14s;
@@ -631,24 +614,53 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 @media (hover: none) { .tl-btn { opacity: 1; } }
 
 /* Settled lines are spent, but still on the page. */
-.tl-group--paid .tl-row { opacity: .6; min-height: 44px; }
-.tl-group--paid .tl-row:hover { opacity: 1; }
-.tl-group--paid .tl-open { font-size: 13.5px; font-weight: 600; }
-.tl-group--paid .tl-amt { font-size: 15px; }
+.tl-group--paid .tl-row { min-height: 56px; }
+.tl-group--paid .tl-mono { opacity: .5; }
+.tl-group--paid .tl-open .nm { font-weight: 600; color: var(--muted); }
+.tl-group--paid .tl-dates { color: var(--muted); }
+.tl-group--paid .tl-row:hover .tl-open .nm { color: var(--ink); }
 
-.tl-empty { padding: 40px var(--led-pad) 44px; color: var(--muted); font-size: 14px; max-width: 48ch; line-height: 1.65; }
+.tl-empty { padding: 44px var(--led-pad) 48px; color: var(--muted); font-size: 14px; max-width: 48ch; line-height: 1.65; }
 .tl-empty em { font-family: var(--serif); font-style: italic; color: var(--ink); font-size: 18px; }
-.tl-empty .tl-reset { margin-top: 10px; display: inline-block; }
+.tl-empty .tl-reset { margin-top: 12px; display: inline-block; }
 
-.tl-body { padding-bottom: 24px; }
+.tl-body { padding-bottom: 0; }
 
-/* One orchestrated moment on entering the view: the account fills in
-   from the top, and the year's bars grow. Acting on a row re-renders
-   without it, so marking three invoices paid does not replay a show. */
-@keyframes tl-line { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+/* ---- What the page comes to: a summary bar, not another rule ---- */
+.tl-close {
+  margin-top: 30px;
+  background: var(--panel); border-top: 1px solid var(--line);
+  padding: 18px var(--led-pad) 20px;
+  display: flex; align-items: baseline; gap: 12px 32px; flex-wrap: wrap;
+}
+.tl-close .cl {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .13em;
+  font-weight: 700; color: var(--muted); flex-shrink: 0;
+}
+.tl-tally { display: flex; flex-direction: column; gap: 9px; }
+.tl-tally .acct { display: flex; align-items: baseline; gap: 0 26px; flex-wrap: wrap; }
+.tl-tally .who {
+  font-size: 11.5px; font-weight: 700; color: var(--ink);
+  width: 106px; flex-shrink: 0;
+}
+.tl-tally .m { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.tl-tally .m b {
+  font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums lining;
+  font-size: 14px; margin-left: 7px;
+}
+.tl-tally .m.is-open b { color: var(--over); }
+.tl-tally .m.is-paid b { color: var(--calm); }
+
+/* Nothing on file yet: no margin to rule, no columns to head. */
+.inv-tl.is-blank .tl-rail, .inv-tl.is-blank .tl-head, .inv-tl.is-blank .tl-period { display: none; }
+.inv-tl.is-blank .tl-work { grid-template-columns: minmax(0, 1fr); }
+.inv-tl.is-blank .tl-empty { padding-top: 52px; }
+
+/* One orchestrated moment on entering the view. Acting on a row
+   re-renders without it, so marking three invoices paid replays nothing. */
+@keyframes tl-line { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes tl-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .tl-body:not(.no-anim) .tl-row { animation: tl-line .34s cubic-bezier(.22,.61,.36,1) both; animation-delay: var(--d, 0s); }
-.tl-body:not(.no-anim) .tl-group--paid .tl-row { animation-name: tl-line; }
 .tl-anim .tl-bars .bar > i { animation: tl-grow .5s cubic-bezier(.22,.61,.36,1) both; animation-delay: var(--d, 0s); }
 @media (prefers-reduced-motion: reduce) {
   .tl-body:not(.no-anim) .tl-row, .tl-anim .tl-bars .bar > i { animation: none; }
@@ -659,35 +671,38 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   background: var(--panel); border-top: 1px solid var(--line);
   padding: 12px var(--led-pad) 12px 24px;
   display: flex; justify-content: space-between; gap: 14px;
-  font-size: 11px; color: var(--muted);
+  font-size: 11.5px; color: var(--muted);
 }
 .tl-foot .r { font-variant-numeric: tabular-nums; }
 
-/* ---- Narrower desktops: the margin column becomes a header strip ---- */
+/* ---- Narrower desktops: the margin becomes a header strip ---- */
 @media (max-width: 1240px) {
-  :root { --led-cols: 82px minmax(0,1fr) 94px 122px 114px 156px; --led-gap: 12px; --led-pad: 20px; }
+  :root { --led-cols: minmax(0,1fr) 118px 126px 116px 158px; --led-gap: 14px; --led-pad: 20px; }
   .tl-work { grid-template-columns: minmax(0, 1fr); }
   .tl-rail {
     position: static; max-height: none; overflow: visible;
     border-right: none; border-bottom: 1px solid var(--line);
-    display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 48px;
-    padding: 20px 20px 22px;
+    display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px 52px;
+    padding: 22px 20px 24px;
   }
   /* Side by side, so the two pots stop making the strip tall. */
-  .tl-sum { display: flex; flex-wrap: wrap; gap: 0 40px; min-width: 0; }
+  .tl-sum { display: flex; flex-wrap: wrap; gap: 0 44px; min-width: 0; }
   .tl-sum .tl-eyebrow { flex-basis: 100%; }
-  .tl-pot { border-bottom: none; padding-bottom: 0; margin-bottom: 0; min-width: 160px; }
-  .tl-facts { width: 280px; max-width: 100%; margin-top: 0; border-top: none; padding-top: 0; }
+  .tl-pot { min-width: 160px; }
+  .tl-pot + .tl-pot { margin-top: 0; }
+  .tl-facts { width: 290px; max-width: 100%; margin-top: 0; padding-top: 0; border-top: none; }
   /* min-width:0 lets the scrolling month strip stop widening the whole sheet. */
-  .tl-spine { flex-basis: 100%; min-width: 0; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  .tl-spine { flex-basis: 100%; min-width: 0; margin-top: 18px; padding-top: 18px; }
+  .tl-years { max-width: 320px; }
   /* The year reads across instead of down. */
-  .tl-months { display: flex; gap: 6px; max-width: 100%; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+  .tl-months { display: flex; gap: 8px; max-width: 100%; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
   .tl-mo {
-    width: 132px; flex: 0 0 132px; border: 1px solid var(--line); background: var(--paper);
-    border-radius: 8px; padding-bottom: 8px;
+    width: 136px; flex: 0 0 136px; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px 10px;
   }
   .tl-mo .row1 { display: block; }
-  .tl-mo .amt { display: block; margin-top: 3px; }
+  .tl-mo .amt { display: block; margin-top: 4px; text-align: left; }
+  .tl-mo[aria-pressed="true"] { border-color: var(--ink); }
   .tl-scope { flex-basis: 100%; }
 }
 
@@ -697,24 +712,24 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .tl-head { display: none; }
   .tl-row {
     grid-template-columns: minmax(0,1fr) auto;
-    grid-template-areas: "num amt" "brand amt" "dates status" "acts acts";
-    row-gap: 3px; align-items: baseline; padding: 12px var(--led-pad) 13px;
+    grid-template-areas: "who amt" "dates status" "acts acts";
+    row-gap: 10px; align-items: center; padding: 15px var(--led-pad);
   }
-  .tl-num { grid-area: num; }
-  .tl-open { grid-area: brand; white-space: normal; font-size: 15px; }
+  .tl-who { grid-area: who; }
+  .tl-open .nm { white-space: normal; }
+  .tl-open .meta { white-space: normal; }
   .tl-dates { grid-area: dates; }
   .tl-status { grid-area: status; text-align: right; }
-  .tl-status .s { justify-content: flex-end; }
-  .tl-status .chase { padding-left: 0; text-align: right; }
   .tl-amt { grid-area: amt; align-self: start; }
-  .tl-acts { grid-area: acts; justify-content: flex-start; margin-top: 8px; }
+  .tl-acts { grid-area: acts; justify-content: flex-start; }
   .tl-btn { opacity: 1; }
-  /* Stacked again, so the two pots need their own rule back. */
+  .tl-period h2 { font-size: 20px; }
+  /* Stacked again, so the pots need their own air back. */
   .tl-sum { display: block; }
-  .tl-pot { border-bottom: 1px solid var(--rule); padding-bottom: 11px; margin-bottom: 11px; }
-  .tl-pot:last-of-type { border-bottom: none; margin-bottom: 0; }
-  .tl-period h2 { font-size: 18px; }
+  .tl-pot + .tl-pot { margin-top: 18px; }
+  .tl-facts { width: 100%; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--rule); }
   .tl-tally .who { width: auto; }
+  .tl-close { flex-direction: column; gap: 12px; }
   .tl-foot { flex-direction: column; gap: 4px; }
   .tl-band { flex-wrap: wrap; gap: 10px; }
 }
@@ -895,7 +910,6 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       <div class="tl-ledger">
         <div class="tl-period" id="tl-period"></div>
         <div class="tl-head" aria-hidden="true">
-          <span>Invoice</span>
           <span>Brand</span>
           <span>Issued &rarr; due</span>
           <span>Status</span>
@@ -1579,8 +1593,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       sum = "";
     } else if (pots.length) {
       sum = '<div class="tl-eyebrow">Outstanding</div>' + pots.map(p =>
-        '<div class="tl-pot"><div class="who"><span>' + p.label + "</span>" +
-          '<span class="n">' + p.n + " invoice" + (p.n === 1 ? "" : "s") + "</span></div>" +
+        '<div class="tl-pot"><div class="who"><span class="lbl">' + p.label + "</span>" +
+          "<span>" + p.n + " invoice" + (p.n === 1 ? "" : "s") + "</span></div>" +
           '<div class="fig">' + fmtMoney(p.total, p.type) + "</div></div>").join("");
     } else {
       sum = '<div class="tl-eyebrow">Outstanding</div>' +
@@ -1676,11 +1690,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     }).join("");
 
     const legend = maxInr && maxUsd
-      ? "<b>Ink</b> is India, <b>blue</b> is international. Each is scaled to its own biggest month."
-      : "Bars are scaled to the biggest month.";
+      ? " <b>Ink</b> is India, <b>blue</b> is international."
+      : "";
     document.getElementById("tl-scope").innerHTML =
-      "Cut by invoice date, not due date. " + legend +
-      " Outstanding above covers every open invoice, in any period.";
+      "Months are cut by invoice date, not due date." + legend;
 
     spineEl.classList.toggle("tl-anim", !!animate);
 
@@ -1707,39 +1720,64 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     const last = lastNudge(m.inv);
     if (last) {
       const ago = daysBetween(last, m.today);
-      return '<span class="chase">Followed up ' +
-        (ago === 0 ? "today" : ago === 1 ? "yesterday" : ago + " days ago") + "</span>";
+      return "Followed up " + (ago === 0 ? "today" : ago === 1 ? "yesterday" : ago + " days ago");
     }
-    if (m.days !== null && m.days < 0) return '<span class="chase never">Not followed up</span>';
+    if (m.days !== null && m.days < 0) return '<span class="never">Not followed up</span>';
     return "";
   }
 
-  // One line of the account. Fixed columns, so the money stays a column.
+  // The monogram is the row's entry point: two initials, skipping the words
+  // nobody reads a company by. The tint is derived from the name so a brand
+  // keeps the same mark every time, and all four tints are cool, so a
+  // monogram can never be misread as a status.
+  const MONO_SKIP = { of: 1, and: 1, the: 1, for: 1 };
+  function monogram(name) {
+    const raw = String(name || "");
+    const words = raw.trim().split(/[\s,.\-]+/).filter(w => w && !MONO_SKIP[w.toLowerCase()]);
+    let ini = "?";
+    if (words.length === 1) ini = words[0].slice(0, 2);
+    else if (words.length > 1) ini = words[0][0] + words[1][0];
+    let h = 0;
+    for (let i = 0; i < raw.length; i++) h = (h * 31 + raw.charCodeAt(i)) % 997;
+    return { ini: esc(ini.toUpperCase()), tint: h % 4 };
+  }
+
+  // One line of the account: a monogram and the brand, the paperwork under it
+  // in the same cell, then the dates, one status pill, and the figure.
   function rowHtml(m, i) {
     const inv = m.inv;
+    const mono = monogram(inv.brand);
     const acts = inv.paid
       ? '<button type="button" class="tl-btn" data-act="unpay">Reopen</button>'
       : '<button type="button" class="tl-btn" data-act="nudge">Followed up</button>' +
         '<button type="button" class="tl-btn tl-btn--paid" data-act="pay">Mark paid</button>';
 
+    const meta = ["<span>" + esc(inv.num) + "</span>"];
+    const chase = chaseText(m);
+    if (chase) meta.push(chase);
+
     return '<div class="tl-row tl-row--' + m.bucket + '" data-num="' + esc(inv.num) +
       '" style="--d:' + Math.min(i, 14) * 0.028 + 's">' +
-      '<div class="tl-num">' + esc(inv.num) + "</div>" +
-      '<button type="button" class="tl-open" data-act="open" title="Open this invoice">' +
-        (esc(inv.brand) || "Untitled") +
-        ((inv.type || "intl") === "india" ? '<span class="tag">IN</span>' : "") +
-      "</button>" +
+      '<div class="tl-who">' +
+        '<span class="tl-mono tl-mono--' + mono.tint + '" aria-hidden="true">' + mono.ini + "</span>" +
+        '<button type="button" class="tl-open" data-act="open" title="Open this invoice">' +
+          '<span class="nm">' + (esc(inv.brand) || "Untitled") + "</span>" +
+          '<span class="meta">' + meta.join('<span class="sep">&middot;</span>') + "</span>" +
+        "</button>" +
+      "</div>" +
       '<div class="tl-dates">' + esc(fmtDateShort(inv.date)) +
         '<span class="to">&rarr;</span><span class="d2">' + esc(fmtDateShort(m.due)) + "</span></div>" +
-      '<div class="tl-status"><span class="s">' + esc(statusText(m)) + "</span>" + chaseText(m) + "</div>" +
+      '<div class="tl-status"><span class="pill pill--' + m.bucket + '">' + esc(statusText(m)) + "</span></div>" +
       '<div class="tl-amt">' + fmtMoney(inv.total || 0, inv.type || "intl") + "</div>" +
       '<div class="tl-acts">' + acts + "</div>" +
     "</div>";
   }
 
+  // A section heading is a heading: set like one, spaced like one, and never
+  // set like the column labels underneath it.
   function groupHtml(spec, ctr) {
     const head = spec.t
-      ? "<h3>" + spec.t + '<span class="n">' + spec.list.length + "</span></h3>"
+      ? '<div class="tl-sec"><h3>' + spec.t + '</h3><span class="cnt">' + spec.list.length + "</span></div>"
       : "";
     return '<div class="tl-group ' + spec.cls + '">' + head +
       spec.list.map(function (m) { return rowHtml(m, ctr.i++); }).join("") + "</div>";
