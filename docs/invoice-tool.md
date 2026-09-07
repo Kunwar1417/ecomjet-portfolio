@@ -19,7 +19,20 @@ Self-contained private tool to generate brand invoices as PDFs. Replaces manual 
 - **Saved-invoice archive (the "one place"):** Download PDF saves the ENTIRE invoice (type, brand, address, items, amounts, terms, date) to `localStorage` key `kd_invoices` (array, source of truth for both the archive list and the derived next-number). The "Saved invoices" list under the form is clickable: click a row → `loadForm()` reloads it fully for view/edit/re-download; each row has a delete (×). Re-downloading an existing number updates it in place. `localStorage` is per-browser, so always generate from the same machine/browser (no cross-device sync without a backend).
 - **"New invoice" button** is safe: warns before clearing if the current invoice has content and hasn't been downloaded (saved). No blind counter advance.
 - **Line items:** multiple rows (add/remove), free-text description with a `datalist` quick-pick of common deliverables, subtotal auto-sums. First line of a description is the title; extra lines become grey sub-text.
+- **Live post link (per line item):** an optional second field under each description. Brands ask for the link often enough that it belongs on the document rather than in the covering email.
+  - **The link wears a short phrase, never the URL.** A raw `instagram.com/reel/DcOLckITE78` is noise on an invoice, so the item prints `Watch the reel` in blue and the address hides behind the anchor (Chrome's Save as PDF carries it through, verified in the exported file).
+  - **The phrase is read off the URL**, so it tells the truth about what it opens: `Watch the reel` for a reel, `Watch the video` for YouTube or TikTok, `View the post` for anything else. `linkWords()` is where a new platform gets added.
+  - Several links on one item are allowed, separated by spaces or commas, for a package billed as one line. Then they are **numbered by kind** (`Reel 1`, `Video 2`) so they stay tellable apart. A protocol is added if it was not pasted, and anything that is not a URL is dropped silently rather than printed as a broken link.
+  - Stored per item as `link`, so reopening a saved invoice reprints it.
 - **Payment terms:** preset `<select>` (7 days / 30 days / 100% advance) + a **50/50 split** option that reveals a milestone toggle (50% advance / final 50%) which labels the line item and writes the correct balance sentence, + a "Custom…" free-text override.
+- **Advance / deposit already received:** an optional block (checkbox, then amount + date received + free-text reference, plus a one-click "Set it to 50% of the total"). It is a **receipt, not a discount**, and the whole design follows from that:
+  - **It comes off after tax.** The stack becomes Subtotal → IGST → **Invoice total** → **Deposit received** (as a minus) → the bar. Deducting before tax would under-charge GST, which is charged on the full value of the work whatever was banked early. The line says `Deposit received`, not "Less advance received": the minus sign already does the arithmetic, and the accountant's "less" reads stiff on a document a brand has to act on. The CSV keeps the word **advance**, since that is GSTR-1's own vocabulary.
+  - **The blue bar always carries the figure the brand has to pay**, so with an advance on the invoice it stops saying `Total due` and says `Balance due` (the serif italic accent moves with it). One bar, one number to act on.
+  - **The date received and the reference are both optional.** A quiet note under the stack carries whichever was filled (`Received on 14 August, 2026 · Wire ref 88410-2`), because that is what an AP team matches on. It never repeats that a deposit came in, which the line above already said, so with neither filled there is no note at all. If the deposit covers the whole invoice the note adds "Paid in full, this copy is for your records", because that document is now a receipt.
+  - Over-payment is clamped to the total, so the balance can never print negative.
+  - **`total` on the saved invoice is always the full billed value**, never the balance. The advance rides alongside it (`advOn`, `adv`, `advDate`, `advRef`) and only moves what is *outstanding*. Everything that reports billing (the month spine, `Billed`, the taxable value in the CSV) is untouched by it.
+  - **Two flows, and only one of them wants this block.** Bill the whole engagement here and deduct the deposit, *or* send a separate advance invoice and then bill only the balance. Doing both double-bills the register, which is why the hint under the block says so.
+  - The advance is per-invoice and is cleared by "New invoice", unlike the deliberately sticky Stripe / bank / terms choices.
 - **Partnership code** is an optional checkbox (off by default), like Stripe.
 - **PDF filename** auto-set from invoice number + brand (`document.title` swapped just before `window.print()`, then restored).
 - **Hardcoded constants** live in the `ME` object at the top of the inline `<script>` (registered address, GSTIN, PAN, `india` Kotak details, `us` bank details, `swift` international-wire details, and the live `stripe` payment link — a "customer chooses price" Stripe Payment Link, reused for every invoice).
@@ -75,14 +88,25 @@ The band's one control. It exports **exactly the period on screen** (`KD-registe
 
 Columns borrow **GSTR-1's own vocabulary**, so the CA can map them without asking what anything means:
 
-`Invoice · Invoice date · Due date · Client · Client GSTIN · Place of supply · Supply type · SAC · Currency · Taxable value · Tax type · Tax rate % · Tax amount · Invoice total · Status · Paid on`
+`Invoice · Invoice date · Due date · Client · Client GSTIN · Place of supply · Supply type · SAC · Currency · Taxable value · Tax type · Tax rate % · Tax amount · Invoice total · Advance received · Advance received on · Balance due · Status · Paid on`
 
 - **`Supply type`** is derived the way the CA would decide it, and tells them which GSTR-1 table the row belongs in: `Export of services` for any international invoice, else `B2B` when a client GSTIN is present and `B2C` when it is not.
 - **`Client GSTIN` and `Place of supply` come straight off the form** (`f-bt-gst`, `f-supply`) and are blank if they were never filled. A missing GSTIN silently reclassifies a registered client as B2C, which costs them their input credit, and a ₹2.5L+ inter-state B2C line still needs a place of supply. **Both fields being optional in the form is the weak link in this export.**
 - **Place of supply is left empty on exports** rather than filled with a guess: it is a state, and Table 6A does not take one.
 - **USD rows stay in USD, deliberately.** GST values an exported service at the rate on the date of the time of supply, not at whatever the remittance actually converted at, so the conversion is the CA's lookup against their own rate convention (RBI reference, bank TT buying). A rate invented here would only disagree with their books. `Invoice date` + `Currency` is everything they need. This is the same principle that stops the register summing or converting currencies anywhere.
 - **`Tax type` / `Tax rate %` are `IGST` / `18` on every India invoice**, because that is what the document itself charges. If an intra-state (Delhi place of supply) case is ever handled, it splits into CGST + SGST and these two columns are where it lands.
-- **`Status` and `Paid on` are for Kunwar's own books, not for GST.** Liability attaches to the invoice, not the receipt; an overdue invoice is still tax payable in its own month.
+- **`Advance received` / `Advance received on` / `Balance due` are the receipt side of the row** and never touch `Taxable value` or `Tax amount`: the tax is on the full invoice whatever was banked early. **The date is there because an advance taken in an earlier tax period is a liability in *that* period** (GSTR-1 table 11A), which the CA can only see if the date travels with the amount.
+- **`Status` and `Paid on` are for Kunwar's own books, not for GST.** Liability attaches to the invoice, not the receipt; an overdue invoice is still tax payable in its own month. `Part paid` is used only for an open invoice carrying an advance; an overdue one still says `Overdue`, since lateness is the thing to act on.
+
+### An advance in the book
+
+The register never mixes the two sides of a row. **Billed stays billed; the advance only moves what is still owed.**
+
+- **Outstanding in the margin is the sum of balances**, not of totals: a deposit already banked is not still owed.
+- **The row keeps its billed figure at its own type level** and puts the balance under it as one muted line (`₹1,47,500 due`), so the money still reads down as a single column and the figure keeps its level in the hierarchy.
+- **The pill stays a timing pill.** A part-paid invoice is still late or still upcoming, and that is what you act on, so "part paid" is told by the second money line, not by a fifth status. One status mark per row still holds.
+- **In the closing block, `Paid` means received against that period's billing**, so an advance on a still-open invoice counts in it. That is what keeps `Billed − Paid = Unpaid` true on the page.
+- Marking an invoice paid settles it whole; the advance stops mattering at that point and is not counted twice.
 
 ### Rules that still hold
 

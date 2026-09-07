@@ -109,6 +109,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .seg button { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 700; border-radius: 999px; color: var(--ink); transition: background .12s, color .12s; }
 .seg button[aria-pressed="true"] { background: var(--blue); color: #fff; }
 
+/* The revealed advance block is not a .field, so it carries its own air. */
+.adv-wrap { margin-bottom: 16px; }
+.adv-wrap .btn-line { margin-top: 2px; }
+
 .chk { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
 .chk input { width: 16px; height: 16px; accent-color: var(--blue); }
 
@@ -119,6 +123,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .li-row { align-items: start; margin-bottom: 7px; }
 .li-row textarea { min-height: 38px; font-size: 13px; padding: 7px 8px; }
 .li-row input { font-size: 13px; padding: 7px 6px; }
+/* The item column carries the description and, under it, where the video went live. */
+.li-main { display: grid; gap: 5px; min-width: 0; }
+.li-row .li-link { font-size: 12px; padding: 6px 8px; color: var(--blue); }
+.li-row .li-link::placeholder { color: var(--muted); }
 .li-del { align-self: center; width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--line-2); background: #fff; color: var(--muted); font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center; }
 .li-del:hover { border-color: #B0345A; color: #B0345A; }
 .btn-line { font-size: 13px; font-weight: 600; color: var(--blue); padding: 5px 0; }
@@ -232,6 +240,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .t-c { text-align: center; font-variant-numeric: tabular-nums; }
 .t-title { font-size: 13.5px; font-weight: 600; }
 .t-sub { font-size: 10.5px; color: var(--muted); margin-top: 1.5mm; line-height: 1.4; }
+/* Where the video went live. The link wears a short phrase, so the item reads
+   as a sentence and the address stays behind it. */
+.t-links { margin-top: 1.8mm; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5mm 4mm; font-size: 11px; line-height: 1.45; }
+.t-links a { color: var(--blue); font-weight: 600; text-decoration: underline; text-underline-offset: 1.8px; text-decoration-thickness: .5px; }
 
 /* --- Totals --- */
 .d-totals { margin-top: 8mm; display: flex; justify-content: flex-end; }
@@ -239,6 +251,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .t-line { display: flex; justify-content: space-between; font-size: 12.5px; padding: 2.4mm 0; color: var(--ink); }
 .t-line .lbl { color: var(--muted); }
 .t-line .val { font-variant-numeric: tabular-nums; font-weight: 600; }
+/* What was already received, told once, under the figure it explains. */
+.t-note { margin-top: 2.5mm; font-size: 10px; line-height: 1.45; color: var(--muted); text-align: right; }
 .t-bar {
   margin-top: 3mm; background: var(--blue); color: #fff;
   display: flex; justify-content: space-between; align-items: baseline;
@@ -597,6 +611,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   color: var(--ink); font-variant-numeric: tabular-nums lining; white-space: nowrap;
 }
 .tl-row--paid .tl-amt { color: var(--muted); font-weight: 600; }
+/* A part-paid line still reports what it billed; the balance sits under it,
+   so the money stays one column and the figure keeps its level. */
+.tl-amt .due { display: block; margin-top: 2px; font-size: 11px; font-weight: 600; letter-spacing: 0; color: var(--muted); }
 
 /* Actions live in a reserved lane, so revealing them never moves a line. */
 .tl-acts { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
@@ -750,6 +767,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     width: 210mm; min-height: 297mm;
     border-left: 3mm solid var(--blue);
   }
+  /* Links carry through to the PDF as links, and print as themselves. */
+  .t-links a { color: var(--blue); }
+  /* An invoice long enough to need a second sheet must not break inside a line
+     item, the totals ladder, or the payment band. */
+  .t-row, .d-totals, .d-foot { break-inside: avoid; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
@@ -855,6 +877,29 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     </div>
     <div class="field" id="f-terms-custom-wrap" hidden>
       <input type="text" id="f-terms-custom" placeholder="Type custom payment terms" />
+    </div>
+
+    <h2>Deposit received</h2>
+    <div class="field">
+      <label class="chk"><input type="checkbox" id="f-adv-on" /> A deposit or advance is already paid</label>
+    </div>
+    <div class="adv-wrap" id="f-adv-wrap" hidden>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-adv-amt">Amount received</label>
+          <input type="number" id="f-adv-amt" min="0" step="1" placeholder="0" />
+        </div>
+        <div class="field">
+          <label for="f-adv-date">Received on (optional)</label>
+          <input type="date" id="f-adv-date" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-adv-ref">Reference (optional)</label>
+        <input type="text" id="f-adv-ref" placeholder="UPI 448301 / paid against KD-2026-0012" />
+      </div>
+      <button type="button" class="btn-line" id="adv-half">Set it to 50% of the total</button>
+      <div class="hint-sm">It comes off after tax, so tax is still charged on the full value, and the invoice closes on Balance due. If you already sent a separate advance invoice, bill only the balance on this one instead.</div>
     </div>
 
     <div class="field intl-only">
@@ -1030,6 +1075,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   const pad4 = n => String(n).padStart(4, "0");
   const esc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const nl2br = s => esc(s).replace(/\n/g, "<br>");
+  const escAttr = s => esc(s).replace(/"/g, "&quot;");
 
   // ---- Archive: array of full invoice objects, keyed by number ----
   function getInvoices() { try { return JSON.parse(localStorage.getItem(LS_INVOICES)) || []; } catch (e) { return []; } }
@@ -1106,6 +1152,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   const pcodeOn = document.getElementById("f-pcode-on");
   const pcodeWrap = document.getElementById("f-pcode-wrap");
   const pcodeInput = document.getElementById("f-pcode");
+  const advOn = document.getElementById("f-adv-on");
+  const advWrap = document.getElementById("f-adv-wrap");
+  const advAmt = document.getElementById("f-adv-amt");
+  const advDate = document.getElementById("f-adv-date");
+  const advRef = document.getElementById("f-adv-ref");
 
   let TYPE = "intl";
   let BANK = "us";                              // intl only: "us" (ACH) or "swift" (international wire)
@@ -1127,7 +1178,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     const row = document.createElement("div");
     row.className = "li-row";
     row.innerHTML =
-      '<textarea class="li-desc" placeholder="Description" list="li-presets">' + esc(data.desc || "") + '</textarea>' +
+      '<div class="li-main">' +
+        '<textarea class="li-desc" placeholder="Description" list="li-presets">' + esc(data.desc || "") + '</textarea>' +
+        '<input type="text" class="li-link" placeholder="Link to the post (optional)" value="' + escAttr(data.link || "") + '" />' +
+      '</div>' +
       '<input type="text" class="li-sac" placeholder="998366" value="' + esc(data.sac || "998366") + '" />' +
       '<input type="number" class="li-qty" min="1" step="1" value="' + (data.qty || "1") + '" />' +
       '<input type="number" class="li-price" min="0" step="1" placeholder="0" value="' + (data.price != null ? data.price : "") + '" />' +
@@ -1147,10 +1201,46 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   function readLineItems() {
     return Array.from(liList.querySelectorAll(".li-row")).map(r => ({
       desc: r.querySelector(".li-desc").value,
+      link: r.querySelector(".li-link").value,
       sac: r.querySelector(".li-sac").value,
       qty: parseFloat(r.querySelector(".li-qty").value) || 0,
       price: parseFloat(r.querySelector(".li-price").value) || 0
     }));
+  }
+
+  // What a link is called on the document. A raw URL is noise on an invoice, so
+  // the link wears a short phrase and the address hides behind it. The phrase
+  // is read off the URL, so it says the true thing: a reel is a reel.
+  function linkWords(href) {
+    const h = href.toLowerCase();
+    if (/instagram\.com\/reels?\//.test(h)) return { one: "Watch the reel", many: "Reel" };
+    if (/youtu\.be\/|youtube\.com|tiktok\.com/.test(h)) return { one: "Watch the video", many: "Video" };
+    return { one: "View the post", many: "Post" };
+  }
+
+  // A line item can carry where the video went live: brands ask for it, and
+  // they file the invoice with the link on it. Several links are allowed on one
+  // item (a package of reels), separated by spaces or commas. A protocol is
+  // added when it was not pasted, and anything that is not a URL is dropped.
+  function parseLinks(str) {
+    return String(str || "").split(/[\s,]+/).filter(Boolean).map(function (raw) {
+      let href = raw.replace(/[.;]+$/, "");
+      if (!/^https?:\/\//i.test(href)) {
+        if (!/^[\w-]+(?:\.[\w-]+)+(?:[\/?#].*)?$/.test(href)) return null;
+        href = "https://" + href;
+      }
+      const w = linkWords(href);
+      return { href: href, one: w.one, many: w.many };
+    }).filter(Boolean);
+  }
+
+  // What has already been received against this invoice. It is a receipt, not a
+  // discount: it comes off AFTER tax, so tax stays charged on the full value.
+  // Passing the total clamps it, since you cannot have received more than you billed.
+  function advanceAmount(total) {
+    if (!advOn.checked) return 0;
+    const v = Math.max(0, parseFloat(advAmt.value) || 0);
+    return total != null ? Math.min(v, total) : v;
   }
 
   function termsText() {
@@ -1256,7 +1346,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       const title = esc(parts[0] || "") + (i === 0 ? esc(suffix) : "");
       const sub = parts.slice(1).join(" · ");
       const subHtml = sub ? '<div class="t-sub">' + esc(sub) + '</div>' : "";
-      const cell = '<div><div class="t-title">' + title + '</div>' + subHtml + '</div>';
+      const links = parseLinks(it.link);
+      // One link says what it is; several are numbered, so they stay tellable apart.
+      const linkHtml = links.length
+        ? '<div class="t-links">' + links.map(function (l, n) {
+            return '<a href="' + escAttr(l.href) + '">' +
+              esc(links.length > 1 ? l.many + " " + (n + 1) : l.one) + '</a>';
+          }).join("") + '</div>'
+        : "";
+      const cell = '<div><div class="t-title">' + title + '</div>' + subHtml + linkHtml + '</div>';
       if (isIndia) return '<div class="t-row">' + cell + '<div>' + esc(it.sac) + '</div><div class="t-c">' + it.qty + '</div><div class="t-r">' + fmtMoney(line, TYPE) + '</div></div>';
       return '<div class="t-row">' + cell + '<div class="t-c">' + it.qty + '</div><div class="t-r">' + fmtMoney(line, TYPE) + '</div></div>';
     }).join("");
@@ -1266,9 +1364,28 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     const taxRate = isIndia ? 0.18 : 0;
     const tax = Math.round(subtotal * taxRate);
     const total = subtotal + tax;
+    const adv = advanceAmount(total);
     let html = '<div class="t-line"><span class="lbl">Subtotal</span><span class="val">' + fmtMoney(subtotal, TYPE) + '</span></div>';
     html += '<div class="t-line"><span class="lbl">' + (isIndia ? "IGST (18%)" : "Tax (0%)") + '</span><span class="val">' + fmtMoney(tax, TYPE) + '</span></div>';
-    html += '<div class="t-bar"><span class="lbl">Total <em>due</em></span><span class="val">' + fmtMoney(total, TYPE) + '</span></div>';
+    // One bar, and it always carries the figure the brand has to pay. With a
+    // deposit on the invoice that figure is the balance, so the invoice total
+    // steps down into a line and the bar takes the balance.
+    if (adv > 0) {
+      html += '<div class="t-line"><span class="lbl">Invoice total</span><span class="val">' + fmtMoney(total, TYPE) + '</span></div>';
+      html += '<div class="t-line"><span class="lbl">Deposit received</span><span class="val">&minus;' + fmtMoney(adv, TYPE) + '</span></div>';
+      html += '<div class="t-bar"><span class="lbl">Balance <em>due</em></span><span class="val">' + fmtMoney(total - adv, TYPE) + '</span></div>';
+      // The line above already says a deposit came in, so the note only carries
+      // what it does not: when, and against what reference. Both are optional,
+      // and with neither there is nothing left to say.
+      const bits = [];
+      if (advDate.value) bits.push("Received on " + fmtDate(advDate.value));
+      if (advRef.value.trim()) bits.push(esc(advRef.value.trim()));
+      let note = bits.join(" &middot; ");
+      if (total - adv <= 0) note += (note ? ". " : "") + "Paid in full, this copy is for your records.";
+      if (note) html += '<div class="t-note">' + note + '</div>';
+    } else {
+      html += '<div class="t-bar"><span class="lbl">Total <em>due</em></span><span class="val">' + fmtMoney(total, TYPE) + '</span></div>';
+    }
     document.getElementById("d-totals").innerHTML = html;
 
     // payments
@@ -1349,6 +1466,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       items: readLineItems(),
       termsSel: termsSel.value,
       termsCustom: termsCustom.value,
+      advOn: advOn.checked,
+      adv: advanceAmount(),
+      advDate: advDate.value,
+      advRef: advRef.value,
       split: SPLIT,
       bank: BANK,
       stripe: stripeChk.checked,
@@ -1392,6 +1513,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     pcodeWrap.hidden = !pcodeOn.checked;
     pcodeInput.value = inv.pcode || "";
     stripeChk.checked = !!inv.stripe;
+
+    advOn.checked = !!inv.advOn;
+    advWrap.hidden = !advOn.checked;
+    advAmt.value = inv.adv ? inv.adv : "";
+    advDate.value = inv.advDate || "";
+    advRef.value = inv.advRef || "";
 
     termsSel.value = inv.termsSel || "Due within 7 days of invoice date";
     termsCustom.value = inv.termsCustom || "";
@@ -1507,6 +1634,10 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
   // Subtotal / tax / total for one saved invoice. Line items are the source;
   // the stored total wins on any disagreement, since that is what was sent.
+  //
+  // An advance never changes what was billed. total is always the full value of
+  // the invoice (that is what the period was billed, and what the tax was on);
+  // the advance is a receipt against it and only moves the balance.
   function invSplit(inv) {
     const items = Array.isArray(inv.items) ? inv.items : [];
     const isIndia = (inv.type || "intl") === "india";
@@ -1515,7 +1646,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     items.forEach(it => { sub += (Number(it.qty) || 0) * (Number(it.price) || 0); });
     if (!sub) sub = isIndia ? Math.round(total / 1.18) : total;
     const tax = isIndia ? Math.max(0, total - sub) : 0;
-    return { sub: sub, tax: tax, total: total || sub + tax };
+    const grand = total || sub + tax;
+    const adv = Math.min(Math.max(0, Number(inv.advOn ? inv.adv : 0) || 0), grand);
+    return { sub: sub, tax: tax, total: grand, adv: adv, balance: Math.max(0, grand - adv) };
   }
 
   // One invoice -> everything a line needs to draw itself.
@@ -1584,8 +1717,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     const pots = [{ label: "India", type: "india" }, { label: "International", type: "intl" }]
       .map(function (p) {
         const list = unpaid.filter(m => ((m.inv.type || "intl") === "india") === (p.type === "india"));
+        // Balances, not totals: a deposit already banked is not still owed.
         return { label: p.label, type: p.type, n: list.length,
-                 total: list.reduce((t, m) => t + (m.inv.total || 0), 0) };
+                 total: list.reduce((t, m) => t + m.split.balance, 0) };
       }).filter(p => p.n);
 
     let sum = "";
@@ -1768,7 +1902,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       '<div class="tl-dates">' + esc(fmtDateShort(inv.date)) +
         '<span class="to">&rarr;</span><span class="d2">' + esc(fmtDateShort(m.due)) + "</span></div>" +
       '<div class="tl-status"><span class="pill pill--' + m.bucket + '">' + esc(statusText(m)) + "</span></div>" +
-      '<div class="tl-amt">' + fmtMoney(inv.total || 0, inv.type || "intl") + "</div>" +
+      '<div class="tl-amt">' + fmtMoney(m.split.total, inv.type || "intl") +
+        // A part-paid line keeps the billed figure at its own level and puts the
+        // balance under it, so the money column still reads down as one column.
+        (m.split.adv > 0 && !inv.paid
+          ? '<span class="due">' + fmtMoney(m.split.balance, inv.type || "intl") + " due</span>"
+          : "") + "</div>" +
       '<div class="tl-acts">' + acts + "</div>" +
     "</div>";
   }
@@ -1790,7 +1929,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
         const list = models.filter(m => ((m.inv.type || "intl") === "india") === (p.type === "india"));
         const billed = list.reduce((t, m) => t + m.split.total, 0);
         const tax = list.reduce((t, m) => t + m.split.tax, 0);
-        const paid = list.filter(m => m.inv.paid).reduce((t, m) => t + m.split.total, 0);
+        // Paid is what came in against this period's billing, so an advance on a
+        // still-open invoice counts. That keeps Billed minus Paid equal to Unpaid.
+        const paid = list.reduce((t, m) => t + (m.inv.paid ? m.split.total : m.split.adv), 0);
         return { label: p.label, type: p.type, n: list.length, billed: billed, tax: tax, paid: paid };
       }).filter(p => p.n);
 
@@ -1907,10 +2048,17 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     // remittance actually converted at, so the conversion is the CA's lookup
     // against their own rate convention. A rate invented here would only
     // disagree with their books. Invoice date + Currency is all they need.
+    //
+    // Advance received / Advance received on / Balance due are the receipt side
+    // of the row. They never touch Taxable value or Tax amount: GST is on the
+    // full invoice, whatever was banked early. The date is there because an
+    // advance taken in an earlier period is a liability in THAT period
+    // (GSTR-1 11A), which the CA can only see if the date travels with it.
     const head = ["Invoice", "Invoice date", "Due date", "Client", "Client GSTIN",
                   "Place of supply", "Supply type", "SAC", "Currency",
                   "Taxable value", "Tax type", "Tax rate %", "Tax amount",
-                  "Invoice total", "Status", "Paid on"];
+                  "Invoice total", "Advance received", "Advance received on",
+                  "Balance due", "Status", "Paid on"];
     const rows = models.map(function (m) {
       const inv = m.inv;
       const isIndia = (inv.type || "intl") === "india";
@@ -1930,7 +2078,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
         isIndia ? "IGST" : "Zero-rated export",
         isIndia ? 18 : 0,
         m.split.tax, m.split.total,
-        inv.paid ? "Paid" : (m.days !== null && m.days < 0 ? "Overdue" : "Open"),
+        m.split.adv || "", m.split.adv ? (inv.advDate || "") : "",
+        inv.paid ? 0 : m.split.balance,
+        inv.paid ? "Paid"
+          : (m.days !== null && m.days < 0) ? "Overdue"
+          : m.split.adv > 0 ? "Part paid" : "Open",
         inv.paid ? (inv.paidDate || "") : ""
       ].map(csvCell).join(",");
     });
@@ -2025,6 +2177,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     btGst.value = "";
     document.getElementById("f-supply").value = "";
     pcodeOn.checked = false; pcodeWrap.hidden = true; pcodeInput.value = "";
+    // The advance belongs to one invoice, so it never carries into the next.
+    advOn.checked = false; advWrap.hidden = true;
+    advAmt.value = ""; advDate.value = ""; advRef.value = "";
     liList.innerHTML = ""; makeLineRow();
     elDate.value = todayIso();
     elDue.dataset.derived = "1"; syncDue(true);
@@ -2066,6 +2221,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     render();
   });
   pcodeOn.addEventListener("change", () => { pcodeWrap.hidden = !pcodeOn.checked; render(); });
+  advOn.addEventListener("change", () => {
+    advWrap.hidden = !advOn.checked;
+    if (advOn.checked && !advAmt.value) advAmt.focus();
+    render();
+  });
+  // A deposit is half the invoice often enough to be worth one click.
+  document.getElementById("adv-half").addEventListener("click", () => {
+    advAmt.value = Math.round(computeTotal() / 2);
+    render();
+  });
 
   document.getElementById("form").addEventListener("input", render);
   document.getElementById("li-add").addEventListener("click", () => { makeLineRow(); render(); });
