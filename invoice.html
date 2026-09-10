@@ -277,6 +277,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .pay-grid { display: grid; grid-template-columns: auto 1fr; gap: 1mm 4mm; font-size: 11.5px; line-height: 1.5; }
 .pay-grid .k { color: var(--muted); white-space: nowrap; }
 .pay-grid .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Must stay AFTER .pay-grid .v: same specificity, so source order decides. */
+.pay-grid .pay-cur { font-weight: 700; }
 .pay-alt { margin-top: 4mm; font-size: 11.5px; }
 .pay-alt .or { font-family: var(--serif); font-style: italic; color: var(--muted); margin-right: 2mm; }
 .pay-alt b { font-weight: 700; }
@@ -1100,10 +1102,16 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     return { text: "KD-" + yr + "-" + pad4(maxSeq + 1), seq: maxSeq + 1, year: yr };
   }
 
+  // A bare "$" is not a currency. It reads as SGD in Singapore, AUD in Sydney,
+  // CAD in Toronto, and a brand quoted 3,500 of the wrong dollar is a brand that
+  // pays the wrong number. Every international figure is written "US$" so the
+  // unit is stated, not guessed. INR is left as the rupee sign, which is unique.
   function fmtMoney(amount, type) {
-    const opts = { style: "currency", maximumFractionDigits: 0, minimumFractionDigits: 0 };
-    if (type === "india") return new Intl.NumberFormat("en-IN", Object.assign({ currency: "INR" }, opts)).format(amount);
-    return new Intl.NumberFormat("en-US", Object.assign({ currency: "USD" }, opts)).format(amount);
+    if (type === "india") {
+      return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(amount);
+    }
+    const digits = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(Math.abs(amount));
+    return (amount < 0 ? "\u2212US$" : "US$") + digits;
   }
   function todayIso() {
     const d = new Date();
@@ -1332,9 +1340,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
     // table head
     const thead = document.getElementById("d-thead");
+    // The column head carries the unit, so the figures below it are never read
+    // in the reader's local dollar.
     thead.innerHTML = isIndia
-      ? '<span>Item</span><span>SAC</span><span class="t-c">Qty</span><span class="t-r">Amount</span>'
-      : '<span>Item</span><span class="t-c">Qty</span><span class="t-r">Amount</span>';
+      ? '<span>Item</span><span>SAC</span><span class="t-c">Qty</span><span class="t-r">Amount (INR)</span>'
+      : '<span>Item</span><span class="t-c">Qty</span><span class="t-r">Amount (USD)</span>';
 
     // rows
     const items = readLineItems();
@@ -1408,6 +1418,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       const b = ME.swift;
       let h = '<div class="pay-method">' + b.method + '</div>' +
         '<div class="pay-grid">' +
+        // Currency leads the block. It is the one instruction a payer has to give
+        // their bank that the account numbers below cannot imply on their own.
+        '<span class="k">Currency</span><span class="v pay-cur">USD (United States Dollars)</span>' +
         '<span class="k">Account holder</span><span class="v">' + b.holder + '</span>' +
         '<span class="k">Account number (IBAN)</span><span class="v">' + b.iban + '</span>' +
         '<span class="k">BIC/SWIFT code</span><span class="v">' + b.bic + '</span>' +
@@ -1421,6 +1434,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       const b = ME.us;
       let h = '<div class="pay-method">' + b.method + '</div>' +
         '<div class="pay-grid">' +
+        '<span class="k">Currency</span><span class="v pay-cur">USD (United States Dollars)</span>' +
         '<span class="k">Account holder</span><span class="v">' + b.holder + '</span>' +
         '<span class="k">Account number</span><span class="v">' + b.account + '</span>' +
         '<span class="k">ACH routing number</span><span class="v">' + b.ach + '</span>' +
