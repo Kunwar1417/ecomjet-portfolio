@@ -645,30 +645,58 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
 .tl-body { padding-bottom: 0; }
 
-/* ---- What the page comes to: a summary bar, not another rule ---- */
+/* ---- What the page comes to: a summary bar, not another rule ----
+   Revenue is the only figure here set at size, because it is the only one that
+   says what the business earned. Everything else is the working that gets to
+   it, so it sits at label weight and lets the eye pass over it. The previous
+   build set all five at one size and coloured three of them, which is why it
+   read as a mesh: nothing was allowed to be the answer. */
 .tl-close {
   margin-top: 30px;
   background: var(--panel); border-top: 1px solid var(--line);
-  padding: 18px var(--led-pad) 20px;
-  display: flex; align-items: baseline; gap: 12px 32px; flex-wrap: wrap;
+  padding: 20px var(--led-pad) 24px;
 }
 .tl-close .cl {
   font-size: 10px; text-transform: uppercase; letter-spacing: .13em;
-  font-weight: 700; color: var(--muted); flex-shrink: 0;
+  font-weight: 700; color: var(--muted); margin-bottom: 15px;
 }
-.tl-tally { display: flex; flex-direction: column; gap: 9px; }
-.tl-tally .acct { display: flex; align-items: baseline; gap: 0 26px; flex-wrap: wrap; }
-.tl-tally .who {
-  font-size: 11.5px; font-weight: 700; color: var(--ink);
-  width: 106px; flex-shrink: 0;
+/* One measure for the head and every account, so the money reads down a
+   column. The empty track before Collected is air doing a rule's job:
+   it separates what the period earned from where that money stands. */
+.tl-tally .acct-head, .tl-tally .acct {
+  display: grid;
+  grid-template-columns: 172px 1fr 1fr 1.55fr 28px 1fr 1fr;
+  gap: 0 20px; align-items: baseline;
 }
-.tl-tally .m { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.tl-tally .m b {
-  font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums lining;
-  font-size: 14px; margin-left: 7px;
+.tl-tally .acct-head {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+  font-weight: 700; color: var(--muted); padding-bottom: 11px;
 }
-.tl-tally .m.is-open b { color: var(--over); }
-.tl-tally .m.is-paid b { color: var(--calm); }
+.tl-tally .acct-head span { text-align: right; }
+.tl-tally .acct-head span:first-child { text-align: left; }
+.tl-tally .acct + .acct { margin-top: 18px; }
+.tl-tally .who { font-size: 13px; font-weight: 700; color: var(--ink); }
+.tl-tally .who .n {
+  display: block; margin-top: 4px;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  font-variant-numeric: tabular-nums lining;
+}
+.tl-tally .f {
+  text-align: right; font-size: 15px; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums lining;
+}
+/* A zero is still a fact, so it prints; it just stops asking to be read. */
+.tl-tally .f.nil { color: var(--muted); font-weight: 500; }
+.tl-tally .f.is-open { color: var(--over); }
+.tl-tally .f.hero {
+  font-size: 24px; font-weight: 700; line-height: 1.08;
+  letter-spacing: -0.025em; font-variation-settings: "opsz" 72;
+}
+.tl-tally .delta {
+  display: block; margin-top: 5px;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0; font-variation-settings: normal;
+}
 
 /* Nothing on file yet: no margin to rule, no columns to head. */
 .inv-tl.is-blank .tl-rail, .inv-tl.is-blank .tl-head, .inv-tl.is-blank .tl-period { display: none; }
@@ -725,6 +753,21 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .tl-scope { flex-basis: 100%; }
 }
 
+/* Below this the seven tracks stop fitting the hero figure, so the foot stops
+   being a table and becomes two columns of labelled figures. */
+@media (max-width: 1024px) {
+  .tl-tally .acct-head { display: none; }
+  .tl-tally .acct { grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+  .tl-tally .acct .sp { display: none; }
+  .tl-tally .who { grid-column: 1 / -1; }
+  .tl-tally .f { text-align: left; }
+  .tl-tally .f::before {
+    content: attr(data-l); display: block; margin-bottom: 3px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    font-weight: 700; color: var(--muted); font-variation-settings: normal;
+  }
+}
+
 @media (max-width: 860px) {
   .inv-tl { border-left-width: 4px; }
   :root { --led-pad: 16px; }
@@ -747,8 +790,6 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   .tl-sum { display: block; }
   .tl-pot + .tl-pot { margin-top: 18px; }
   .tl-facts { width: 100%; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--rule); }
-  .tl-tally .who { width: auto; }
-  .tl-close { flex-direction: column; gap: 12px; }
   .tl-foot { flex-direction: column; gap: 4px; }
   .tl-band { flex-wrap: wrap; gap: 10px; }
 }
@@ -1710,6 +1751,21 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
     if (p.kind === "fy") return "FY" + p.y + "-" + String((p.y + 1) % 100).padStart(2, "0");
     return String(p.y);
   }
+  // The comparable period immediately before this one. All time has nothing to
+  // stand against, so the foot carries no delta there.
+  function prevPeriod(p) {
+    if (!p || p.kind === "all") return null;
+    if (p.kind === "month") return p.m === 0 ? { kind: "month", y: p.y - 1, m: 11 } : { kind: "month", y: p.y, m: p.m - 1 };
+    if (p.kind === "fy") return { kind: "fy", y: p.y - 1 };
+    return { kind: "year", y: p.y - 1 };
+  }
+  // Named short: the figure beside it already says what is being compared, so
+  // the year is only worth printing when the comparison crosses one.
+  function prevLabelShort(prev, cur) {
+    if (prev.kind === "month") return MON_LONG[prev.m] + (prev.y === cur.y ? "" : " " + prev.y);
+    return periodLabel(prev);
+  }
+
   function yearOf(iso) {
     const y = parseInt(String(iso || "").slice(0, 4), 10);
     return isNaN(y) ? null : y;
@@ -1936,26 +1992,72 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       spec.list.map(function (m) { return rowHtml(m, ctr.i++); }).join("") + "</div>";
   }
 
-  // What a period adds up to, one account per currency, never blended.
+  // What the period came to, one account per currency, never blended.
+  //
+  // **Revenue is the business number, and it is why this block was rebuilt.**
+  // IGST is collected on the government's behalf and is not income, so a month
+  // that billed 3,30,400 earned 2,80,000. The old foot printed Billed and IGST
+  // at the same weight and left that subtraction to be done in the head.
+  // Billed stays, because it is what the month spine and the CSV report and
+  // what the invoices themselves say; it is now the working, not the answer.
   function tallyHtml(models) {
+    const prevP = prevPeriod(PERIOD);
+    const prevModels = prevP ? getInvoices().filter(inv => inPeriod(inv, prevP)).map(tlModel) : null;
+    const ofType = (list, type) => list.filter(m => ((m.inv.type || "intl") === "india") === (type === "india"));
+
     const rows = [{ label: "India", type: "india" }, { label: "International", type: "intl" }]
       .map(function (p) {
-        const list = models.filter(m => ((m.inv.type || "intl") === "india") === (p.type === "india"));
+        const list = ofType(models, p.type);
         const billed = list.reduce((t, m) => t + m.split.total, 0);
         const tax = list.reduce((t, m) => t + m.split.tax, 0);
         // Paid is what came in against this period's billing, so an advance on a
         // still-open invoice counts. That keeps Billed minus Paid equal to Unpaid.
         const paid = list.reduce((t, m) => t + (m.inv.paid ? m.split.total : m.split.adv), 0);
-        return { label: p.label, type: p.type, n: list.length, billed: billed, tax: tax, paid: paid };
+        const prevRev = prevModels
+          ? ofType(prevModels, p.type).reduce((t, m) => t + (m.split.total - m.split.tax), 0)
+          : 0;
+        return { label: p.label, type: p.type, n: list.length, billed: billed,
+                 tax: tax, paid: paid, rev: billed - tax, prevRev: prevRev };
       }).filter(p => p.n);
 
     if (!rows.length) return "";
-    return '<div class="tl-tally">' + rows.map(function (r) {
-      let m = '<span class="m">Billed<b>' + fmtMoney(r.billed, r.type) + "</b></span>";
-      if (r.tax) m += '<span class="m">IGST<b>' + fmtMoney(r.tax, r.type) + "</b></span>";
-      m += '<span class="m is-paid">Paid<b>' + fmtMoney(r.paid, r.type) + "</b></span>";
-      if (r.billed - r.paid > 0) m += '<span class="m is-open">Unpaid<b>' + fmtMoney(r.billed - r.paid, r.type) + "</b></span>";
-      return '<div class="acct"><span class="who">' + r.label + "</span>" + m + "</div>";
+
+    // data-l carries the column label into the cell, so the narrow layout can
+    // drop the head row and still say what every figure is.
+    const cell = (v, label, cls) => '<div class="f' + (cls ? " " + cls : "") + '" data-l="' + label + '">' + v + "</div>";
+
+    const head = '<div class="acct-head"><span></span>' +
+      "<span>Billed</span><span>IGST held</span><span>Revenue</span>" +
+      '<span class="sp"></span><span>Collected</span><span>Outstanding</span></div>';
+
+    return '<div class="tl-tally">' + head + rows.map(function (r) {
+      const open = r.billed - r.paid;
+      // An average only says something once there is more than one deal in it.
+      const meta = r.n + (r.n === 1 ? " invoice" : " invoices") +
+        (r.n > 1 ? " &middot; avg " + fmtMoney(Math.round(r.rev / r.n), r.type) : "");
+
+      // Only against a period that actually earned something: a percentage off
+      // a base of nothing is not a comparison.
+      let delta = "";
+      if (r.prevRev > 0) {
+        const pct = Math.round((r.rev - r.prevRev) / r.prevRev * 100);
+        const on = " on " + esc(prevLabelShort(prevP, PERIOD));
+        delta = '<span class="delta">' +
+          (pct === 0 ? "Level" + on : (pct > 0 ? "\u2191 " : "\u2193 ") + Math.abs(pct) + "%" + on) +
+          "</span>";
+      }
+
+      return '<div class="acct">' +
+        '<div class="who">' + r.label + '<span class="n">' + meta + "</span></div>" +
+        cell(fmtMoney(r.billed, r.type), "Billed") +
+        // An export carries no IGST at all, which is a different thing from
+        // carrying none, so it reads as a dash rather than a zero.
+        cell(r.tax ? fmtMoney(r.tax, r.type) : "&ndash;", "IGST held", r.tax ? "" : "nil") +
+        cell(fmtMoney(r.rev, r.type) + delta, "Revenue", "hero") +
+        '<div class="sp"></div>' +
+        cell(fmtMoney(r.paid, r.type), "Collected", r.paid ? "" : "nil") +
+        cell(fmtMoney(open, r.type), "Outstanding", open > 0 ? "is-open" : "nil") +
+        "</div>";
     }).join("") + "</div>";
   }
 

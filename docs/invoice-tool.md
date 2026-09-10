@@ -83,9 +83,29 @@ The year read down the margin. Every month prints what was billed in it and clic
 - The **bar is the year's rhythm; the figure beside it is the readout.** Each currency is scaled to its own biggest month (`maxInr`, `maxUsd`) and drawn in its own colour (ink = India, blue = international), because one shared scale would need an exchange rate. A bar is drawn only for a currency that actually has money in that month, so a quiet month stays a single ruled line.
 - **No rule under any month**: the bar is the only ink a month needs, and empty months sit at `.42` opacity. The spine shows the months of the **focused year**; an FY selection makes it run Apr → Mar and crossing months carry a 2-digit year. Each cell owns its own `y`, so the crossing works.
 
-### The closing block (`.tl-close`)
+### The closing block (`.tl-close`): the period's business numbers
 
-The page closes on a **panel summary bar** (`--panel` ground, one top hairline) rather than another rule in the table: `Total, august 2026` then one account per currency with **Billed / IGST / Paid / Unpaid**. The heading says which page you are on; the foot says what the page adds up to, so neither does the other's job. IGST only prints where there is tax (India). Sub/tax/total come from `invSplit()`: line items are the source, but the **stored total wins** on any disagreement, since that is what was actually sent.
+The page closes on a **panel summary bar** (`--panel` ground, one top hairline) rather than another rule in the table. The heading says which page you are on; the foot says what the page came to, so neither does the other's job.
+
+**Revenue is the point of this block.** IGST is collected on the government's behalf and is not income, so a month that billed ₹3,30,400 *earned* ₹2,80,000. The build before this one printed `Billed / IGST / Paid / Unpaid` as four label-and-figure pairs at one size, three of them coloured, and left that subtraction to be done in the head. It was rejected as ugly and clunky, and the diagnosis is the same one the hierarchy section makes about the table: **nothing was allowed to be the answer.**
+
+One aligned measure, shared by the head row and every account:
+
+`account · Billed · IGST held · Revenue · ⟨air⟩ · Collected · Outstanding`
+
+- **Revenue is the only figure set at size** (24px, `opsz 72`), because it is the only one that says what the business earned. Billed and IGST are the working that gets to it and sit at 15px. Four type levels again: hero figure 24 / account name 13 / figures 15 / labels and meta 10–11 muted.
+- **The empty 28px track before `Collected` is air doing a rule's job**, separating what the period earned from where that money stands. Consistent with *air separates, lines do not*.
+- **Colour is spent once.** Only `Outstanding` carries `--over`, and only when it is above zero. The old block's green `Paid` is gone: money arriving is the normal case and did not need marking.
+- **A zero still prints, muted** (`.nil`), because it is a fact. The exception is IGST on an international account, which prints an en dash: an export carries no IGST *at all*, which is a different statement from carrying none.
+- **`avg` appears only at two invoices or more**, since an average of one is just the figure again. It averages revenue, not billed, to stay consistent with the hero.
+
+**The delta.** Under Revenue, one line comparing against the period immediately before (`prevPeriod()` → previous month / year / FY; `prevLabelShort()` names it, printing the year only when the comparison crosses one). It is deliberately quiet: muted 11px with an arrow, no colour, because a down month is information and not an alarm. It is **omitted entirely when the previous period earned nothing**, since a percentage off a base of nothing is not a comparison, and on **All time**, which has nothing to stand against.
+
+Sub/tax/total come from `invSplit()`: line items are the source, but the **stored total wins** on any disagreement, since that is what was actually sent. Revenue is computed as `billed − tax` rather than by summing `sub`, so the arithmetic printed across the row is exactly true.
+
+Below 1024px the seven tracks stop fitting the hero, so **the foot stops being a table**: the head row is dropped and each figure carries its own label through `data-l` in a `::before`, two columns wide.
+
+**The CSV needs no revenue column.** `Taxable value` already is it, under GSTR-1's own name.
 
 ### Export for the CA (`Export CSV`)
 
