@@ -107,6 +107,19 @@ Below 1024px the seven tracks stop fitting the hero, so **the foot stops being a
 
 **The CSV needs no revenue column.** `Taxable value` already is it, under GSTR-1's own name.
 
+#### The combined revenue line, and the one place a rate is allowed
+
+The foot closes on **`Total revenue`, both accounts in INR**. It is the single exception to *two currencies are two accounts, never summed or converted*, and the exception is drawn narrowly enough that the rule still holds everywhere else:
+
+- **The rate is hand set and always printed** beside the total, as part of the line's own working (`₹2,85,000 + US$3,300 at ₹92.00`). It is never fetched, never guessed at render time, and never hidden. `₹92.00` is a button; clicking it prompts for a new rate, stored in `localStorage` under `kd_usd_inr` (`FX_DEFAULT` is 92 until it is set). **Check it before trusting the figure**, because a stale rate is the only way this line can lie.
+- **It converts nothing else.** Every account figure, the Outstanding pots in the margin, the month spine and the CSV all stay in the currency they were billed in. The reasoning that keeps the CSV unconverted is unchanged and is in the export section: GST values an exported service at the rate on the date of the time of supply, which is the CA's lookup, not this tool's.
+- **It only renders when both accounts have invoices** (`rows.length < 2` returns `""`). On a single-currency page the combined total would just be that account's revenue printed a second time.
+- **The rule sits over the Revenue column alone**, because that is the column it totals. This is the one place in the register where a line does a job air cannot: in bookkeeping a total rule belongs over the figures it closes.
+
+#### Why the tracks are fixed and not `1fr`
+
+The first build of this foot stretched five `1fr` money columns across the full sheet, which put roughly a thousand pixels between an account's name and its last figure and lost the line on the way. The tracks are now sized to the figures (`152px 104px 100px 176px 18px 104px 116px`) with a **trailing `minmax(0, 1fr)` that takes the slack**, so the block keeps a readable measure however wide the sheet gets. A side effect worth preserving: the last figure column's right edge lands on the same vertical as the table's `Amount` column above it.
+
 ### Export for the CA (`Export CSV`)
 
 The band's one control. It exports **exactly the period on screen** (`KD-register-2026-08.csv`, `KD-register-FY2026-27.csv`, `KD-register-all-time.csv`), in issue order. A **UTF-8 BOM** is prepended, which is what makes Excel read `₹` and the client names correctly. Disabled when the period is empty. Kept pure data (no total rows, no symbols, no digit grouping) so a spreadsheet can sum it.

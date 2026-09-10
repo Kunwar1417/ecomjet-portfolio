@@ -662,11 +662,17 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 }
 /* One measure for the head and every account, so the money reads down a
    column. The empty track before Collected is air doing a rule's job:
-   it separates what the period earned from where that money stands. */
+   it separates what the period earned from where that money stands.
+   
+   The tracks are sized to the figures rather than left as 1fr: stretched
+   across the full sheet, a row put a thousand pixels between an account's
+   name and its last figure, and the eye lost the line on the way. The
+   trailing minmax track takes the slack instead, so the block keeps a
+   readable measure however wide the sheet gets. */
 .tl-tally .acct-head, .tl-tally .acct {
   display: grid;
-  grid-template-columns: 172px 1fr 1fr 1.55fr 28px 1fr 1fr;
-  gap: 0 20px; align-items: baseline;
+  grid-template-columns: 152px 104px 100px 176px 18px 104px 116px minmax(0, 1fr);
+  gap: 0 16px; align-items: baseline;
 }
 .tl-tally .acct-head {
   font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
@@ -697,6 +703,20 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
   font-size: 11px; font-weight: 600; color: var(--muted);
   letter-spacing: 0; font-variation-settings: normal;
 }
+
+/* The page's own total. The rule sits over the Revenue column alone, because
+   that is the column it totals: the two accounts sum down into it. */
+.tl-tally .acct--total { margin-top: 22px; }
+.tl-tally .acct--total .who { color: var(--muted); }
+.tl-tally .acct--total .hero { border-top: 1px solid var(--line-2); padding-top: 12px; }
+/* The rate is never an assumption the total hides, so it is always printed,
+   and always a button. */
+.tl-fx {
+  font: inherit; color: var(--ink); font-weight: 700; padding: 0;
+  border-bottom: 1px dashed var(--line-2);
+}
+.tl-fx:hover { border-bottom-color: var(--ink); }
+.tl-fx:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 /* Nothing on file yet: no margin to rule, no columns to head. */
 .inv-tl.is-blank .tl-rail, .inv-tl.is-blank .tl-head, .inv-tl.is-blank .tl-period { display: none; }
@@ -758,7 +778,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 @media (max-width: 1024px) {
   .tl-tally .acct-head { display: none; }
   .tl-tally .acct { grid-template-columns: 1fr 1fr; gap: 14px 18px; }
-  .tl-tally .acct .sp { display: none; }
+  .tl-tally .acct .sp, .tl-tally .f:empty { display: none; }
+  .tl-tally .acct--total .hero::before { display: none; }
   .tl-tally .who { grid-column: 1 / -1; }
   .tl-tally .f { text-align: left; }
   .tl-tally .f::before {
@@ -1114,6 +1135,23 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 
   const SEED_SEQUENCE = 15, SEED_YEAR = 2026;   // 15 invoices already done in 2026 → next suggested is 16
   const LS_INVOICES = "kd_invoices";            // full saved-invoice archive (source of truth)
+  const LS_FX = "kd_usd_inr";                   // rupees to one dollar, for the combined revenue line only
+
+  // The register never converts a currency on its own, because a rate invented
+  // here would disagree with the books it is meant to shadow. The one combined
+  // figure that does convert therefore uses a rate that is **hand set and always
+  // printed beside the total**, never fetched and never hidden. It touches the
+  // combined line and nothing else: every account figure, the month spine and
+  // the CSV all stay in the currency they were billed in.
+  const FX_DEFAULT = 92;
+  function fxRate() {
+    const v = parseFloat(localStorage.getItem(LS_FX));
+    return v > 0 ? v : FX_DEFAULT;
+  }
+  function fxLabel() {
+    const r = fxRate();
+    return "\u20B9" + (Math.round(r * 100) / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
 
   const pad4 = n => String(n).padStart(4, "0");
   const esc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -2058,7 +2096,29 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
         cell(fmtMoney(r.paid, r.type), "Collected", r.paid ? "" : "nil") +
         cell(fmtMoney(open, r.type), "Outstanding", open > 0 ? "is-open" : "nil") +
         "</div>";
-    }).join("") + "</div>";
+    }).join("") + totalHtml(rows) + "</div>";
+  }
+
+  // One combined figure, in the currency the business actually banks in.
+  //
+  // It only appears when both accounts have something in them: with a single
+  // currency on the page the total would just be that account's revenue printed
+  // twice. It shows its own working (india + usd at the rate) so the rate is
+  // never a hidden assumption, and the rate itself is a button.
+  function totalHtml(rows) {
+    if (rows.length < 2) return "";
+    const india = rows.filter(r => r.type === "india").reduce((t, r) => t + r.rev, 0);
+    const usd = rows.filter(r => r.type !== "india").reduce((t, r) => t + r.rev, 0);
+    const total = Math.round(india + usd * fxRate());
+    return '<div class="acct acct--total">' +
+      '<div class="who">Total revenue<span class="n">Both accounts, in INR</span></div>' +
+      '<div class="f"></div><div class="f"></div>' +
+      '<div class="f hero">' + fmtMoney(total, "india") +
+        '<span class="delta">' + fmtMoney(india, "india") + " + " + fmtMoney(usd, "intl") +
+        ' at <button type="button" class="tl-fx" data-fx="1" title="Set the rate used for this line">' +
+        fxLabel() + "</button></span></div>" +
+      '<div class="sp"></div><div class="f"></div><div class="f"></div>' +
+      "</div>";
   }
 
   function renderTimeline(animate) {
@@ -2242,6 +2302,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
       return;
     }
     if (e.target.closest("[data-reset]")) { setPeriod({ kind: "all" }); return; }
+
+    if (e.target.closest("[data-fx]")) {
+      const ans = prompt("Rupees to one US dollar.\n\nUsed only for the combined revenue line. Every other figure, the month spine and the CSV stay in the currency they were billed in.", String(fxRate()));
+      if (ans !== null) {
+        const v = parseFloat(String(ans).replace(/[^\d.]/g, ""));
+        if (v > 0) { localStorage.setItem(LS_FX, String(v)); renderTimeline(false); }
+      }
+      return;
+    }
 
     const btn = e.target.closest("[data-act]");
     if (!btn) return;
