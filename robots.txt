@@ -15,5 +15,6 @@ Disallow: /private
 Disallow: /private.html
 Disallow: /proposal-
 Disallow: /proposals-pdf/
+Disallow: /outreach
 
 Sitemap: https://theecomjet.com/sitemap.xml
