@@ -32,7 +32,7 @@
 | `rates.html` | Rate card at `/rates`, sent for cold/early pricing questions. Carries the site nav + footer (outbound links only, which does not make it discoverable). Warm inquiries get a full proposal instead. See docs/proposals.md. |
 | `proposal-{brand}-print.html` | Per-brand pitch pages (landscape PDF). Built from `proposal-template-print.html`. Usually exported to PDF and emailed, **not deployed**. See docs/proposals.md. |
 | `/outreach` | **Not a file here.** `vercel.json` proxies `/outreach/*` to the outreach dashboard on Modal (`Outreach - Hong Kong/app`, app `outreach-hq`). Password protected by the dashboard itself. `/outreach` redirects to `/outreach/` because the dashboard uses relative asset paths. To change the dashboard, deploy the Modal app, not this site. |
-| `media-kit.html` | Source for the downloadable `media-kit.pdf`. 6-page Letter layout. The "Get the media kit" buttons link to the **PDF**, never to this page. To update the kit: edit here, then re-print (see below). |
+| `media-kit.html` | Source for the downloadable `media-kit.pdf`. 6-page Letter layout. The "Get the media kit" buttons link to the **PDF**, never to this page. To update the kit: edit here, then re-print (see below). A second PDF, `media-kit-region.pdf`, adds an audience Region block: print it from `media-kit.html?region=1`. It is linked from nowhere (sent directly), with a `noindex` header in `vercel.json`. Re-print **both** whenever the kit changes. |
 
 **Re-printing `media-kit.pdf`** (no Chrome in /Applications; use the puppeteer-cached Chrome):
 ```sh

@@ -44,6 +44,15 @@
           "value": "no-referrer"
         }
       ]
+    },
+    {
+      "source": "/media-kit-region.pdf",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "redirects": [

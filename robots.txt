@@ -9,6 +9,7 @@ Disallow: /invoice
 Disallow: /invoice.html
 Disallow: /media-kit
 Disallow: /media-kit.html
+Disallow: /media-kit-region.pdf
 Disallow: /rates
 Disallow: /rates.html
 Disallow: /private

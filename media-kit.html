@@ -261,6 +261,9 @@
   }
   .aud-bar__fill { height: 100%; background: var(--orange); border-radius: 4px; }
   .aud-card h4.aud-card__h4--mt { margin-top: 14px; }
+  .region-block { display: none; }
+  .with-region .region-block { display: block; }
+  .with-region .aud-card h4.aud-age-h4 { margin-top: 14px; }
 
   .qual-grid {
     display: grid;
@@ -699,6 +702,7 @@
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
+  <script>if (/[?&]region=1\b/.test(location.search)) document.documentElement.classList.add('with-region');</script>
 </head>
 <body>
 
@@ -786,7 +790,17 @@
       </div>
 
       <div class="aud-card">
-        <h4>Age &amp; gender</h4>
+        <!-- Region prints only with ?region=1 (media-kit-region.pdf). The public media-kit.pdf leaves it out. -->
+        <div class="region-block">
+          <h4>Region</h4>
+          <div class="aud-row"><span class="aud-row__label">India</span><span class="aud-row__num">70%</span></div>
+          <div class="aud-bar"><div class="aud-bar__fill" style="width: 70%;"></div></div>
+          <div class="aud-row"><span class="aud-row__label">US, UK, Canada &amp; Australia</span><span class="aud-row__num">15%</span></div>
+          <div class="aud-bar"><div class="aud-bar__fill" style="width: 15%;"></div></div>
+          <div class="aud-row"><span class="aud-row__label">Other</span><span class="aud-row__num">15%</span></div>
+          <div class="aud-bar"><div class="aud-bar__fill" style="width: 15%;"></div></div>
+        </div>
+        <h4 class="aud-age-h4">Age &amp; gender</h4>
         <div class="aud-row"><span class="aud-row__label">Age 18 to 45</span><span class="aud-row__num">95%</span></div>
         <div class="aud-row"><span class="aud-row__label">Male / Female</span><span class="aud-row__num">80 / 20</span></div>
       </div>
@@ -1102,7 +1116,7 @@
       </div>
       <div class="closing__currently">
         <span class="dot"></span>
-        <span><strong style="color: var(--dark-text);">Currently:</strong> open for Q3 · Q4 '26 partnerships.</span>
+        <span><strong style="color: var(--dark-text);">Currently:</strong> open for Q4 '26 partnerships.</span>
       </div>
     </div>
 
